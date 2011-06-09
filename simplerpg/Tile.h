@@ -10,17 +10,14 @@ class Tile
 public:
 	Tile();
 	~Tile(void);
-	/*
-	char getGraphic() { return mGraphic; }
-	void setGraphic(char graphic) { mGraphic = graphic; }
 
-	int getColour() { return mColour; }
-	void setColour(int colour) { mColour = colour; }
-	*/
 	bool getPassable() { return mPassable; }
 	void setPassable(bool passable) { mPassable = passable; }
 
-	static void registerTile(Tile* tile, int code);
+	void setCode(int code) { mCode = code; }
+	int getCode() { return mCode; }
+
+	static void registerTile(Tile* tile);
 	static Tile* getTile(int code);
 	static void registerDefaults();
 
@@ -28,9 +25,8 @@ public:
 
 protected:
 	
-	//char mGraphic;
 	bool mPassable;
-	//int mColour;
+	int mCode;
 
 	static map<int, Tile *> sTiles;
 };

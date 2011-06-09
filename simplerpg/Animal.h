@@ -13,7 +13,7 @@ public:
 	~Animal(void);
 
 	Pixel virtual getGraphic();
-	void virtual update();
+	void virtual update(float dt);
 
 protected:
 	float nextFloat() { return (float)rand() / (float)RAND_MAX; }

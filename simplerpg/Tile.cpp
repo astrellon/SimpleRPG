@@ -16,9 +16,9 @@ Tile::~Tile(void)
 {
 }
 
-void Tile::registerTile(Tile *tile, int code)
+void Tile::registerTile(Tile *tile)
 {
-	Tile::sTiles[code] = tile;
+	Tile::sTiles[tile->getCode()] = tile;
 }
 
 Tile* Tile::getTile(int code)
@@ -33,7 +33,8 @@ void Tile::registerDefaults()
 	tile->pixel.graphic = '.';
 	tile->pixel.setColour(COLOR_GREEN);
 	tile->pixel.bold = true;
-	Tile::registerTile(tile, 0);
+	tile->setCode(0);
+	Tile::registerTile(tile);
 
 	// Tree or bush
 	tile = new Tile();
@@ -41,21 +42,24 @@ void Tile::registerDefaults()
 	tile->pixel.setColour(COLOR_GREEN);
 	tile->pixel.bold = false;
 	tile->setPassable(false);
-	Tile::registerTile(tile, 1);
+	tile->setCode(1);
+	Tile::registerTile(tile);
 
 	// Grass
 	tile = new Tile();
 	tile->pixel.graphic = ',';
 	tile->pixel.setColour(COLOR_GREEN);
 	tile->pixel.bold = true;
-	Tile::registerTile(tile, 2);
+	tile->setCode(2);
+	Tile::registerTile(tile);
 
 	// Tall grass
 	tile = new Tile();
 	tile->pixel.graphic = ';';
 	tile->pixel.setColour(COLOR_GREEN);
 	tile->pixel.bold = false;
-	Tile::registerTile(tile, 3);
+	tile->setCode(3);
+	Tile::registerTile(tile);
 
 	// Fence
 	tile = new Tile();
@@ -63,12 +67,14 @@ void Tile::registerDefaults()
 	tile->setPassable(false);
 	tile->pixel.setColour(COLOR_YELLOW);
 	tile->pixel.bold = false;
-	Tile::registerTile(tile, 4);
+	tile->setCode(4);
+	Tile::registerTile(tile);
 
 	// Sand
 	tile = new Tile();
 	tile->pixel.graphic = ',';
 	tile->pixel.setColour(COLOR_YELLOW);
 	tile->pixel.bold = false;
-	Tile::registerTile(tile, 5);
+	tile->setCode(5);
+	Tile::registerTile(tile);
 }

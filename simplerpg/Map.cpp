@@ -49,11 +49,46 @@ bool listContains(vector<AStarNode *> *list, AStarNode *node)
 	return found;
 }
 
+inline bool Map::checkNeighbor(vector<AStarNode *> *nodes, int x, int y)
+{
+	if(x >= 0 && x < mWidth && y >= 0 && y < mHeight)
+	{
+		AStarNode *node = &mMapData[x][y];
+		if(node->tile->getPassable())
+		{
+			nodes->push_back(node);
+			return true;
+		}
+	}
+	return false;
+}
+
+
 vector<AStarNode *> *Map::getNeighbors(Vector2 position)
 {
 	vector<AStarNode *> *nodes = new vector<AStarNode *>();
 
-	for(int x = -1; x <= 1; x++)
+	int posX = (int)position.x;
+	int posY = (int)position.y;
+
+	bool left = checkNeighbor(nodes, posX - 1, posY);
+	bool top = checkNeighbor(nodes, posX, posY - 1);
+	bool right = checkNeighbor(nodes, posX + 1, posY);
+	bool bottom = checkNeighbor(nodes, posX, posY + 1);
+
+	if (left && top)
+		checkNeighbor(nodes, posX - 1, posY - 1);
+	
+	if (top && right)
+		checkNeighbor(nodes, posX + 1, posY - 1);
+
+	if (bottom && left)
+		checkNeighbor(nodes, posX - 1, posY + 1);
+
+	if (bottom && right)
+		checkNeighbor(nodes, posX + 1, posY + 1);
+
+	/*for(int x = -1; x <= 1; x++)
 	{
 		int xx = (int)position.x + x;
 		for(int y = -1; y <= 1; y++)
@@ -71,7 +106,7 @@ vector<AStarNode *> *Map::getNeighbors(Vector2 position)
 				}
 			}
 		}
-	}
+	}*/
 
 	return nodes;
 }
@@ -119,7 +154,6 @@ vector<Vector2> *Map::search(Vector2 start, Vector2 end)
 		{
 			openList.erase(openList.begin());
 			closedList.push_back(node);
-			//sort(closedList.begin(), closedList.end(), compare);
 
 			vector<AStarNode *> *neighbors = getNeighbors(node->position);
 			for(vector<AStarNode *>::iterator iter = neighbors->begin(); iter != neighbors->end(); iter++)

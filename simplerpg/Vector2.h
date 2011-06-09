@@ -1,29 +1,30 @@
 #pragma once
 
 #include <math.h>
+typedef float MathType;
 
 #ifndef _WIN32
-inline double abs(double x)
+inline MathType abs(MathType x)
 {
-	return fabs(x);
+	return fabs((float)x);
 }
 #endif
 
 class Vector2
 {
 public:
-	double x;
-	double y;
+	MathType x;
+	MathType y;
 
 	Vector2(void) { x = 0.0f; y = 0.0f; }
-	Vector2(double ix, double iy) { x = ix; y = iy; }
+	Vector2(MathType ix, MathType iy) { x = ix; y = iy; }
 	~Vector2(void) {}
 
 	inline Vector2 add(Vector2 rhs)
 	{
 		return Vector2(x + rhs.x, y + rhs.y);
 	}
-	inline Vector2 add(double dx, double dy)
+	inline Vector2 add(MathType dx, MathType dy)
 	{
 		return Vector2(x + dx, y + dy);
 	}
@@ -32,27 +33,29 @@ public:
 	{
 		return Vector2(x - rhs.x, y - rhs.y);
 	}
-	inline Vector2 sub(double dx, double dy)
+	inline Vector2 sub(MathType dx, MathType dy)
 	{
 		return Vector2(x - dx, y - dy);
 	}
 
-	inline Vector2 scale(double factor)
+	inline Vector2 scale(MathType factor)
 	{
 		return Vector2(x * factor, y * factor);
 	}
 
-	inline void normalise()
+	inline Vector2 &normalise()
 	{
-		double len = length();
+		MathType len = length();
 		if(len != 0.0f)
 		{
 			x /= len;
 			y /= len;
 		}
+
+		return *this;
 	}
 
-	inline bool equals(Vector2 rhs, double tolerance = 0)
+	inline bool equals(Vector2 rhs, MathType tolerance = 0)
 	{
 		if(tolerance > 0)
 		{
@@ -64,7 +67,7 @@ public:
 		}
 	}
 
-	inline double length() { return sqrt(x * x + y * y); }
-	inline double dot(Vector2 rhs) { return x * rhs.x + y * rhs.y; }
+	inline MathType length() { return sqrt(x * x + y * y); }
+	inline MathType dot(Vector2 rhs) { return x * rhs.x + y * rhs.y; }
 };
 

@@ -43,10 +43,10 @@
     <LibraryPath>C:\Users\Aloon\Downloads\Programming\pdc34dllw;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>C:\Users\Aloon\Downloads\Programming\pthreads.2;C:\Users\Aloon\Downloads\Programming\pdc34dllw;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Program Files (x86)\boost\boost_1_44_1;C:\Users\Aloon\Downloads\Programming\pdc34dllw;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LibraryPath>C:\Users\Aloon\Downloads\Programming\pdc34dllw;$(LibraryPath)</LibraryPath>
+    <LibraryPath>C:\Program Files (x86)\boost\boost_1_44_1\lib;C:\Users\Aloon\Downloads\Programming\pdc34dllw;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

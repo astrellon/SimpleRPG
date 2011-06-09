@@ -42,6 +42,9 @@ public:
 
 	void renderMap(Rect rect, WINDOW *wnd);
 
+	void setMappedTiles(map<char, Tile *> tiles) { mMappedTiles = tiles; }
+	map<char, Tile *> *getMappedTiles() { return &mMappedTiles; }
+
 protected:
 	AStarNode **mMapData;
 
@@ -49,6 +52,9 @@ protected:
 	int mHeight;
 
 	vector<AStarNode *> *getNeighbors(Vector2 position);
+	bool checkNeighbor(vector<AStarNode *> *nodes, int x, int y);
+
+	map<char, Tile *> mMappedTiles;
 
 	vector<Vector2> *getPath(AStarNode *node);
 };

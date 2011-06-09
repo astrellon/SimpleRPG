@@ -24,11 +24,11 @@ void Game::removeEntity(GameEntity* entity)
 	}
 }
 
-void Game::update()
+void Game::update(float dt)
 {
 	for(vector<GameEntity *>::iterator iter = mEntities.begin(); iter != mEntities.end(); iter++)
 	{
-		(*iter)->update();
+		(*iter)->update(dt);
 	}
 }
 
@@ -52,7 +52,49 @@ void Game::moveCamera(int dx, int dy)
 	mScreenSize.setY(mScreenSize.getY() + dy);
 }
 
-void Game::loadMap(char *filename)
+void Game::saveMap(string filename)
+{
+	ofstream file(filename);
+	if(!file.is_open())
+	{
+		cout << "Failed to open file " << filename << " for saving." << endl;
+		return;
+	}
+
+	file << "// Auto generated map file." << endl;
+
+	Map *gameMap = getMap();
+
+	map<char, Tile *> *tileMap = gameMap->getMappedTiles();
+	map<Tile *, char> tileLookup;
+	
+	file << "-- Tiles" << endl;
+	for(map<char, Tile *>::iterator iter = tileMap->begin(); iter != tileMap->end(); iter++)
+	{
+		file << iter->first << ' ' << iter->second->getCode() << endl;
+		tileLookup[iter->second] = iter->first;
+	}
+
+	file << endl << "-- Map" << endl;
+
+	for(int y = 0; y < gameMap->getHeight(); y++)
+	{
+		for(int x = 0; x < gameMap->getWidth(); x++)
+		{
+			Tile *tile = gameMap->getTile(x, y);
+			file << tileLookup[tile];
+		}
+		file << endl;
+	}
+
+	file << endl << "-- Entities" << endl;
+
+	file << endl << "-- End";
+
+	file.close();
+}
+
+void Game::loadMap(string filename)
 {
 	ifstream file(filename);
 	if(!file.is_open())
@@ -61,48 +103,140 @@ void Game::loadMap(char *filename)
 		return;
 	}
 
-	string line;
+	string fileStr((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+	file.close();
+
+	boost::regex readFileRegex(
+		// Multi-line comments.
+		"(/\\*[^/\\*]*\\*/)|"
+		// Single-line comments.
+		"(//[^\n]*\n)|"
+		// Double quoted strings.
+		"(\"[^\"]*\")|"
+		// Single quoted strings.
+		"('[^']*')|"
+		// Everything that's not whitespace.
+		"(\\S+)");
+
+	boost::sregex_token_iterator iter(fileStr.begin(), fileStr.end(), readFileRegex, 0), end;
+
+	static const int STATE_EMPTY = 0;
+	static const int STATE_READ_TILES = 1;
+	static const int STATE_READ_MAP = 2;
+	static const int STATE_READ_ENTITIES = 3;
+	static const int STATE_END_OF_FILE = 4;
+
 	vector<string> mapData;
 	int width = 0;
 
 	map<char, Tile *> tileMap;
-
 	Map *map;
 
-	int state = 0;
-	char c;
+	int state = STATE_EMPTY;
+	char c = '\0';
 
-	while(file.good())
+	// Indicates that we want to change the current state of the file loader.
+	bool changeState = false;
+	// Indicates to the state machine that the current state is done, call finish code.
+	bool endState = false;
+
+	while(iter != end)
 	{
-		getline(file, line);
-		if(line[line.length() - 1] == '\r')
+		string line;
+		if(!endState)
 		{
-			line.erase(line.end() - 1);
+			line = *iter++;
 		}
+
+		// Ignore comments
+		if(line.length() >= 2)
+		{
+			if(line[0] == '/' && (line[1] == '/' || line[1] == '*'))
+			{
+				continue;
+			}
+			if(line[0] == '-' && line[1] == '-')
+			{
+				changeState = true;
+				if(state != STATE_EMPTY)
+				{
+					endState = true;
+				}
+				continue;
+			}
+		}
+
+		if(changeState && !endState)
+		{
+			changeState = false;
+			if(boost::algorithm::iequals(line, "Tiles"))
+			{
+				// Change to tiles.
+				state = STATE_READ_TILES;
+				cout << "Switching to reading tiles." << endl;
+			}
+			else if(boost::algorithm::iequals(line, "Map"))
+			{
+				state = STATE_READ_MAP;
+				cout << "Switching to reading map." << endl;
+			}
+			else if(boost::algorithm::iequals(line, "Entities"))
+			{
+				state = STATE_READ_ENTITIES;
+				cout << "Switching to reading entities." << endl;
+			}
+			else if(boost::algorithm::iequals(line, "End"))
+			{
+				state = STATE_END_OF_FILE;
+				cout << "Switching to end of file state." << endl;
+			}
+			else
+			{
+				cout << "Unknown state " << line << endl;
+				break;
+			}
+			continue;
+		}
+
+		if(!endState)
+		{
+			cout << "Line: >" << line << "<" << endl;
+		}
+		else
+		{
+			cout << "Ending state." << endl;
+		}
+
 		switch(state)
 		{
-		case 0:
-			if(line.length() == 0)
-				break;
-			else
-				state++;
-		case 1:
-			if(line.size() == 0)
+		default:
+		case STATE_EMPTY:
+			break;
+		case STATE_READ_TILES:
+			if(endState)
 			{
-				state++;
+				cout << "Tiles do nothing on end state." << endl;
 				break;
 			}
 
-			// Get types.
-			c = line[0];
-			tileMap[c] = Tile::getTile( atoi(line.c_str() + 2));
+			if(c == '\0')
+			{
+				c = line[0];
+			}
+			else
+			{
+				tileMap[c] = Tile::getTile( atoi(line.c_str()));
+				c = '\0';
+			}
 
 			break;
-		case 2:
-			if(line.length() == 0)
+		case STATE_READ_MAP:
+			if(endState)
 			{
-				state++;
+				cout << "Create map and add to game." << endl;
+				//state++;
 				map = new Map(width, mapData.size());
+				map->setMappedTiles(tileMap);
 				for(unsigned int y = 0; y < mapData.size(); y++)
 				{
 					string l = mapData[y];
@@ -115,6 +249,7 @@ void Game::loadMap(char *filename)
 				setMap(map);
 				break;
 			}
+
 			if(width == 0)
 			{
 				width = line.length();
@@ -126,18 +261,16 @@ void Game::loadMap(char *filename)
 				break;
 			}
 			mapData.push_back(line);
+
 			break;
-		case 3:
-			if(line.length() == 0)
+		case STATE_READ_ENTITIES:
+			if(endState)
+			{
+				cout << "End state for entities." << endl;
 				break;
-			else
-				state++;
-		case 4:
-			// Load game entites.
-			break;
-		default:
-			// Unknown state.
+			}
 			break;
 		}
+		endState = false;
 	}
 }

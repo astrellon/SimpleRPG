@@ -25,24 +25,7 @@ Pixel Animal::getGraphic()
 	return GameEntity::getGraphic();
 }
 
-void Animal::update()
+void Animal::update(float dt)
 {
-	GameEntity::update();
-	
-	if(nextFloat() > 0.92f)
-	{
-		if(nextFloat() > 0.5f)
-		{
-			turn(1.5);
-		}
-		else
-		{
-			turn(-1.5);
-		}
-	}
-
-	if(nextFloat() > 0.9f)
-	{
-		move(0, 1);
-	}
+	GameEntity::update(dt);
 }

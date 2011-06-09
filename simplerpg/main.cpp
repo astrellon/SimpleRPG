@@ -25,6 +25,7 @@ extern "C"
 {
 	#include <curses.h>
 }
+
 #ifdef _WIN32
 #include <Windows.h>
 inline void msleep(int ms)
@@ -80,14 +81,21 @@ int main()
 		return 0;
 	}
 
-	for(int i = 0; i < 10; i++)
+	game->saveMap("test.out");
+
+	/*for(int i = 0; i < 10; i++)
 	{
 		Animal* ani = new Animal(game);
 		int x = rand() % 79;
 		int y = rand() % 24;
 		ani->move(1, 1, false);
 		game->addEntity(ani);
-	}
+	}*/
+
+	Animal *ani = new Animal(game);
+	ani->move(1, 1, false);
+	game->addEntity(ani);
+	ani->setDestination(Vector2(14, 4));
 
 	initscr();
 	curs_set(0);
@@ -101,8 +109,6 @@ int main()
 	keypad(wnd, true);
 
 	SideMenu menu;
-
-	//currentItem = &menu;
 
 	bool paused = false;
 	char buff[20];
@@ -126,9 +132,17 @@ int main()
 			if(c == 50)
 				hud.scrollConsole(-1);
 
-			if(c == 112)
+			if(c == 'p' || c == ' ')
 				paused = !paused;
-			
+
+			if(c == 'a')
+			{
+				ani->setDestination(1, 1);
+			}
+			if(c == 'b')
+			{
+				ani->setDestination(14, 4);
+			}
 			//sprintf(buff, "%d", c);
 			//hud.writeLine(buff);
 		}
@@ -141,11 +155,19 @@ int main()
 
 		if(!paused)
 		{
-			game->update();
+			game->update(0.04f);
 		}
 		game->render(wnd);
 
 		hud.render();
+
+		if(paused)
+		{
+			wattron(wnd, A_BOLD);
+			wattron(wnd, COLOR_PAIR(5));
+			mvwaddstr(wnd, 0, 0, "*PAUSED*");
+			wrefresh(wnd);
+		}
 
 		msleep(40);
 	}

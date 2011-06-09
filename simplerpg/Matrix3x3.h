@@ -6,15 +6,16 @@
 
 #ifndef M_PI
 #define M_PI 3.1415926535897932384626433832795
+#define M_PI2	M_PI * 2
 #endif
 
 class Matrix3x3
 {
 public:
-	Matrix3x3(void) { identity(); }
+	Matrix3x3(void) { identity(); mFacing = 0; }
 	~Matrix3x3(void) {}
 
-	void setRotation(double angle)
+	void setRotation(MathType angle)
 	{
 		xx = cos(angle);
 		yy = xx;
@@ -22,25 +23,24 @@ public:
 		xy = -yx;
 		zz = 1;
 		xz = yz = 0;
-		double twice = M_PI * 2.0;
 		while(angle > M_PI)
-			angle -= twice;
+			angle -= M_PI2;
 		
 		while(angle <= -M_PI)
-			angle += twice;
+			angle += M_PI2;
 
 		mFacing = angle;
 	}
 
-	void rotate(double angle)
+	void rotate(MathType angle)
 	{
 		setRotation(angle + mFacing);
 	}
 
 	void transformVectorConst(Vector2 *vec)
 	{
-		double x = vec->x;
-		double y = vec->y;
+		MathType x = vec->x;
+		MathType y = vec->y;
 		vec->x = x * xx + y * xy;
 		vec->y = x * yx + y * yy;
 	}
@@ -106,7 +106,7 @@ public:
 		printf("%f, %f, %f\n", zx, zy, zz);
 	}
 
-	inline void translate(double dx, double dy)
+	inline void translate(MathType dx, MathType dy)
 	{
 		zx += dx;
 		zy += dy;
@@ -118,22 +118,22 @@ public:
 		zy += vec.y;
 	}
 
-	inline double getAngle() { return mFacing; }
+	inline MathType getAngle() { return mFacing; }
 
-	double xx;
-	double xy;
-	double xz;
+	MathType xx;
+	MathType xy;
+	MathType xz;
 
-	double yx;
-	double yy;
-	double yz;
+	MathType yx;
+	MathType yy;
+	MathType yz;
 
-	double zx;
-	double zy;
-	double zz;
+	MathType zx;
+	MathType zy;
+	MathType zz;
 
 protected:
-	double mFacing;
+	MathType mFacing;
 
 };
 

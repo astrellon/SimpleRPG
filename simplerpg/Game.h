@@ -4,8 +4,10 @@
 #include <fstream>
 #include <string>
 #include <vector>
-//#include <Windows.h>
 #include <curses.h>
+
+#include <boost/regex.hpp>
+#include <boost/algorithm/string/predicate.hpp>
 
 #include "Map.h"
 #include "Rect.h"
@@ -26,23 +28,36 @@ public:
 	void addEntity(GameEntity* entity) { mEntities.push_back(entity); }
 	void removeEntity(GameEntity* entity);
 
-	void update();
+	void update(float dt);
 	void render(WINDOW *wnd);
 
 	void moveCamera(int dx, int dy);
 
-	void loadMap(char *filename);
+	void loadMap(string filename);
+	void saveMap(string filename);
 
 protected:
 	void clearCanvas();
 
 	Map *mMap;
-
 	Rect mScreenSize;
-
-	//Pixel **mCanvas;
 	vector<GameEntity *> mEntities;
+
+	bool compareStrings(const string &a, const string &b)
+	{
+		size_t len = a.length();
+		if(b.length() != len)
+			return false;
+
+		for(size_t i = 0; i < len; i++)
+		{
+			if(tolower(a[i]) != tolower(b[i]))
+			{
+				return false;
+			}
+		}
+		return true;
+	}
 
 	//HANDLE hConsole;
 };
-

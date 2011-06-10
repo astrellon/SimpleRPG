@@ -4,6 +4,9 @@
 #include <curses.h>
 #include <math.h>
 
+#include <boost\regex.hpp>
+#include <boost/algorithm/string/predicate.hpp>
+
 #include "Map.h"
 #include "Pixel.h"
 #include "Vector2.h"
@@ -68,6 +71,9 @@ public:
 
 	vector<Vector2> *getPath() { return mPath; }
 
+	virtual void loadFromFile(boost::sregex_token_iterator &iter);
+	virtual void updateMovePath();
+
 protected:
 	Pixel mGraphic;
 	Game* mGame;
@@ -83,8 +89,7 @@ protected:
 
 	virtual void doStateIdle(float dt) {}
 	virtual void doStateMoving(float dt);
-	virtual void updateMovePath();
-
+	
 	float getTurnAmount(float facing, float dest)
 	{
 		float diff = dest - facing;

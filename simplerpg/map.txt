@@ -15,4 +15,16 @@
 ################
 
 -- Entities
+Animal
+facing 1.5
+position 1.2 3.5
+destination 14 5
+end
+
+Animal
+facing 0
+position 14 5
+destination 1 1
+end
+
 -- 	end

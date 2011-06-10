@@ -91,12 +91,12 @@ int main()
 		ani->move(1, 1, false);
 		game->addEntity(ani);
 	}*/
-
+	/*
 	Animal *ani = new Animal(game);
 	ani->move(1, 1, false);
 	game->addEntity(ani);
 	ani->setDestination(Vector2(14, 4));
-
+	*/
 	initscr();
 	curs_set(0);
 	init_colours();
@@ -135,14 +135,14 @@ int main()
 			if(c == 'p' || c == ' ')
 				paused = !paused;
 
-			if(c == 'a')
+			/*if(c == 'a')
 			{
 				ani->setDestination(1, 1);
 			}
 			if(c == 'b')
 			{
 				ani->setDestination(14, 4);
-			}
+			}*/
 			//sprintf(buff, "%d", c);
 			//hud.writeLine(buff);
 		}

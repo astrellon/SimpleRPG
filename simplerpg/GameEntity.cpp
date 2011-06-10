@@ -185,3 +185,34 @@ void GameEntity::render(Rect screenSize, WINDOW *wnd)
 
 	getGraphic().render(wnd, xPos, yPos);
 }
+
+void GameEntity::loadFromFile(boost::sregex_token_iterator &iter)
+{
+	boost::sregex_token_iterator end;
+
+	while(iter != end)
+	{
+		string line = *iter++;
+		if(boost::algorithm::iequals(line, "end"))
+		{
+			break;
+		}
+		if(boost::algorithm::iequals(line, "facing"))
+		{
+			float f = atof(string(*iter++).c_str());
+			setFacing(f);
+		}
+		if(boost::algorithm::iequals(line, "position"))
+		{
+			float x = atof(string(*iter++).c_str());
+			float y = atof(string(*iter++).c_str());
+			move(x, y, false);
+		}
+		if(boost::algorithm::iequals(line, "destination"))
+		{
+			float x = atof(string(*iter++).c_str());
+			float y = atof(string(*iter++).c_str());
+			setDestination(x, y);
+		}
+	}
+}

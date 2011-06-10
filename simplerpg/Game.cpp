@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "GameEntity.h"
+#include "GameEntityFactory.h"
 
 Game::Game(void)
 {
@@ -269,6 +270,19 @@ void Game::loadMap(string filename)
 				cout << "End state for entities." << endl;
 				break;
 			}
+
+			GameEntity *entity = GameEntityFactory::create(this, line);
+			if(entity == NULL)
+			{
+				cout << "Error parsing entity " << line << endl;
+			}
+			else
+			{
+				entity->loadFromFile(iter);
+				addEntity(entity);
+				entity->updateMovePath();
+			}
+			
 			break;
 		}
 		endState = false;

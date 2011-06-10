@@ -135,6 +135,12 @@ int main()
 			if(c == 'p' || c == ' ')
 				paused = !paused;
 
+			if(c == 's')
+			{
+				game->saveMap("test.out");
+				hud.writeLine("Saved!");
+			}
+
 			/*if(c == 'a')
 			{
 				ani->setDestination(1, 1);

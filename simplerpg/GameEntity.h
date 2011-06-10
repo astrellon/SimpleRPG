@@ -72,6 +72,7 @@ public:
 	vector<Vector2> *getPath() { return mPath; }
 
 	virtual void loadFromFile(boost::sregex_token_iterator &iter);
+	virtual void saveToFile(ofstream &file);
 	virtual void updateMovePath();
 
 protected:
@@ -89,6 +90,8 @@ protected:
 
 	virtual void doStateIdle(float dt) {}
 	virtual void doStateMoving(float dt);
+
+	virtual string getEntityName() { return "GameEntity"; }
 	
 	float getTurnAmount(float facing, float dest)
 	{

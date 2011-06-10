@@ -17,5 +17,7 @@ public:
 
 protected:
 	float nextFloat() { return (float)rand() / (float)RAND_MAX; }
+
+	virtual string getEntityName() { return "Animal"; }
 };
 

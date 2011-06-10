@@ -90,6 +90,12 @@ void Game::saveMap(string filename)
 
 	file << endl << "-- Entities" << endl;
 
+	
+	for(vector<GameEntity *>::iterator iter = mEntities.begin(); iter != mEntities.end(); iter++)
+	{
+		(*iter)->saveToFile(file);
+	}
+
 	file << endl << "-- End";
 
 	file.close();
@@ -235,7 +241,6 @@ void Game::loadMap(string filename)
 			if(endState)
 			{
 				cout << "Create map and add to game." << endl;
-				//state++;
 				map = new Map(width, mapData.size());
 				map->setMappedTiles(tileMap);
 				for(unsigned int y = 0; y < mapData.size(); y++)

@@ -216,3 +216,16 @@ void GameEntity::loadFromFile(boost::sregex_token_iterator &iter)
 		}
 	}
 }
+
+void GameEntity::saveToFile(ofstream &file)
+{
+	file << getEntityName() << endl;
+
+	file << "facing " << getFacing() << endl;
+	Vector2 pos = getPosition();
+	file << "position " << pos.x << ' ' << pos.y << endl;
+	Vector2 dest = getDestination();
+	file << "destination " << dest.x << ' ' << dest.y << endl;
+
+	file << "end" << endl << endl;
+}

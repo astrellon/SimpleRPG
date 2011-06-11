@@ -18,6 +18,9 @@ public:
 protected:
 	float nextFloat() { return (float)rand() / (float)RAND_MAX; }
 
+	virtual void saveProperty(const int &propertyId, ofstream &file);
+	virtual void loadProperties(boost::sregex_token_iterator &iter);
+
 	virtual string getEntityName() { return "Animal"; }
 };
 

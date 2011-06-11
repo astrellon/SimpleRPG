@@ -87,7 +87,7 @@ void GameEntity::doStateMoving(float dt)
 	{
 		Vector2 nextPos = (*mPath)[0];
 		Vector2 toNextPos = nextPos.sub(pos);
-		if(toNextPos.length() < 0.6f)
+		if(toNextPos.length() < 0.4f)
 		{
 			mPath->erase(mPath->begin());
 			if(mPath->empty())
@@ -133,12 +133,12 @@ void GameEntity::doStateMoving(float dt)
 	}
 }
 
-void GameEntity::setDestination(MathType xPos, MathType yPos)
+void GameEntity::setDestination(const MathType &xPos, const MathType &yPos)
 {
 	setDestination(Vector2(xPos, yPos));
 }
 
-void GameEntity::setDestination(Vector2 dest)
+void GameEntity::setDestination(const Vector2 &dest)
 {
 	mDestination = dest;
 	mDestination.x = round(mDestination.x);
@@ -165,8 +165,8 @@ void GameEntity::updateMovePath()
 			mPath = NULL;
 		}
 		Vector2 pos = getPosition();
-		pos.x = round(pos.x);
-		pos.y = round(pos.y);
+		pos.x = (MathType)round(pos.x);
+		pos.y = (MathType)round(pos.y);
 		mPath = mGame->getMap()->search(pos, mDestination);
 		mState = STATE_MOVING;
 	}
@@ -192,28 +192,38 @@ void GameEntity::loadFromFile(boost::sregex_token_iterator &iter)
 
 	while(iter != end)
 	{
-		string line = *iter++;
-		if(boost::algorithm::iequals(line, "end"))
+		string line = *iter;
+		if(iequals(line, "end"))
 		{
 			break;
 		}
-		if(boost::algorithm::iequals(line, "facing"))
-		{
-			float f = atof(string(*iter++).c_str());
-			setFacing(f);
-		}
-		if(boost::algorithm::iequals(line, "position"))
-		{
-			float x = atof(string(*iter++).c_str());
-			float y = atof(string(*iter++).c_str());
-			move(x, y, false);
-		}
-		if(boost::algorithm::iequals(line, "destination"))
-		{
-			float x = atof(string(*iter++).c_str());
-			float y = atof(string(*iter++).c_str());
-			setDestination(x, y);
-		}
+		loadProperties(iter);
+	}
+}
+
+void GameEntity::loadProperties(boost::sregex_token_iterator &iter)
+{
+	string propertyName = *iter++;
+	if(iequals(propertyName, "facing"))
+	{
+		float f = atof(string(*iter++).c_str());
+		setFacing(f);
+	}
+	else if(iequals(propertyName, "position"))
+	{
+		float x = atof(string(*iter++).c_str());
+		float y = atof(string(*iter++).c_str());
+		move(x, y, false);
+	}
+	else if(iequals(propertyName, "destination"))
+	{
+		float x = atof(string(*iter++).c_str());
+		float y = atof(string(*iter++).c_str());
+		setDestination(x, y);
+	}
+	else
+	{
+		cout << "Unable to load unknown property '" << propertyName << "'" << endl;
 	}
 }
 
@@ -221,11 +231,36 @@ void GameEntity::saveToFile(ofstream &file)
 {
 	file << getEntityName() << endl;
 
-	file << "facing " << getFacing() << endl;
-	Vector2 pos = getPosition();
-	file << "position " << pos.x << ' ' << pos.y << endl;
-	Vector2 dest = getDestination();
-	file << "destination " << dest.x << ' ' << dest.y << endl;
+	saveProperties(file);
 
 	file << "end" << endl << endl;
+}
+
+void GameEntity::saveProperties(ofstream &file)
+{
+	saveProperty(PROPERTY_FACING, file);
+	saveProperty(PROPERTY_POSITION, file);
+	saveProperty(PROPERTY_DESTINATION, file);
+}
+
+void GameEntity::saveProperty(const int &propertyId, ofstream &file)
+{
+	Vector2 v;
+	switch(propertyId)
+	{
+	case PROPERTY_FACING:
+		file << "facing " << getFacing() << endl;
+		break;
+	case PROPERTY_POSITION:
+		v = getPosition();
+		file << "position " << v.x << ' ' << v.y << endl;
+		break;
+	case PROPERTY_DESTINATION:
+		v = getDestination();
+		file << "destination " << v.x << ' ' << v.y << endl;
+		break;
+	default:
+		cout << "Unable to save unknown property " << propertyId << endl;
+		break;
+	}
 }

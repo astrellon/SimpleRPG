@@ -1,4 +1,4 @@
-#include "Animal.h"
+﻿#include "Animal.h"
 
 
 Animal::Animal(Game *game) : GameEntity(game)
@@ -21,6 +21,7 @@ Pixel Animal::getGraphic()
 		mGraphic.graphic = '>';
 	else
 		mGraphic.graphic = '^';
+	
 
 	return GameEntity::getGraphic();
 }
@@ -28,4 +29,14 @@ Pixel Animal::getGraphic()
 void Animal::update(float dt)
 {
 	GameEntity::update(dt);
+}
+
+void Animal::saveProperty(const int &propertyId, ofstream &file)
+{
+	GameEntity::saveProperty(propertyId, file);
+}
+
+void Animal::loadProperties(boost::sregex_token_iterator &iter)
+{
+	GameEntity::loadProperties(iter);
 }

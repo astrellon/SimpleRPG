@@ -4,7 +4,7 @@
 #include <curses.h>
 #include <math.h>
 
-#include <boost\regex.hpp>
+#include <boost/regex.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 
 #include "Map.h"
@@ -17,9 +17,14 @@
 #endif
 
 using namespace std;
+using namespace boost::algorithm;
 
 #define STATE_IDLE		0
 #define STATE_MOVING	1
+
+#define PROPERTY_FACING			0
+#define PROPERTY_POSITION		1
+#define PROPERTY_DESTINATION	2
 
 class Game;
 
@@ -65,9 +70,9 @@ public:
 		return (int)x;
 	}
 
-	void setDestination(Vector2 dest);
-	void setDestination(MathType xPos, MathType yPos);
-	Vector2 getDestination() { return mDestination; }
+	virtual void setDestination(const Vector2 &dest);
+	virtual void setDestination(const MathType &xPos, const MathType &yPos);
+	virtual Vector2 getDestination() { return mDestination; }
 
 	vector<Vector2> *getPath() { return mPath; }
 
@@ -90,6 +95,11 @@ protected:
 
 	virtual void doStateIdle(float dt) {}
 	virtual void doStateMoving(float dt);
+
+	virtual void loadProperties(boost::sregex_token_iterator &iter);
+
+	virtual void saveProperty(const int &propertyId, ofstream &file);
+	virtual void saveProperties(ofstream &file);
 
 	virtual string getEntityName() { return "GameEntity"; }
 	

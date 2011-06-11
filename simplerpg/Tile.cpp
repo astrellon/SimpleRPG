@@ -77,4 +77,13 @@ void Tile::registerDefaults()
 	tile->pixel.bold = false;
 	tile->setCode(5);
 	Tile::registerTile(tile);
+
+	// Water
+	tile = new Tile();
+	tile->pixel.graphic = '~';
+	tile->pixel.setColour(COLOR_BLUE);
+	tile->pixel.bold = true;
+	tile->setPassable(false);
+	tile->setCode(6);
+	Tile::registerTile(tile);
 }

@@ -118,18 +118,18 @@ int main()
 		while(kbhit())
 		{
 			int c = wgetch(wnd);
-			if(c == 260)
+			if (c == 260)
 				game->moveCamera(-1, 0);
-			if(c == 261)
+			if (c == 261)
 				game->moveCamera(1, 0);
-			if(c == 259)
+			if (c == 259)
 				game->moveCamera(0, -1);
-			if(c == 258)
+			if (c == 258)
 				game->moveCamera(0, 1);
 
-			if(c == 56)
+			if (c == 56)
 				hud.scrollConsole(1);
-			if(c == 50)
+			if (c == 50)
 				hud.scrollConsole(-1);
 
 			if(c == 'p' || c == ' ')

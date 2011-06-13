@@ -98,5 +98,8 @@
     <ClInclude Include="GameEntityFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GameMath.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

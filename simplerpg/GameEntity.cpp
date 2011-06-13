@@ -22,8 +22,8 @@ void GameEntity::move(MathType dx, MathType dy, bool inObjectSpace)
 	if(inObjectSpace)
 		mTransform.transformVectorConst(&v);
 
-	int newPosX = round(mTransform.zx + v.x);
-	int newPosY = round(mTransform.zy + v.y);
+	int newPosX = math::round(mTransform.zx + v.x);
+	int newPosY = math::round(mTransform.zy + v.y);
 
 	Tile *tile = mGame->getMap()->getTile(newPosX, newPosY);
 	if(tile != NULL && tile->getPassable())
@@ -32,14 +32,14 @@ void GameEntity::move(MathType dx, MathType dy, bool inObjectSpace)
 		return;
 	}
 
-	tile = mGame->getMap()->getTile(round(mTransform.zx), newPosY);
+	tile = mGame->getMap()->getTile(math::round(mTransform.zx), newPosY);
 	if(tile != NULL && tile->getPassable())
 	{
 		mTransform.translate(0, v.y);
 		return;
 	}
 
-	tile = mGame->getMap()->getTile(newPosX, round(mTransform.zy));
+	tile = mGame->getMap()->getTile(newPosX, math::round(mTransform.zy));
 	if(tile != NULL && tile->getPassable())
 	{
 		mTransform.translate(v.x, 0);
@@ -143,8 +143,8 @@ void GameEntity::setDestination(const MathType &xPos, const MathType &yPos)
 void GameEntity::setDestination(const Vector2 &dest)
 {
 	mDestination = dest;
-	mDestination.x = round(mDestination.x);
-	mDestination.y = round(mDestination.y);
+	mDestination.x = math::round(mDestination.x);
+	mDestination.y = math::round(mDestination.y);
 	updateMovePath();
 }
 
@@ -167,8 +167,8 @@ void GameEntity::updateMovePath()
 			mPath = NULL;
 		}
 		Vector2 pos = getPosition();
-		pos.x = (MathType)round(pos.x);
-		pos.y = (MathType)round(pos.y);
+		pos.x = (MathType)math::round(pos.x);
+		pos.y = (MathType)math::round(pos.y);
 		mPath = mGame->getMap()->search(pos, mDestination);
 		mState = STATE_MOVING;
 	}
@@ -176,8 +176,8 @@ void GameEntity::updateMovePath()
 
 void GameEntity::render(Rect screenSize, WINDOW *wnd)
 {
-	int xPos = round(getX()) - screenSize.getX();
-	int yPos = round(getY()) - screenSize.getY();
+	int xPos = math::round(getX()) - screenSize.getX();
+	int yPos = math::round(getY()) - screenSize.getY();
 
 	if (xPos < 0 || xPos >= screenSize.getWidth() ||
 		yPos < 0 || yPos >= screenSize.getHeight())

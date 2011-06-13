@@ -11,10 +11,13 @@
 
 #include "Map.h"
 #include "Rect.h"
+#include "HUD.h"
 
 class GameEntity;
 
 using namespace std;
+
+typedef vector<GameEntity *> EntityList;
 
 class Game
 {
@@ -37,13 +40,14 @@ public:
 	void saveMap(string filename);
 
 	void setCursor(int xPos, int yPos);
+	void displayUnderCursor(HUD &hud);
 
 protected:
 	void clearCanvas();
 
 	Map *mMap;
 	Rect mScreenSize;
-	vector<GameEntity *> mEntities;
+	EntityList mEntities;
 
 	int mCursorX;
 	int mCursorY;
@@ -63,6 +67,4 @@ protected:
 		}
 		return true;
 	}
-
-	//HANDLE hConsole;
 };

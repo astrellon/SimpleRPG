@@ -132,6 +132,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameEntity.h" />
     <ClInclude Include="GameEntityFactory.h" />
+    <ClInclude Include="GameMath.h" />
     <ClInclude Include="HUD.h" />
     <ClInclude Include="IKeyActions.h" />
     <ClInclude Include="keyboard.h" />

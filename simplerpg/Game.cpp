@@ -42,6 +42,36 @@ void Game::update(float dt)
 	}
 }
 
+void Game::displayUnderCursor(HUD &hud)
+{
+	Map *m = getMap();
+	if(m == NULL || mCursorX < 0 || mCursorY < 0 || mCursorX > m->getWidth() || mCursorY > m->getHeight())
+	{
+		return;
+	}
+	hud.clear();
+	Tile *tile = getMap()->getTile(mCursorX, mCursorY);
+	if(tile != NULL)
+	{
+		hud << "Tile: " << tile->getName() << '\n';
+	}
+
+	int num = 1;
+
+	for(EntityList::iterator iter = mEntities.begin(); iter != mEntities.end(); iter++)
+	{
+		GameEntity *entity = *iter;
+		Vector2 pos = entity->getPosition();
+		int posX = math::round(pos.x);
+		int posY = math::round(pos.y);
+		if(posX == mCursorX && posY == mCursorY)
+		{
+			hud << "<12>" << num << "</>: " << "Animal" << '\n';
+			num++;
+		}
+	}
+}
+
 void Game::render(WINDOW *wnd)
 {
 	wclear(wnd);

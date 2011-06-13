@@ -131,14 +131,7 @@ int main()
 					cy++;
 
 				game->setCursor(cx, cy);
-
-				hud.clear();
-				Tile *t = game->getMap()->getTile(cx, cy);
-				if(t != NULL)
-				{
-					hud.clear();
-					hud << "Tile: " << t->getName();
-				}
+				game->displayUnderCursor(hud);
 			}
 			else
 			{
@@ -173,7 +166,7 @@ int main()
 			currentItem->displayActions(hud);
 		}
 
-		if(!paused)
+		if(!paused && !cursorMode)
 		{
 			game->update(0.04f);
 		}
@@ -181,7 +174,7 @@ int main()
 
 		hud.render();
 
-		if(paused)
+		if(paused || cursorMode)
 		{
 			wattron(wnd, A_BOLD);
 			wattron(wnd, COLOR_PAIR(5));

@@ -5,8 +5,8 @@ GameEntity::GameEntity(Game *game)
 {
 	mGame = game;
 	mGraphic = Pixel('o', 7, false);
-	mSpeed = 4.0f;
-	mTurningSpeed = 10.0f;
+	mSpeed = 1.1f;
+	mTurningSpeed = 2.0f;
 	mState = STATE_IDLE;
 	mPath = NULL;
 	mDestination = Vector2(-1, -1);
@@ -111,7 +111,9 @@ void GameEntity::doStateMoving(float dt)
 
 		facing = getFacing();
 
-		if (facingDiff > 0.01f || facingDiff < -0.01f)
+		MathType turnLeft = getTurnAmount(facing, toFacing);
+
+		if (turnLeft > 0.01f || turnLeft < -0.01f)
 		{
 			break;
 		}

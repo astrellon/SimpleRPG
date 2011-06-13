@@ -6,11 +6,20 @@ Game::Game(void)
 {
 	mScreenSize = Rect(0, 0, 80, 25);
 	mMap = NULL;
+
+	mCursorX = -1;
+	mCursorY = -1;
 }
 
 Game::~Game(void)
 {
 	
+}
+
+void Game::setCursor(int xPos, int yPos)
+{
+	mCursorX = xPos;
+	mCursorY = yPos;
 }
 
 void Game::removeEntity(GameEntity* entity)
@@ -42,6 +51,23 @@ void Game::render(WINDOW *wnd)
 	for(vector<GameEntity *>::iterator iter = mEntities.begin(); iter != mEntities.end(); iter++)
 	{
 		(*iter)->render(mScreenSize, wnd);
+	}
+
+	if(mCursorX >= 0 || mCursorY >= 0)
+	{
+		int xPos = mCursorX - mScreenSize.getX();
+		int yPos = mCursorY - mScreenSize.getY();
+
+		if (xPos >= 0 && xPos < mScreenSize.getWidth() &&
+			yPos >= 0 && yPos < mScreenSize.getHeight())
+		{
+			if (mCursorX >= 0 && mCursorX < mMap->getWidth() &&
+				mCursorY >= 0 && mCursorY < mMap->getHeight())
+			{
+				wattron(wnd, COLOR_PAIR(9));
+				mvwaddch(wnd, yPos, xPos, 'X');
+			}
+		}
 	}
 
 	wrefresh(wnd);

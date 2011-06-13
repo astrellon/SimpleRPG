@@ -14,16 +14,16 @@ public:
 	{
 	}
 
-	virtual void displayActions(HUD *hud)
+	virtual void displayActions(HUD &hud)
 	{
 		if(!redisplay)
 			return;
 
-		hud->clear();
-		hud->writeLine("Hello thar");
-		hud->writeLine("<1>c<2>o<3>l<4>o<5>u<6>r<7>s</></></></></></></>");
-		hud->writeLine("<4>hell<3>o th</></>ar</> asdf<5>sdfs");
-		hud->writeLine("SDJFLK");
+		hud.clear();
+		hud << "Hello thar";
+		hud << "<1>c<2>o<3>l<4>o<5>u<6>r<7>s</></></></></></></>";
+		hud << "<4>hell<3>o th</></>ar</> asdf<5>sdfs";
+		hud << "SDJFLK";
 
 		redisplay = false;
 	}

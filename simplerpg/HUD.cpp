@@ -5,6 +5,7 @@ HUD::HUD(void)
 {
 	wnd = newwin(25, 20, 0, 60);
 	scrollOffset = 0;
+	clear();
 }
 
 HUD::~HUD(void)
@@ -24,77 +25,80 @@ void HUD::render()
 		mvwaddch(wnd, y, 0, '|');
 	}
 
-	int y = -scrollOffset;
+	int y = -scrollOffset + 1;
 	bool inColour = false;
 	bool escaped = false;
 	int colour = 0;
 
-	for(int i = 0; i < (int)log.size(); i++)
+	string sss = ss.str();
+	const char *line = sss.c_str();
+	int pos = 0;
+	int x = 2;
+
+	colours.clear();
+	updateColour();
+
+	while(line[pos] != '\0')
 	{
-		y++;
-		if(y > 25)
-			break;
-
-		const char *line = log[i].c_str();
-		int pos = 0;
-		int x = 2;
-
-		colours.clear();
-		updateColour();
-
-		while(line[pos] != '\0')
+		char c = line[pos++];
+		if(!escaped && c == '\\')
 		{
-			char c = line[pos++];
-			if(!escaped && c == '\\')
-			{
-				escaped = true;
-				continue;
-			}
+			escaped = true;
+			continue;
+		}
 
-			if(c == '<' && !escaped)
+		if(c == '\n')
+		{
+			y++;
+			x = 2;
+			continue;
+		}
+
+		if(c == '<' && !escaped)
+		{
+			inColour = true;
+			continue;
+		}
+		if(inColour)
+		{
+			if(c != '>')
 			{
-				inColour = true;
-				continue;
-			}
-			if(inColour)
-			{
-				if(c != '>')
+				if(c == '/')
 				{
-					if(c == '/')
-					{
-						popColour();
-					}
-					else
-					{
-						if(line[pos] != '>')
-						{
-							colour = 10 * (c - '0') + (line[pos++] - '0');
-						}
-						else
-						{
-							colour = (c - '0');
-						}
-						bool bold = (colour & 0x8) > 0;
-						colour = colour & 0x7;
-						pushColour(colour, bold);
-					}
+					popColour();
 				}
 				else
 				{
-					inColour = false;
+					if(line[pos] != '>')
+					{
+						colour = 10 * (c - '0') + (line[pos++] - '0');
+					}
+					else
+					{
+						colour = (c - '0');
+					}
+					bool bold = (colour & 0x8) > 0;
+					colour = colour & 0x7;
+					pushColour(colour, bold);
 				}
-				continue;
 			}
+			else
+			{
+				inColour = false;
+			}
+			continue;
+		}
+
+		if(y >= 0)
 			mvwaddch(wnd, y, x++, c);
 
-			escaped = false;
+		escaped = false;
 
-			if(x >= 20)
-			{
-				x = 2;
-				if(line[pos] != '\0')
-					y++;
-			}
+		if(x >= 20)
+		{
+			x = 2;
+			if(line[pos] != '\0')
+				y++;
 		}
 	}
 

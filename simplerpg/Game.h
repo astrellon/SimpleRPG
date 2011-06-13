@@ -36,12 +36,17 @@ public:
 	void loadMap(string filename);
 	void saveMap(string filename);
 
+	void setCursor(int xPos, int yPos);
+
 protected:
 	void clearCanvas();
 
 	Map *mMap;
 	Rect mScreenSize;
 	vector<GameEntity *> mEntities;
+
+	int mCursorX;
+	int mCursorY;
 
 	bool compareStrings(const string &a, const string &b)
 	{

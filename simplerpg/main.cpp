@@ -49,6 +49,7 @@ void init_colours()
 	{
 		init_pair(i + 1, i, COLOR_BLACK);
 	}
+	init_pair(9, 0, 8);
 }
 
 WINDOW *wnd;
@@ -83,20 +84,6 @@ int main()
 
 	game->saveMap("test.out");
 
-	/*for(int i = 0; i < 10; i++)
-	{
-		Animal* ani = new Animal(game);
-		int x = rand() % 79;
-		int y = rand() % 24;
-		ani->move(1, 1, false);
-		game->addEntity(ani);
-	}*/
-	/*
-	Animal *ani = new Animal(game);
-	ani->move(1, 1, false);
-	game->addEntity(ani);
-	ani->setDestination(Vector2(14, 4));
-	*/
 	initscr();
 	curs_set(0);
 	init_colours();
@@ -113,19 +100,57 @@ int main()
 	bool paused = false;
 	char buff[20];
 
+	bool cursorMode = false;
+	int cx = -1;
+	int cy = -1;
+
 	while(true)
 	{
 		while(kbhit())
 		{
 			int c = wgetch(wnd);
-			if (c == 260)
-				game->moveCamera(-1, 0);
-			if (c == 261)
-				game->moveCamera(1, 0);
-			if (c == 259)
-				game->moveCamera(0, -1);
-			if (c == 258)
-				game->moveCamera(0, 1);
+
+			if(c == 'k')
+			{
+				cursorMode = !cursorMode;
+				if(!cursorMode)
+				{
+					game->setCursor(-1, -1);
+				}
+			}
+
+			if(cursorMode)
+			{
+				if (c == 260)
+					cx--;
+				if (c == 261)
+					cx++;
+				if (c == 259)
+					cy--;
+				if (c == 258)
+					cy++;
+
+				game->setCursor(cx, cy);
+
+				hud.clear();
+				Tile *t = game->getMap()->getTile(cx, cy);
+				if(t != NULL)
+				{
+					hud.clear();
+					hud << "Tile: " << t->getName();
+				}
+			}
+			else
+			{
+				if (c == 260)
+					game->moveCamera(-1, 0);
+				if (c == 261)
+					game->moveCamera(1, 0);
+				if (c == 259)
+					game->moveCamera(0, -1);
+				if (c == 258)
+					game->moveCamera(0, 1);
+			}
 
 			if (c == 56)
 				hud.scrollConsole(1);
@@ -138,25 +163,14 @@ int main()
 			if(c == 's')
 			{
 				game->saveMap("test.out");
-				hud.writeLine("Saved!");
+				hud << "Saved!";
 			}
-
-			/*if(c == 'a')
-			{
-				ani->setDestination(1, 1);
-			}
-			if(c == 'b')
-			{
-				ani->setDestination(14, 4);
-			}*/
-			//sprintf(buff, "%d", c);
-			//hud.writeLine(buff);
 		}
 
 		if(currentItem != NULL)
 		{
 			currentItem->keyActions();
-			currentItem->displayActions(&hud);
+			currentItem->displayActions(hud);
 		}
 
 		if(!paused)

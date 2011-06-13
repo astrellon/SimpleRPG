@@ -3,6 +3,7 @@
 #include <curses.h>
 #include <vector>
 #include <string>
+#include <sstream>
 
 using namespace std;
 
@@ -22,16 +23,8 @@ public:
 
 	inline void clear()
 	{
-		log.clear();
-	}
-
-	inline void writeLine(char *line)
-	{
-		log.push_back(string(line));
-	}
-	inline void writeLine(string line)
-	{
-		log.push_back(line);
+		//ss.clear();
+		ss.str("");
 	}
 
 	void render();
@@ -51,10 +44,64 @@ public:
 		return scrollOffset;
 	}
 
+	inline HUD &operator<<(const char *c)
+	{
+		ss << c;
+		return *this;
+	}
+
+	inline HUD &operator<<(const string &s)
+	{
+		ss << s;
+		return *this;
+	}
+
+	inline HUD &operator<<(const int &i)
+	{
+		ss << i;
+		return *this;
+	}
+
+	inline HUD &operator<<(const unsigned int &i)
+	{
+		ss << i;
+		return *this;
+	}
+
+	inline HUD &operator<<(const bool &b)
+	{
+		ss << (b ? "true" : "false");
+		return *this;
+	}
+
+	inline HUD &operator<<(const char &c)
+	{
+		ss << c;
+		return *this;
+	}
+
+	inline HUD &operator<<(const unsigned char &c)
+	{
+		ss << c;
+		return *this;
+	}
+
+	inline HUD &operator<<(const float &f)
+	{
+		ss << f;
+		return *this;
+	}
+
+	inline HUD &operator<<(const double &f)
+	{
+		ss << f;
+		return *this;
+	}
+
 protected:
 	WINDOW *wnd;
 
-	vector<string> log;
+	stringstream ss;
 
 	int scrollOffset;
 

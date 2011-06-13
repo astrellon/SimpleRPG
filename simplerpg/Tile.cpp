@@ -4,11 +4,10 @@ map<int, Tile *> Tile::sTiles;
 
 Tile::Tile()
 {
-	//mGraphic = graphic;
-	mPassable = true;
-	//mColour = 15;
+	setPassable(true);
 	pixel.setColour(15);
 	pixel.graphic = ' ';
+	setName("Unnamed");
 }
 
 
@@ -21,7 +20,7 @@ void Tile::registerTile(Tile *tile)
 	Tile::sTiles[tile->getCode()] = tile;
 }
 
-Tile* Tile::getTile(int code)
+Tile *Tile::getTile(const int &code)
 {
 	return Tile::sTiles[code];
 }
@@ -34,6 +33,7 @@ void Tile::registerDefaults()
 	tile->pixel.setColour(COLOR_GREEN);
 	tile->pixel.bold = true;
 	tile->setCode(0);
+	tile->setName("Short grass");
 	Tile::registerTile(tile);
 
 	// Tree or bush
@@ -43,6 +43,7 @@ void Tile::registerDefaults()
 	tile->pixel.bold = false;
 	tile->setPassable(false);
 	tile->setCode(1);
+	tile->setName("Trees");
 	Tile::registerTile(tile);
 
 	// Grass
@@ -51,6 +52,7 @@ void Tile::registerDefaults()
 	tile->pixel.setColour(COLOR_GREEN);
 	tile->pixel.bold = true;
 	tile->setCode(2);
+	tile->setName("Grass");
 	Tile::registerTile(tile);
 
 	// Tall grass
@@ -59,6 +61,7 @@ void Tile::registerDefaults()
 	tile->pixel.setColour(COLOR_GREEN);
 	tile->pixel.bold = false;
 	tile->setCode(3);
+	tile->setName("Tall grass");
 	Tile::registerTile(tile);
 
 	// Fence
@@ -68,6 +71,7 @@ void Tile::registerDefaults()
 	tile->pixel.setColour(COLOR_YELLOW);
 	tile->pixel.bold = false;
 	tile->setCode(4);
+	tile->setName("Fence");
 	Tile::registerTile(tile);
 
 	// Sand
@@ -76,6 +80,7 @@ void Tile::registerDefaults()
 	tile->pixel.setColour(COLOR_YELLOW);
 	tile->pixel.bold = false;
 	tile->setCode(5);
+	tile->setName("Sand");
 	Tile::registerTile(tile);
 
 	// Water
@@ -85,5 +90,6 @@ void Tile::registerDefaults()
 	tile->pixel.bold = true;
 	tile->setPassable(false);
 	tile->setCode(6);
+	tile->setName("Water");
 	Tile::registerTile(tile);
 }

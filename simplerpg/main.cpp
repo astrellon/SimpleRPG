@@ -23,7 +23,7 @@
 
 extern "C"
 {
-	#include <curses.h>
+	#include "curses.h"
 }
 
 #ifdef _WIN32

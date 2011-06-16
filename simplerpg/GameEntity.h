@@ -1,7 +1,7 @@
 #pragma once
 
 #include <iostream>
-#include <curses.h>
+#include "curses.h"
 #include <math.h>
 
 #include <boost/regex.hpp>

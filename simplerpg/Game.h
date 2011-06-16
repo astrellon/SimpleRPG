@@ -4,7 +4,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include <curses.h>
+#include "curses.h"
 
 #include <boost/regex.hpp>
 #include <boost/algorithm/string/predicate.hpp>

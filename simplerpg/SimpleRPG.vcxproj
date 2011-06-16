@@ -129,6 +129,7 @@
   <ItemGroup>
     <ClInclude Include="Animal.h" />
     <ClInclude Include="AStarNode.h" />
+    <ClInclude Include="curses.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameEntity.h" />
     <ClInclude Include="GameEntityFactory.h" />
@@ -137,6 +138,7 @@
     <ClInclude Include="keyboard.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Matrix3x3.h" />
+    <ClInclude Include="panel.h" />
     <ClInclude Include="Pixel.h" />
     <ClInclude Include="Rect.h" />
     <ClInclude Include="SideMenu.h" />

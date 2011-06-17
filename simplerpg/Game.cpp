@@ -9,6 +9,9 @@ Game::Game(void)
 
 	mCursorX = -1;
 	mCursorY = -1;
+
+	mCursorMode = false;
+	mRedisplay = true;
 }
 
 Game::~Game(void)
@@ -16,7 +19,56 @@ Game::~Game(void)
 	
 }
 
-void Game::setCursor(int xPos, int yPos)
+void Game::keyActions(const int key)
+{
+	if(key == 'k')
+	{
+		mCursorMode = !mCursorMode;
+	}
+
+	if(mCursorMode)
+	{
+		int cx = mCursorX;
+		int cy = mCursorY;
+
+		if (key == 260)
+			cx--;
+		if (key == 261)
+			cx++;
+		if (key == 259)
+			cy--;
+		if (key == 258)
+			cy++;
+
+		setCursorPosition(cx, cy);
+	}
+	else
+	{
+		if (key == 260)
+			moveCamera(-1, 0);
+		if (key == 261)
+			moveCamera(1, 0);
+		if (key == 259)
+			moveCamera(0, -1);
+		if (key == 258)
+			moveCamera(0, 1);
+	}
+}
+
+void Game::displayActions(HUD &hud)
+{
+	if(mCursorMode)
+	{
+		displayUnderCursor(hud);
+	}
+	else
+	{
+		hud.clear();
+		hud << "Hello";
+	}
+}
+
+void Game::setCursorPosition(int xPos, int yPos)
 {
 	mCursorX = xPos;
 	mCursorY = yPos;
@@ -83,7 +135,7 @@ void Game::render(WINDOW *wnd)
 		(*iter)->render(mScreenSize, wnd);
 	}
 
-	if(mCursorX >= 0 || mCursorY >= 0)
+	if(mCursorMode)
 	{
 		int xPos = mCursorX - mScreenSize.getX();
 		int yPos = mCursorY - mScreenSize.getY();

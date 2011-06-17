@@ -12,6 +12,7 @@
 #include "Vector2.h"
 #include "Matrix3x3.h"
 #include "GameMath.h"
+#include "IKeyActions.h"
 
 #ifndef M_PI
 #define M_PI 3.1415926535897932384626433832795
@@ -29,7 +30,7 @@ using namespace boost::algorithm;
 
 class Game;
 
-class GameEntity
+class GameEntity : public IKeyActions
 {
 public:
 	GameEntity(Game *game);
@@ -65,9 +66,32 @@ public:
 	virtual void saveToFile(ofstream &file);
 	virtual void updateMovePath();
 
+	virtual void keyActions(const int key)
+	{
+	}
+
+	virtual void displayActions(HUD &hud)
+	{
+		if(!mRedisplay)
+			return;
+
+		hud.clear();
+		hud << "Entity: " << "Animal\n";
+		hud << "Facing: " << getFacing() << '\n';
+
+		mRedisplay = true;
+	}
+
+	virtual void clearDisplay()
+	{
+		mRedisplay = true;
+	}
+
 protected:
 	Pixel mGraphic;
 	Game* mGame;
+
+	bool mRedisplay;
 
 	Matrix3x3 mTransform;
 	vector<Vector2> *mPath;

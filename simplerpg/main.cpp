@@ -88,6 +88,11 @@ int main()
 	curs_set(0);
 	init_colours();
 
+	Animal *ani = new Animal(game);
+	ani->move(1, 1, false);
+	ani->setDestination(3, 7);
+	game->addEntity(ani);
+
 	HUD hud;
 
 	wnd = newwin(25, 60, 0, 0);
@@ -97,53 +102,16 @@ int main()
 
 	SideMenu menu;
 
+	//currentItem = ani;
+
 	bool paused = false;
 	char buff[20];
-
-	bool cursorMode = false;
-	int cx = -1;
-	int cy = -1;
 
 	while(true)
 	{
 		while(kbhit())
 		{
 			int c = wgetch(wnd);
-
-			if(c == 'k')
-			{
-				cursorMode = !cursorMode;
-				if(!cursorMode)
-				{
-					game->setCursor(-1, -1);
-				}
-			}
-
-			if(cursorMode)
-			{
-				if (c == 260)
-					cx--;
-				if (c == 261)
-					cx++;
-				if (c == 259)
-					cy--;
-				if (c == 258)
-					cy++;
-
-				game->setCursor(cx, cy);
-				game->displayUnderCursor(hud);
-			}
-			else
-			{
-				if (c == 260)
-					game->moveCamera(-1, 0);
-				if (c == 261)
-					game->moveCamera(1, 0);
-				if (c == 259)
-					game->moveCamera(0, -1);
-				if (c == 258)
-					game->moveCamera(0, 1);
-			}
 
 			if (c == 56)
 				hud.scrollConsole(1);
@@ -158,15 +126,27 @@ int main()
 				game->saveMap("test.out");
 				hud << "Saved!";
 			}
+
+			if(currentItem != NULL)
+			{
+				currentItem->keyActions(c);
+			}
+			else
+			{
+				game->keyActions(c);
+			}
 		}
 
 		if(currentItem != NULL)
 		{
-			currentItem->keyActions();
 			currentItem->displayActions(hud);
 		}
+		else
+		{
+			game->displayActions(hud);
+		}
 
-		if(!paused && !cursorMode)
+		if(!paused && !game->getCursorMode())
 		{
 			game->update(0.04f);
 		}
@@ -174,7 +154,7 @@ int main()
 
 		hud.render();
 
-		if(paused || cursorMode)
+		if(paused || game->getCursorMode())
 		{
 			wattron(wnd, A_BOLD);
 			wattron(wnd, COLOR_PAIR(5));

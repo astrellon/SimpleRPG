@@ -5,6 +5,7 @@ HUD::HUD(void)
 {
 	wnd = newwin(25, 20, 0, 60);
 	scrollOffset = 0;
+	mRedisplay = true;
 	clear();
 }
 
@@ -15,6 +16,10 @@ HUD::~HUD(void)
 
 void HUD::render()
 {
+	if(!mRedisplay)
+		return;
+
+	mRedisplay = false;
 	wclear(wnd);
 
 	wattroff(wnd, A_BOLD);

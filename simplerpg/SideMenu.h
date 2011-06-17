@@ -10,7 +10,7 @@ public:
 	SideMenu(void);
 	~SideMenu(void);
 
-	virtual void keyActions()
+	virtual void keyActions(const int key)
 	{
 	}
 

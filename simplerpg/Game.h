@@ -12,6 +12,7 @@
 #include "Map.h"
 #include "Rect.h"
 #include "HUD.h"
+#include "IKeyActions.h"
 
 class GameEntity;
 
@@ -19,7 +20,7 @@ using namespace std;
 
 typedef vector<GameEntity *> EntityList;
 
-class Game
+class Game : public IKeyActions
 {
 public:
 	Game(void);
@@ -39,10 +40,18 @@ public:
 	void loadMap(string filename);
 	void saveMap(string filename);
 
-	void setCursor(int xPos, int yPos);
+	bool getCursorMode() { return mCursorMode; }
+	void setCursorMode(bool mode) { mCursorMode = mode; }
+	pair<int, int> getCursorPosition() { return pair<int, int>(mCursorX, mCursorY); }
+	void setCursorPosition(int xPos, int yPos);
 	void displayUnderCursor(HUD &hud);
 
+	virtual void keyActions(const int key);
+	virtual void displayActions(HUD &hud);
+	virtual void clearDisplay()	{ mRedisplay = true; }
+
 protected:
+	bool mRedisplay;
 	void clearCanvas();
 
 	Map *mMap;
@@ -51,6 +60,7 @@ protected:
 
 	int mCursorX;
 	int mCursorY;
+	bool mCursorMode;
 
 	bool compareStrings(const string &a, const string &b)
 	{

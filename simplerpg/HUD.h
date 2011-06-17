@@ -23,7 +23,6 @@ public:
 
 	inline void clear()
 	{
-		//ss.clear();
 		ss.str("");
 	}
 
@@ -47,54 +46,63 @@ public:
 	inline HUD &operator<<(const char *c)
 	{
 		ss << c;
+		mRedisplay = true;
 		return *this;
 	}
 
 	inline HUD &operator<<(const string &s)
 	{
 		ss << s;
+		mRedisplay = true;
 		return *this;
 	}
 
 	inline HUD &operator<<(const int &i)
 	{
 		ss << i;
+		mRedisplay = true;
 		return *this;
 	}
 
 	inline HUD &operator<<(const unsigned int &i)
 	{
 		ss << i;
+		mRedisplay = true;
 		return *this;
 	}
 
 	inline HUD &operator<<(const bool &b)
 	{
 		ss << (b ? "true" : "false");
+		mRedisplay = true;
 		return *this;
 	}
 
 	inline HUD &operator<<(const char &c)
 	{
 		ss << c;
+		mRedisplay = true;
 		return *this;
 	}
 
 	inline HUD &operator<<(const unsigned char &c)
 	{
 		ss << c;
+		mRedisplay = true;
 		return *this;
 	}
 
 	inline HUD &operator<<(const float &f)
 	{
 		ss << f;
+		mRedisplay = true;
 		return *this;
 	}
 
 	inline HUD &operator<<(const double &f)
 	{
 		ss << f;
+		mRedisplay = true;
 		return *this;
 	}
 
@@ -104,6 +112,7 @@ protected:
 	stringstream ss;
 
 	int scrollOffset;
+	bool mRedisplay;
 
 	vector<colour_t> colours;
 

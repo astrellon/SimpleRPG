@@ -12,6 +12,7 @@ Game::Game(void)
 
 	mCursorMode = false;
 	mRedisplay = true;
+	mUnderCursorDirty = true;
 }
 
 Game::~Game(void)
@@ -21,9 +22,9 @@ Game::~Game(void)
 
 void Game::keyActions(const int key)
 {
-	if(key == 'k')
+	if(key == 'k' || (getCursorMode() && key == 27))
 	{
-		mCursorMode = !mCursorMode;
+		setCursorMode(!getCursorMode());
 	}
 
 	if(mCursorMode)
@@ -72,11 +73,50 @@ void Game::setCursorPosition(int xPos, int yPos)
 {
 	mCursorX = xPos;
 	mCursorY = yPos;
+
+	mUnderCursorDirty = true;
 }
 
-void Game::removeEntity(GameEntity* entity)
+EntityList Game::getUnderCursor()
 {
-	for(vector<GameEntity*>::iterator iter = mEntities.begin(); iter != mEntities.end(); iter++)
+	if(!mUnderCursorDirty)
+	{
+		return mUnderCursor;
+	}
+
+	mUnderCursorDirty = false;
+
+	Map *m = getMap();
+	if(m == NULL || mCursorX < 0 || mCursorY < 0 || mCursorX > m->getWidth() || mCursorY > m->getHeight())
+	{
+		return EntityList();
+	}
+
+	mUnderCursor.clear();
+
+	for(EntityList::iterator iter = mEntities.begin(); iter != mEntities.end(); iter++)
+	{
+		GameEntity *entity = *iter;
+		Vector2 pos = entity->getPosition();
+		int posX = math::round(pos.x);
+		int posY = math::round(pos.y);
+		if(posX == mCursorX && posY == mCursorY)
+		{
+			mUnderCursor.push_back(entity);
+		}
+	}
+
+	return mUnderCursor;
+}
+
+void Game::addEntity(GameEntity *entity)
+{
+	mEntities.push_back(entity);
+}
+
+void Game::removeEntity(GameEntity *entity)
+{
+	for(vector<GameEntity *>::iterator iter = mEntities.begin(); iter != mEntities.end(); iter++)
 	{
 		if((*iter) == entity)
 		{
@@ -96,11 +136,8 @@ void Game::update(float dt)
 
 void Game::displayUnderCursor(HUD &hud)
 {
-	Map *m = getMap();
-	if(m == NULL || mCursorX < 0 || mCursorY < 0 || mCursorX > m->getWidth() || mCursorY > m->getHeight())
-	{
-		return;
-	}
+	getUnderCursor();
+
 	hud.clear();
 	Tile *tile = getMap()->getTile(mCursorX, mCursorY);
 	if(tile != NULL)
@@ -109,18 +146,9 @@ void Game::displayUnderCursor(HUD &hud)
 	}
 
 	int num = 1;
-
-	for(EntityList::iterator iter = mEntities.begin(); iter != mEntities.end(); iter++)
+	for(EntityList::iterator iter = mUnderCursor.begin(); iter != mUnderCursor.end(); iter++)
 	{
-		GameEntity *entity = *iter;
-		Vector2 pos = entity->getPosition();
-		int posX = math::round(pos.x);
-		int posY = math::round(pos.y);
-		if(posX == mCursorX && posY == mCursorY)
-		{
-			hud << "<12>" << num << "</>: " << "Animal" << '\n';
-			num++;
-		}
+		hud << "<12>" << num++ << "</>: " << (*iter)->getEntityName() << '\n';
 	}
 }
 
@@ -393,7 +421,8 @@ void Game::loadMap(string filename)
 			{
 				entity->loadFromFile(iter);
 				addEntity(entity);
-				entity->updateMovePath();
+				//entity->updateMovePath();
+				entity->onAddedToGame();
 			}
 			
 			break;

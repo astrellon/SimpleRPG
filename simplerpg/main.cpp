@@ -113,8 +113,14 @@ int main()
 		{
 			int c = wgetch(wnd);
 
+			// Escape key.
+			if (c == 27)
+				currentItem = NULL;
+
+			// Numpad 8
 			if (c == 56)
 				hud.scrollConsole(1);
+			// Numpad 2
 			if (c == 50)
 				hud.scrollConsole(-1);
 
@@ -134,6 +140,18 @@ int main()
 			else
 			{
 				game->keyActions(c);
+				if(game->getCursorMode())
+				{
+					if(c >= '1' && c <= '9')
+					{
+						EntityList list = game->getUnderCursor();
+						int numPressed = c - '1';
+						if(!list.empty() && numPressed < list.size())
+						{
+							currentItem = list[numPressed];
+						}
+					}
+				}
 			}
 		}
 

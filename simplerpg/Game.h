@@ -29,7 +29,7 @@ public:
 	Map *getMap() { return mMap; }
 	void setMap(Map *map) { mMap = map; }
 
-	void addEntity(GameEntity* entity) { mEntities.push_back(entity); }
+	void addEntity(GameEntity* entity);
 	void removeEntity(GameEntity* entity);
 
 	void update(float dt);
@@ -41,7 +41,12 @@ public:
 	void saveMap(string filename);
 
 	bool getCursorMode() { return mCursorMode; }
-	void setCursorMode(bool mode) { mCursorMode = mode; }
+	void setCursorMode(bool mode)
+	{
+		if(mode)
+			mUnderCursorDirty = true;
+		mCursorMode = mode;
+	}
 	pair<int, int> getCursorPosition() { return pair<int, int>(mCursorX, mCursorY); }
 	void setCursorPosition(int xPos, int yPos);
 	void displayUnderCursor(HUD &hud);
@@ -50,6 +55,8 @@ public:
 	virtual void displayActions(HUD &hud);
 	virtual void clearDisplay()	{ mRedisplay = true; }
 
+	virtual EntityList getUnderCursor();
+
 protected:
 	bool mRedisplay;
 	void clearCanvas();
@@ -57,24 +64,10 @@ protected:
 	Map *mMap;
 	Rect mScreenSize;
 	EntityList mEntities;
+	EntityList mUnderCursor;
+	bool mUnderCursorDirty;
 
 	int mCursorX;
 	int mCursorY;
 	bool mCursorMode;
-
-	bool compareStrings(const string &a, const string &b)
-	{
-		size_t len = a.length();
-		if(b.length() != len)
-			return false;
-
-		for(size_t i = 0; i < len; i++)
-		{
-			if(tolower(a[i]) != tolower(b[i]))
-			{
-				return false;
-			}
-		}
-		return true;
-	}
 };

@@ -36,6 +36,8 @@ public:
 	GameEntity(Game *game);
 	~GameEntity(void);
 
+	friend class Game;
+
 	virtual Pixel getGraphic() { return mGraphic; }
 	virtual void setGraphic(Pixel graphic) { mGraphic = graphic; }
 
@@ -53,39 +55,30 @@ public:
 
 	virtual Matrix3x3 *getTransform() { return &mTransform; }
 
-	virtual void update(float dt);
+	virtual void update(float dt) {}
 	virtual void render(Rect screenSize, WINDOW *wnd);
-
-	virtual void setDestination(const Vector2 &dest);
-	virtual void setDestination(const MathType &xPos, const MathType &yPos);
-	virtual Vector2 getDestination() { return mDestination; }
-
-	vector<Vector2> *getPath() { return mPath; }
 
 	virtual void loadFromFile(boost::sregex_token_iterator &iter);
 	virtual void saveToFile(ofstream &file);
-	virtual void updateMovePath();
-
-	virtual void keyActions(const int key)
-	{
-	}
-
+	
+	virtual void keyActions(const int key) {}
 	virtual void displayActions(HUD &hud)
 	{
 		if(!mRedisplay)
 			return;
 
 		hud.clear();
-		hud << "Entity: " << "Animal\n";
+		hud << "Entity: " << getEntityName() << '\n';
 		hud << "Facing: " << getFacing() << '\n';
 
 		mRedisplay = true;
 	}
-
 	virtual void clearDisplay()
 	{
 		mRedisplay = true;
 	}
+
+	virtual string getEntityName() { return "GameEntity"; }
 
 protected:
 	Pixel mGraphic;
@@ -94,41 +87,11 @@ protected:
 	bool mRedisplay;
 
 	Matrix3x3 mTransform;
-	vector<Vector2> *mPath;
-	Vector2 mDestination;
-
-	int mState;
-
-	MathType mSpeed;
-	MathType mTurningSpeed;
-
-	virtual void doStateIdle(float dt) {}
-	virtual void doStateMoving(float dt);
-
-	virtual void loadProperties(boost::sregex_token_iterator &iter);
-
-	virtual void saveProperty(const int &propertyId, ofstream &file);
-	virtual void saveProperties(ofstream &file);
-
-	virtual string getEntityName() { return "GameEntity"; }
 	
-	float getTurnAmount(float facing, float dest)
-	{
-		float diff = dest - facing;
-		if(diff < 0.0f)
-		{
-			if(diff < -M_PI)
-			{
-				diff += M_PI * 2.0f;
-			}
-		}
-		else
-		{
-			if(diff > M_PI)
-			{
-				diff -= M_PI * 2.0f;
-			}
-		}
-		return diff;
-	}
+	virtual void loadProperties(boost::sregex_token_iterator &iter) {}
+	virtual void saveProperty(const int &propertyId, ofstream &file) {}
+	virtual void saveProperties(ofstream &file) {}
+
+	virtual void onAddedToGame() {}
+	
 };

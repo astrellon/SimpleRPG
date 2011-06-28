@@ -4,7 +4,9 @@
 Animal::Animal(Game *game) : GameEntity(game)
 {
 	srand( (unsigned int)time(NULL) );
-	mSpeed = 1.1f;
+	mWalkingSpeed = 1.1f;
+	mRunningSpeed = 10.0f;
+	mWalking = true;
 	mTurningSpeed = 2.0f;
 	mState = STATE_IDLE;
 	mPath = NULL;
@@ -27,7 +29,6 @@ Pixel Animal::getGraphic()
 	else
 		mGraphic.graphic = '^';
 	
-
 	return GameEntity::getGraphic();
 }
 

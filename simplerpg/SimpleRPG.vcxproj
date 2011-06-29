@@ -35,6 +35,7 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
+    <UseOfMfc>Static</UseOfMfc>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -50,10 +51,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugBroken|Win32'">
-    <IncludePath>C:\Users\Aloon\Downloads\Programming\pdc34dllw;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Program Files (x86)\boost\boost_1_44_1;C:\Users\Aloon\Downloads\Programming\pdc34dllw;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugBroken|Win32'">
-    <LibraryPath>C:\Users\Aloon\Downloads\Programming\pdc34dllw;$(LibraryPath)</LibraryPath>
+    <LibraryPath>C:\Program Files (x86)\boost\boost_1_44_1\lib;C:\Users\Aloon\Downloads\Programming\pdc34dllw;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>C:\Program Files (x86)\boost\boost_1_44_1;C:\Users\Aloon\Downloads\Programming\pdc34dllw;$(IncludePath)</IncludePath>
@@ -77,6 +78,10 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>pdcurses.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>copy "$(ProjectDir)pdcurses.dll" "$(OutputPath)"
+copy "$(ProjectDir)map.txt" "$(OutputPath)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -93,6 +98,10 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>pdcurses.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>copy "$(ProjectDir)pdcurses.dll" "$(OutputPath)"
+copy "$(ProjectDir)map.txt" "$(OutputPath)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -111,6 +120,10 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>pdcurses.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>copy "$(ProjectDir)pdcurses.dll" "$(OutputPath)"
+copy "$(ProjectDir)map.txt" "$(OutputPath)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Animal.cpp" />
@@ -118,13 +131,17 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameEntity.cpp" />
     <ClCompile Include="GameEntityFactory.cpp" />
-    <ClCompile Include="HUD.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Pixel.cpp" />
     <ClCompile Include="Rect.cpp" />
-    <ClCompile Include="SideMenu.cpp" />
     <ClCompile Include="Tile.cpp" />
+    <ClCompile Include="UIComponent.cpp" />
+    <ClCompile Include="UIContainer.cpp" />
+    <ClCompile Include="UIList.cpp" />
+    <ClCompile Include="UIScroller.cpp" />
+    <ClCompile Include="UISelector.cpp" />
+    <ClCompile Include="UIText.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animal.h" />
@@ -133,7 +150,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameEntity.h" />
     <ClInclude Include="GameEntityFactory.h" />
-    <ClInclude Include="HUD.h" />
+    <ClInclude Include="GameMath.h" />
     <ClInclude Include="IKeyActions.h" />
     <ClInclude Include="keyboard.h" />
     <ClInclude Include="Map.h" />
@@ -141,8 +158,14 @@
     <ClInclude Include="panel.h" />
     <ClInclude Include="Pixel.h" />
     <ClInclude Include="Rect.h" />
-    <ClInclude Include="SideMenu.h" />
     <ClInclude Include="Tile.h" />
+    <ClInclude Include="UIComponent.h" />
+    <ClInclude Include="UIContainer.h" />
+    <ClInclude Include="UIList.h" />
+    <ClInclude Include="UIScoller.h" />
+    <ClInclude Include="UISelector.h" />
+    <ClInclude Include="UISpacer.h" />
+    <ClInclude Include="UIText.h" />
     <ClInclude Include="Vector2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

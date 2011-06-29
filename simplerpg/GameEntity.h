@@ -11,6 +11,10 @@
 #include "Pixel.h"
 #include "Vector2.h"
 #include "Matrix3x3.h"
+#include "GameMath.h"
+#include "IKeyActions.h"
+#include "UIText.h"
+#include "UIContainer.h"
 
 #ifndef M_PI
 #define M_PI 3.1415926535897932384626433832795
@@ -28,11 +32,13 @@ using namespace boost::algorithm;
 
 class Game;
 
-class GameEntity
+class GameEntity : public IKeyActions
 {
 public:
 	GameEntity(Game *game);
 	~GameEntity(void);
+
+	friend class Game;
 
 	virtual Pixel getGraphic() { return mGraphic; }
 	virtual void setGraphic(Pixel graphic) { mGraphic = graphic; }
@@ -51,75 +57,59 @@ public:
 
 	virtual Matrix3x3 *getTransform() { return &mTransform; }
 
-	virtual void update(float dt);
+	virtual void update(float dt) {}
 	virtual void render(Rect screenSize, WINDOW *wnd);
-
-	inline int round(float x)
-	{
-		x = floor(x + 0.5f);
-		if(x < 0)
-			return (int)x - 1;
-		return (int)x;
-	}
-
-	inline int round(double x)
-	{
-		x = floor(x + 0.5);
-		if(x < 0)
-			return (int)x - 1;
-		return (int)x;
-	}
-
-	virtual void setDestination(const Vector2 &dest);
-	virtual void setDestination(const MathType &xPos, const MathType &yPos);
-	virtual Vector2 getDestination() { return mDestination; }
-
-	vector<Vector2> *getPath() { return mPath; }
 
 	virtual void loadFromFile(boost::sregex_token_iterator &iter);
 	virtual void saveToFile(ofstream &file);
-	virtual void updateMovePath();
+	
+	virtual void keyActions(const int key) {}
+	virtual void setupDisplay(UIContainer &hud)
+	{
+		hud.removeAllChildren(true);
+
+		mHudText = new UIText();
+
+		mHudText->setX(1);
+		mHudText->setY(1);
+		hud.addChild(*mHudText);
+
+	}
+	virtual void displayActions(UIContainer &hud)
+	{
+		if(!mRedisplay)
+			return;
+
+		mHudText->clearText();
+		*mHudText << "Entity: " << getEntityName() << '\n';
+		*mHudText << "Facing: " << getFacing() << '\n';
+
+		mRedisplay = false;
+	}
+	virtual void clearDisplay(UIContainer &hud)
+	{
+		hud.removeChild(*mHudText);
+		mRedisplay = true;
+
+		delete mHudText;
+	}
+
+	virtual string getEntityName() { return "GameEntity"; }
 
 protected:
 	Pixel mGraphic;
 	Game* mGame;
 
+	bool mRedisplay;
+
+	UIText *mHudText;
+
 	Matrix3x3 mTransform;
-	vector<Vector2> *mPath;
-	Vector2 mDestination;
-
-	int mState;
-
-	MathType mSpeed;
-	MathType mTurningSpeed;
-
-	virtual void doStateIdle(float dt) {}
-	virtual void doStateMoving(float dt);
-
-	virtual void loadProperties(boost::sregex_token_iterator &iter);
-
-	virtual void saveProperty(const int &propertyId, ofstream &file);
-	virtual void saveProperties(ofstream &file);
-
-	virtual string getEntityName() { return "GameEntity"; }
 	
-	float getTurnAmount(float facing, float dest)
-	{
-		float diff = dest - facing;
-		if(diff < 0.0f)
-		{
-			if(diff < -M_PI)
-			{
-				diff += M_PI * 2.0f;
-			}
-		}
-		else
-		{
-			if(diff > M_PI)
-			{
-				diff -= M_PI * 2.0f;
-			}
-		}
-		return diff;
-	}
+	virtual void loadProperties(boost::sregex_token_iterator &iter) {}
+	virtual void saveProperty(const int &propertyId, ofstream &file) {}
+	virtual void saveProperties(ofstream &file) {}
+
+	virtual void onAddedToGame() {}
+	
 };

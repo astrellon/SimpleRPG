@@ -4,11 +4,17 @@
 
 Game::Game(void)
 {
-	mScreenSize = Rect(0, 0, 80, 25);
+	mScreenSize = Rect(0, 0, 60, 25);
 	mMap = NULL;
 
 	mCursorX = -1;
 	mCursorY = -1;
+
+	mCursorMode = false;
+	mRedisplay = true;
+	mUnderCursorDirty = true;
+
+	mSelectedItem = NULL;
 }
 
 Game::~Game(void)
@@ -16,15 +22,115 @@ Game::~Game(void)
 	
 }
 
-void Game::setCursor(int xPos, int yPos)
+void Game::keyActions(const int key)
+{
+	if(key == 'k' || (getCursorMode() && key == 27))
+	{
+		setCursorMode(!getCursorMode());
+	}
+
+	if(mCursorMode)
+	{
+		int cx = mCursorX;
+		int cy = mCursorY;
+
+		if (key == 260)
+			cx--;
+		if (key == 261)
+			cx++;
+		if (key == 259)
+			cy--;
+		if (key == 258)
+			cy++;
+
+		setCursorPosition(cx, cy);
+
+		if(key >= '1' && key <= '9')
+		{
+			EntityList list = getUnderCursor();
+			int numPressed = key - '1';
+			if(!list.empty() && numPressed < list.size())
+			{
+				//currentItem = list[numPressed];
+				mSelectedItem = list[numPressed];
+			}
+		}
+	}
+	else
+	{
+		if (key == 260)
+			moveCamera(-1, 0);
+		if (key == 261)
+			moveCamera(1, 0);
+		if (key == 259)
+			moveCamera(0, -1);
+		if (key == 258)
+			moveCamera(0, 1);
+	}
+}
+
+void Game::displayActions(UIContainer &hud)
+{
+	mHudText.clearText();
+
+	if(mCursorMode)
+	{
+		displayUnderCursor(hud);
+	}
+	else
+	{
+		mHudText << "Hello!";
+	}
+}
+
+void Game::setCursorPosition(int xPos, int yPos)
 {
 	mCursorX = xPos;
 	mCursorY = yPos;
+
+	mUnderCursorDirty = true;
 }
 
-void Game::removeEntity(GameEntity* entity)
+EntityList Game::getUnderCursor()
 {
-	for(vector<GameEntity*>::iterator iter = mEntities.begin(); iter != mEntities.end(); iter++)
+	if(!mUnderCursorDirty)
+	{
+		return mUnderCursor;
+	}
+
+	mUnderCursorDirty = false;
+
+	Map *m = getMap();
+	if(m == NULL || mCursorX < 0 || mCursorY < 0 || mCursorX > m->getWidth() || mCursorY > m->getHeight())
+	{
+		return EntityList();
+	}
+
+	mUnderCursor.clear();
+
+	for(EntityList::iterator iter = mEntities.begin(); iter != mEntities.end(); iter++)
+	{
+		GameEntity *entity = *iter;
+		Vector2 pos = entity->getPosition();
+		int posX = math::round(pos.x);
+		int posY = math::round(pos.y);
+		if(posX == mCursorX && posY == mCursorY)
+		{
+			mUnderCursor.push_back(entity);
+		}
+	}
+
+	return mUnderCursor;
+}
+
+void Game::addEntity(GameEntity *entity)
+{
+	mEntities.push_back(entity);
+}
+
+void Game::removeEntity(GameEntity *entity)
+{
+	for(vector<GameEntity *>::iterator iter = mEntities.begin(); iter != mEntities.end(); iter++)
 	{
 		if((*iter) == entity)
 		{
@@ -42,10 +148,25 @@ void Game::update(float dt)
 	}
 }
 
+void Game::displayUnderCursor(UIContainer &hud)
+{
+	getUnderCursor();
+
+	Tile *tile = getMap()->getTile(mCursorX, mCursorY);
+	if(tile != NULL)
+	{
+		mHudText << "Tile: " << tile->getName() << '\n';
+	}
+
+	int num = 1;
+	for(EntityList::iterator iter = mUnderCursor.begin(); iter != mUnderCursor.end(); iter++)
+	{
+		mHudText << "<12>" << num++ << "</>: " << (*iter)->getEntityName() << '\n';
+	}
+}
+
 void Game::render(WINDOW *wnd)
 {
-	wclear(wnd);
-	
 	mMap->renderMap(mScreenSize, wnd);
 
 	for(vector<GameEntity *>::iterator iter = mEntities.begin(); iter != mEntities.end(); iter++)
@@ -53,7 +174,7 @@ void Game::render(WINDOW *wnd)
 		(*iter)->render(mScreenSize, wnd);
 	}
 
-	if(mCursorX >= 0 || mCursorY >= 0)
+	if(mCursorMode)
 	{
 		int xPos = mCursorX - mScreenSize.getX();
 		int yPos = mCursorY - mScreenSize.getY();
@@ -69,8 +190,6 @@ void Game::render(WINDOW *wnd)
 			}
 		}
 	}
-
-	wrefresh(wnd);
 }
 
 void Game::moveCamera(int dx, int dy)
@@ -311,7 +430,8 @@ void Game::loadMap(string filename)
 			{
 				entity->loadFromFile(iter);
 				addEntity(entity);
-				entity->updateMovePath();
+				//entity->updateMovePath();
+				entity->onAddedToGame();
 			}
 			
 			break;

@@ -11,8 +11,11 @@
 
 #include "Map.h"
 #include "Rect.h"
-#include "HUD.h"
+//#include "HUD.h"
 #include "IKeyActions.h"
+
+#include "UIList.h"
+#include "UIText.h"
 
 class GameEntity;
 
@@ -49,11 +52,23 @@ public:
 	}
 	pair<int, int> getCursorPosition() { return pair<int, int>(mCursorX, mCursorY); }
 	void setCursorPosition(int xPos, int yPos);
-	void displayUnderCursor(HUD &hud);
+	void displayUnderCursor(UIContainer &hud);
+
+
 
 	virtual void keyActions(const int key);
-	virtual void displayActions(HUD &hud);
-	virtual void clearDisplay()	{ mRedisplay = true; }
+	virtual void displayActions(UIContainer &hud);
+	virtual void setupDisplay(UIContainer &hud)
+	{
+		hud.removeAllChildren(true);
+		hud.addChild(mHud);
+		mHud.addChild(mHudText);
+	}
+	virtual void clearDisplay(UIContainer &hud)
+	{
+		mRedisplay = true;
+		hud.removeChild(mHud);
+	}
 
 	virtual EntityList getUnderCursor();
 
@@ -66,6 +81,11 @@ protected:
 	EntityList mEntities;
 	EntityList mUnderCursor;
 	bool mUnderCursorDirty;
+
+	GameEntity *mSelectedItem;
+
+	UIList mHud;
+	UIText mHudText;
 
 	int mCursorX;
 	int mCursorY;

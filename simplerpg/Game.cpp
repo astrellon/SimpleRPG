@@ -4,7 +4,7 @@
 
 Game::Game(void)
 {
-	mScreenSize = Rect(0, 0, 80, 25);
+	mScreenSize = Rect(0, 0, 60, 25);
 	mMap = NULL;
 
 	mCursorX = -1;
@@ -13,6 +13,8 @@ Game::Game(void)
 	mCursorMode = false;
 	mRedisplay = true;
 	mUnderCursorDirty = true;
+
+	mSelectedItem = NULL;
 }
 
 Game::~Game(void)
@@ -42,6 +44,17 @@ void Game::keyActions(const int key)
 			cy++;
 
 		setCursorPosition(cx, cy);
+
+		if(key >= '1' && key <= '9')
+		{
+			EntityList list = getUnderCursor();
+			int numPressed = key - '1';
+			if(!list.empty() && numPressed < list.size())
+			{
+				//currentItem = list[numPressed];
+				mSelectedItem = list[numPressed];
+			}
+		}
 	}
 	else
 	{
@@ -56,16 +69,17 @@ void Game::keyActions(const int key)
 	}
 }
 
-void Game::displayActions(HUD &hud)
+void Game::displayActions(UIContainer &hud)
 {
+	mHudText.clearText();
+
 	if(mCursorMode)
 	{
 		displayUnderCursor(hud);
 	}
 	else
 	{
-		hud.clear();
-		hud << "Hello";
+		mHudText << "Hello!";
 	}
 }
 
@@ -134,28 +148,25 @@ void Game::update(float dt)
 	}
 }
 
-void Game::displayUnderCursor(HUD &hud)
+void Game::displayUnderCursor(UIContainer &hud)
 {
 	getUnderCursor();
 
-	hud.clear();
 	Tile *tile = getMap()->getTile(mCursorX, mCursorY);
 	if(tile != NULL)
 	{
-		hud << "Tile: " << tile->getName() << '\n';
+		mHudText << "Tile: " << tile->getName() << '\n';
 	}
 
 	int num = 1;
 	for(EntityList::iterator iter = mUnderCursor.begin(); iter != mUnderCursor.end(); iter++)
 	{
-		hud << "<12>" << num++ << "</>: " << (*iter)->getEntityName() << '\n';
+		mHudText << "<12>" << num++ << "</>: " << (*iter)->getEntityName() << '\n';
 	}
 }
 
 void Game::render(WINDOW *wnd)
 {
-	wclear(wnd);
-	
 	mMap->renderMap(mScreenSize, wnd);
 
 	for(vector<GameEntity *>::iterator iter = mEntities.begin(); iter != mEntities.end(); iter++)
@@ -179,8 +190,6 @@ void Game::render(WINDOW *wnd)
 			}
 		}
 	}
-
-	wrefresh(wnd);
 }
 
 void Game::moveCamera(int dx, int dy)

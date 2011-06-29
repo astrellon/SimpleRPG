@@ -13,6 +13,8 @@
 #include "Matrix3x3.h"
 #include "GameMath.h"
 #include "IKeyActions.h"
+#include "UIText.h"
+#include "UIContainer.h"
 
 #ifndef M_PI
 #define M_PI 3.1415926535897932384626433832795
@@ -62,20 +64,34 @@ public:
 	virtual void saveToFile(ofstream &file);
 	
 	virtual void keyActions(const int key) {}
-	virtual void displayActions(HUD &hud)
+	virtual void setupDisplay(UIContainer &hud)
+	{
+		hud.removeAllChildren(true);
+
+		mHudText = new UIText();
+
+		mHudText->setX(1);
+		mHudText->setY(1);
+		hud.addChild(*mHudText);
+
+	}
+	virtual void displayActions(UIContainer &hud)
 	{
 		if(!mRedisplay)
 			return;
 
-		hud.clear();
-		hud << "Entity: " << getEntityName() << '\n';
-		hud << "Facing: " << getFacing() << '\n';
+		mHudText->clearText();
+		*mHudText << "Entity: " << getEntityName() << '\n';
+		*mHudText << "Facing: " << getFacing() << '\n';
 
-		mRedisplay = true;
+		mRedisplay = false;
 	}
-	virtual void clearDisplay()
+	virtual void clearDisplay(UIContainer &hud)
 	{
+		hud.removeChild(*mHudText);
 		mRedisplay = true;
+
+		delete mHudText;
 	}
 
 	virtual string getEntityName() { return "GameEntity"; }
@@ -85,6 +101,8 @@ protected:
 	Game* mGame;
 
 	bool mRedisplay;
+
+	UIText *mHudText;
 
 	Matrix3x3 mTransform;
 	

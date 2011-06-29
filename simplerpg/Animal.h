@@ -23,14 +23,14 @@ public:
 
 	virtual void updateMovePath();
 
-	virtual void displayActions(HUD &hud)
+	virtual void displayActions(UIContainer &hud)
 	{
 		if(!mRedisplay)
 			return;
 
 		GameEntity::displayActions(hud);
 
-		hud << "Destination: " << mDestination.x << ", " << mDestination.y << '\n';
+		*mHudText << "Destination: " << mDestination.x << ", " << mDestination.y << '\n';
 	}
 
 	virtual string getEntityName() { return "Animal"; }

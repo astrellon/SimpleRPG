@@ -131,12 +131,10 @@ copy "$(ProjectDir)map.txt" "$(OutputPath)"</Command>
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameEntity.cpp" />
     <ClCompile Include="GameEntityFactory.cpp" />
-    <ClCompile Include="HUD.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Pixel.cpp" />
     <ClCompile Include="Rect.cpp" />
-    <ClCompile Include="SideMenu.cpp" />
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="UIComponent.cpp" />
     <ClCompile Include="UIContainer.cpp" />
@@ -152,14 +150,12 @@ copy "$(ProjectDir)map.txt" "$(OutputPath)"</Command>
     <ClInclude Include="GameEntity.h" />
     <ClInclude Include="GameEntityFactory.h" />
     <ClInclude Include="GameMath.h" />
-    <ClInclude Include="HUD.h" />
     <ClInclude Include="IKeyActions.h" />
     <ClInclude Include="keyboard.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Matrix3x3.h" />
     <ClInclude Include="Pixel.h" />
     <ClInclude Include="Rect.h" />
-    <ClInclude Include="SideMenu.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="UIComponent.h" />
     <ClInclude Include="UIContainer.h" />

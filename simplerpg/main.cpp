@@ -15,8 +15,8 @@
 #include "Animal.h"
 #include "Vector2.h"
 #include "Matrix3x3.h"
-#include "HUD.h"
-#include "SideMenu.h"
+//#include "HUD.h"
+//#include "SideMenu.h"
 #include "keyboard.h"
 #include "UIText.h"
 #include "UIContainer.h"
@@ -91,15 +91,21 @@ void init_colours()
 WINDOW *gameWnd;
 WINDOW *mainMenuWnd;
 
+UIList hud;
+
 IKeyActions *currentItem = NULL;
 
-void switchKeyItem(IKeyActions *item)
+void switchKeyItem(IKeyActions *item, UIContainer &hud)
 {
 	if(currentItem != NULL)
 	{
-		currentItem->clearDisplay();
+		currentItem->clearDisplay(hud);
 	}
 	currentItem = item;
+	if(item != NULL)
+	{
+		item->setupDisplay(hud);
+	}
 }
 
 Game *startGame(string filename)
@@ -113,6 +119,7 @@ Game *startGame(string filename)
 		return 0;
 	}
 
+	switchKeyItem(game, hud);
 	return game;
 }
 
@@ -128,11 +135,13 @@ int main()
 	curs_set(0);
 	init_colours();
 
-	HUD hud;
+	
+	hud.setX(62);
+	hud.setY(1);
 
 	mainMenuWnd = newwin(25, 80, 0, 0);
-
-	gameWnd = newwin(25, 60, 0, 0);
+	gameWnd = newwin(25, 80, 0, 0);
+	hud.setWindow(gameWnd);
 	cbreak();
 	noecho();
 	keypad(gameWnd, true);
@@ -182,6 +191,10 @@ int main()
 
 	bool loadFilelist = true;
 	vector<folder_entry> folderEntries;
+
+	UIText pausedText("<12>*PAUSED*</>");
+	pausedText.setX(1);
+	pausedText.setWindow(gameWnd);
 
 	while(true)
 	{
@@ -342,10 +355,10 @@ int main()
 
 				// Numpad 8
 				if (c == 56)
-					hud.scrollConsole(1);
+					hud.scrollY(1);
 				// Numpad 2
 				if (c == 50)
-					hud.scrollConsole(-1);
+					hud.scrollY(-1);
 
 				if(c == 'p' || c == ' ')
 					paused = !paused;
@@ -353,10 +366,10 @@ int main()
 				if(c == 's')
 				{
 					game->saveMap("test.out");
-					hud << "Saved!";
+					//hud << "Saved!";
 				}
 
-				if(currentItem != NULL)
+				/*if(currentItem != NULL)
 				{
 					currentItem->keyActions(c);
 				}
@@ -375,33 +388,38 @@ int main()
 							}
 						}
 					}
-				}
+				}*/
+				game->keyActions(c);
 			}
 
-			if(currentItem != NULL)
+			/*if(currentItem != NULL)
 			{
 				currentItem->displayActions(hud);
 			}
 			else
 			{
 				game->displayActions(hud);
-			}
+			}*/
+
+			game->displayActions(hud);
 
 			if(!paused && !game->getCursorMode())
 			{
 				game->update(0.04f);
 			}
+
+			wclear(gameWnd);
+
 			game->render(gameWnd);
 
 			hud.render();
 
 			if(paused || game->getCursorMode())
 			{
-				wattron(gameWnd, A_BOLD);
-				wattron(gameWnd, COLOR_PAIR(5));
-				mvwaddstr(gameWnd, 0, 0, "*PAUSED*");
-				wrefresh(gameWnd);
+				pausedText.render(false);
 			}
+
+			wrefresh(gameWnd);
 
 			msleep(40);
 		}

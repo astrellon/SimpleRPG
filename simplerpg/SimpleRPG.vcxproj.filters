@@ -48,12 +48,6 @@
     <ClCompile Include="AStarNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="HUD.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SideMenu.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GameEntityFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -107,13 +101,7 @@
     <ClInclude Include="AStarNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="HUD.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="IKeyActions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SideMenu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="keyboard.h">

@@ -7,5 +7,9 @@ GameEntity *GameEntityFactory::create(Game *game, string name)
 	{
 		return new Animal(game);
 	}
+	if(boost::algorithm::iequals(name, "Plant"))
+	{
+		return new Plant(game);
+	}
 	return NULL;
 }

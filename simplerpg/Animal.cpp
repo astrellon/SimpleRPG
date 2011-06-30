@@ -4,13 +4,17 @@
 Animal::Animal(Game *game) : GameEntity(game)
 {
 	srand( (unsigned int)time(NULL) );
+
+	mWalking = true;
 	mWalkingSpeed = 1.1f;
 	mRunningSpeed = 10.0f;
-	mWalking = true;
 	mTurningSpeed = 2.0f;
+	
 	mState = STATE_IDLE;
 	mPath = NULL;
 	mDestination = Vector2(-1, -1);
+
+	mName = "Animal";
 }
 
 Animal::~Animal(void)
@@ -49,34 +53,30 @@ void Animal::update(float dt)
 
 void Animal::loadProperties(boost::sregex_token_iterator &iter)
 {
-	string propertyName = *iter++;
+	string propertyName = *iter;
 	if(iequals(propertyName, "facing"))
 	{
+		iter++;
 		float f = atof(string(*iter++).c_str());
 		setFacing(f);
 	}
-	else if(iequals(propertyName, "position"))
-	{
-		float x = atof(string(*iter++).c_str());
-		float y = atof(string(*iter++).c_str());
-		move(x, y, false);
-	}
 	else if(iequals(propertyName, "destination"))
 	{
+		iter++;
 		float x = atof(string(*iter++).c_str());
 		float y = atof(string(*iter++).c_str());
 		setDestination(x, y);
 	}
 	else
 	{
-		cout << "Unable to load unknown property '" << propertyName << "'" << endl;
+		GameEntity::loadProperties(iter);
 	}
 }
 
 void Animal::saveProperties(ofstream &file)
 {
+	GameEntity::saveProperties(file);
 	saveProperty(PROPERTY_FACING, file);
-	saveProperty(PROPERTY_POSITION, file);
 	saveProperty(PROPERTY_DESTINATION, file);
 }
 
@@ -88,16 +88,12 @@ void Animal::saveProperty(const int &propertyId, ofstream &file)
 	case PROPERTY_FACING:
 		file << "facing " << getFacing() << endl;
 		break;
-	case PROPERTY_POSITION:
-		v = getPosition();
-		file << "position " << v.x << ' ' << v.y << endl;
-		break;
 	case PROPERTY_DESTINATION:
 		v = getDestination();
 		file << "destination " << v.x << ' ' << v.y << endl;
 		break;
 	default:
-		cout << "Unable to save unknown property " << propertyId << endl;
+		GameEntity::saveProperty(propertyId, file);
 		break;
 	}
 }

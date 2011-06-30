@@ -5,6 +5,7 @@
 
 #include "GameEntity.h"
 #include "Animal.h"
+#include "Plant.h"
 
 using namespace std;
 

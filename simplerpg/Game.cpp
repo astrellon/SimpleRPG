@@ -1,6 +1,7 @@
 #include "Game.h"
 #include "GameEntity.h"
 #include "GameEntityFactory.h"
+#include "Animal.h"
 
 Game::Game(void)
 {
@@ -15,6 +16,10 @@ Game::Game(void)
 	mUnderCursorDirty = true;
 
 	mSelectedItem = NULL;
+
+	mHud.setX(61);
+	mHud.setY(1);
+	mHud.addChild(mHudText);
 }
 
 Game::~Game(void)
@@ -24,12 +29,36 @@ Game::~Game(void)
 
 void Game::keyActions(const int key)
 {
+	// Numpad 8
+	if (key == 56)
+	{
+		mHud.scrollY(1);
+	}
+	// Numpad 2
+	if (key == 50)
+	{
+		mHud.scrollY(-1);
+	}
+
+	if(mSelectedItem != NULL)
+	{
+		if(key == 27)
+		{
+			switchKeyItem(NULL, mHud);
+			return;
+		}
+		else
+		{
+			mSelectedItem->keyActions(key);
+			return;
+		}
+	}
 	if(key == 'k' || (getCursorMode() && key == 27))
 	{
 		setCursorMode(!getCursorMode());
 	}
 
-	if(mCursorMode)
+	if(getCursorMode())
 	{
 		int cx = mCursorX;
 		int cy = mCursorY;
@@ -51,8 +80,7 @@ void Game::keyActions(const int key)
 			int numPressed = key - '1';
 			if(!list.empty() && numPressed < list.size())
 			{
-				//currentItem = list[numPressed];
-				mSelectedItem = list[numPressed];
+				switchKeyItem(list[numPressed], mHud);
 			}
 		}
 	}
@@ -69,17 +97,28 @@ void Game::keyActions(const int key)
 	}
 }
 
-void Game::displayActions(UIContainer &hud)
+void Game::displayActions(/*UIContainer &hud*/)
 {
 	mHudText.clearText();
 
-	if(mCursorMode)
+	if(getCursorMode())
 	{
-		displayUnderCursor(hud);
+		if(mSelectedItem != NULL)
+		{
+			mSelectedItem->displayActions(mHud);
+		}
+		else
+		{
+			displayUnderCursor(mHud);
+		}
 	}
 	else
 	{
-		mHudText << "Hello!";
+		if(mHudText.getString().empty())
+		{
+			mHudText << "Menu\n\n";
+			mHudText << "<11>k</>: Look mode.";
+		}
 	}
 }
 
@@ -186,10 +225,15 @@ void Game::render(WINDOW *wnd)
 				mCursorY >= 0 && mCursorY < mMap->getHeight())
 			{
 				wattron(wnd, COLOR_PAIR(9));
+				wattroff(wnd, A_BOLD);
 				mvwaddch(wnd, yPos, xPos, 'X');
 			}
 		}
 	}
+
+	mHud.setWindow(wnd);
+	displayActions();
+	mHud.render();
 }
 
 void Game::moveCamera(int dx, int dy)
@@ -430,7 +474,6 @@ void Game::loadMap(string filename)
 			{
 				entity->loadFromFile(iter);
 				addEntity(entity);
-				//entity->updateMovePath();
 				entity->onAddedToGame();
 			}
 			

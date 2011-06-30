@@ -5,6 +5,7 @@ GameEntity::GameEntity(Game *game)
 {
 	mGame = game;
 	mGraphic = Pixel('o', 7, false);
+	mName = "GameEntity";
 }
 
 GameEntity::~GameEntity(void)
@@ -83,9 +84,61 @@ void GameEntity::loadFromFile(boost::sregex_token_iterator &iter)
 
 void GameEntity::saveToFile(ofstream &file)
 {
-	file << getEntityName() << endl;
+	file << getEntityType() << endl;
 
 	saveProperties(file);
 
 	file << "end" << endl << endl;
+}
+
+void GameEntity::saveProperties(ofstream &file)
+{
+	saveProperty(PROPERTY_POSITION, file);
+	saveProperty(PROPERTY_NAME, file);
+}
+
+void GameEntity::saveProperty(const int &propertyId, ofstream &file)
+{
+	Vector2 v;
+
+	switch(propertyId)
+	{
+	case PROPERTY_POSITION:
+		v = getPosition();
+		file << "position " << v.x << ' ' << v.y << endl;
+		break;
+	case PROPERTY_NAME:
+		file << "name \"" << getEntityName() << "\"" << endl;
+		break;
+	default:
+		cout << "Unable to save unknown property " << propertyId << endl;
+		break;
+	}
+}
+
+void GameEntity::loadProperties(boost::sregex_token_iterator &iter)
+{
+	string propertyName = *iter;
+	if(iequals(propertyName, "position"))
+	{
+		iter++;
+		float x = atof(string(*iter++).c_str());
+		float y = atof(string(*iter++).c_str());
+		move(x, y, false);
+	}
+	else if(iequals(propertyName, "name"))
+	{
+		iter++;
+		string name = *iter++;
+		if(name[0] == '"')
+		{
+			name = name.substr(1, name.size() - 2);
+		}
+		setEntityName(name);
+	}
+	else 
+	{
+		iter++;
+		cout << "Unable to load unknown property '" << propertyName << "'" << endl;
+	}
 }

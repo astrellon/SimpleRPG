@@ -27,13 +27,24 @@ Animal
 facing -2.9342
 position 2.75406 4.16886
 destination 5 1
+name "Fred"
 end
 
 Animal
 facing 1.6872
 position 10.8575 4.10027
 destination 5 1
+name "Jeff"
 end
 
+Plant
+position 5 6
+name "Shrub"
+end
+
+Plant
+position 6 6
+name "Better Shrub"
+end
 
 -- End

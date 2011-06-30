@@ -29,6 +29,8 @@ using namespace boost::algorithm;
 #define PROPERTY_FACING			0
 #define PROPERTY_POSITION		1
 #define PROPERTY_DESTINATION	2
+#define PROPERTY_NAME			3
+#define PROPERTY_GRAPHIC		4
 
 class Game;
 
@@ -66,11 +68,10 @@ public:
 	virtual void keyActions(const int key) {}
 	virtual void setupDisplay(UIContainer &hud)
 	{
-		hud.removeAllChildren(true);
+		hud.removeAllChildren(false);
 
 		mHudText = new UIText();
 
-		mHudText->setX(1);
 		mHudText->setY(1);
 		hud.addChild(*mHudText);
 
@@ -94,7 +95,10 @@ public:
 		delete mHudText;
 	}
 
-	virtual string getEntityName() { return "GameEntity"; }
+	virtual void setEntityName(string name) { mName = name; }
+	virtual string getEntityName() { return mName; }
+
+	virtual string getEntityType() { return "GameEntity"; }
 
 protected:
 	Pixel mGraphic;
@@ -105,10 +109,12 @@ protected:
 	UIText *mHudText;
 
 	Matrix3x3 mTransform;
+
+	string mName;
 	
-	virtual void loadProperties(boost::sregex_token_iterator &iter) {}
-	virtual void saveProperty(const int &propertyId, ofstream &file) {}
-	virtual void saveProperties(ofstream &file) {}
+	virtual void loadProperties(boost::sregex_token_iterator &iter);
+	virtual void saveProperty(const int &propertyId, ofstream &file);
+	virtual void saveProperties(ofstream &file);
 
 	virtual void onAddedToGame() {}
 	

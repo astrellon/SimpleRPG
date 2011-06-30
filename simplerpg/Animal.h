@@ -33,8 +33,6 @@ public:
 		*mHudText << "Destination: " << mDestination.x << ", " << mDestination.y << '\n';
 	}
 
-	virtual string getEntityName() { return "Animal"; }
-
 	virtual MathType getRunningSpeed() { return mRunningSpeed; }
 	virtual void setRunningSpeed(MathType speed) { mRunningSpeed = speed; }
 
@@ -61,6 +59,8 @@ public:
 	virtual int getIntelligence() { return mIntelligence; }
 	virtual void setIntelligence(int intelligence) { mIntelligence = intelligence; }
 
+	virtual string getEntityType() { return "Animal"; }
+
 protected:
 
 	vector<Vector2> *mPath;
@@ -78,6 +78,9 @@ protected:
 	int mIntelligence;
 
 	bool mWalking;
+
+	float mLineOfSightDistance;
+	float mLineOfSightAngle;
 
 	virtual void doStateIdle(float dt) {}
 	virtual void doStateMoving(float dt);

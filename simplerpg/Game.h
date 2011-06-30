@@ -18,12 +18,13 @@
 #include "UIText.h"
 
 class GameEntity;
+class Animal;
 
 using namespace std;
 
 typedef vector<GameEntity *> EntityList;
 
-class Game : public IKeyActions
+class Game// : public IKeyActions
 {
 public:
 	Game(void);
@@ -49,28 +50,27 @@ public:
 		if(mode)
 			mUnderCursorDirty = true;
 		mCursorMode = mode;
+		mSelectedItem = NULL;
 	}
 	pair<int, int> getCursorPosition() { return pair<int, int>(mCursorX, mCursorY); }
 	void setCursorPosition(int xPos, int yPos);
 	void displayUnderCursor(UIContainer &hud);
 
-
-
 	virtual void keyActions(const int key);
-	virtual void displayActions(UIContainer &hud);
-	virtual void setupDisplay(UIContainer &hud)
+	virtual void displayActions(/*UIContainer &hud*/);
+	/*virtual void setupDisplay(UIContainer &hud)
 	{
-		hud.removeAllChildren(true);
-		hud.addChild(mHud);
 		mHud.addChild(mHudText);
 	}
 	virtual void clearDisplay(UIContainer &hud)
 	{
 		mRedisplay = true;
-		hud.removeChild(mHud);
-	}
+		//hud.removeChild(mHud);
+	}*/
 
 	virtual EntityList getUnderCursor();
+
+	void setDebugAnimal(Animal *animal);
 
 protected:
 	bool mRedisplay;
@@ -82,7 +82,9 @@ protected:
 	EntityList mUnderCursor;
 	bool mUnderCursorDirty;
 
-	GameEntity *mSelectedItem;
+	Animal *mDebugAnimal;
+
+	IKeyActions *mSelectedItem;
 
 	UIList mHud;
 	UIText mHudText;
@@ -90,4 +92,22 @@ protected:
 	int mCursorX;
 	int mCursorY;
 	bool mCursorMode;
+
+	void switchKeyItem(IKeyActions *item, UIContainer &hud)
+	{
+		if(mSelectedItem != NULL)
+		{
+			mSelectedItem->clearDisplay(hud);
+		}
+		mHud.setScrollY(0);
+		mSelectedItem = item;
+		if(item != NULL)
+		{
+			item->setupDisplay(hud);
+		}
+		else
+		{
+			mHud.addChild(mHudText);
+		}
+	}
 };

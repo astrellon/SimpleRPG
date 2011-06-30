@@ -15,8 +15,6 @@
 #include "Animal.h"
 #include "Vector2.h"
 #include "Matrix3x3.h"
-//#include "HUD.h"
-//#include "SideMenu.h"
 #include "keyboard.h"
 #include "UIText.h"
 #include "UIContainer.h"
@@ -91,23 +89,6 @@ void init_colours()
 WINDOW *gameWnd;
 WINDOW *mainMenuWnd;
 
-UIList hud;
-
-IKeyActions *currentItem = NULL;
-
-void switchKeyItem(IKeyActions *item, UIContainer &hud)
-{
-	if(currentItem != NULL)
-	{
-		currentItem->clearDisplay(hud);
-	}
-	currentItem = item;
-	if(item != NULL)
-	{
-		item->setupDisplay(hud);
-	}
-}
-
 Game *startGame(string filename)
 {
 	Game *game = new Game();
@@ -119,7 +100,6 @@ Game *startGame(string filename)
 		return 0;
 	}
 
-	switchKeyItem(game, hud);
 	return game;
 }
 
@@ -135,13 +115,8 @@ int main()
 	curs_set(0);
 	init_colours();
 
-	
-	hud.setX(62);
-	hud.setY(1);
-
 	mainMenuWnd = newwin(25, 80, 0, 0);
 	gameWnd = newwin(25, 80, 0, 0);
-	hud.setWindow(gameWnd);
 	cbreak();
 	noecho();
 	keypad(gameWnd, true);
@@ -161,7 +136,7 @@ int main()
 	title << "<15>Alan Lawrey's Thesis project 2011</>";
 
 	UIText mainItem1;
-	mainItem1 << "<12>1</>. Load world.\n<12>2</>. Quit.";
+	mainItem1 << "<12>1</>: Load world.\n<12>2</>: Quit.";
 	
 	UIList mainItem2;
 	mainItem2.setVisible(false);
@@ -344,21 +319,9 @@ int main()
 		}
 		else
 		{
-			//cbreak();
 			while(kbhit())
 			{
 				int c = wgetch(gameWnd);
-
-				// Escape key.
-				if (c == 27)
-					currentItem = NULL;
-
-				// Numpad 8
-				if (c == 56)
-					hud.scrollY(1);
-				// Numpad 2
-				if (c == 50)
-					hud.scrollY(-1);
 
 				if(c == 'p' || c == ' ')
 					paused = !paused;
@@ -366,42 +329,9 @@ int main()
 				if(c == 's')
 				{
 					game->saveMap("test.out");
-					//hud << "Saved!";
 				}
-
-				/*if(currentItem != NULL)
-				{
-					currentItem->keyActions(c);
-				}
-				else
-				{
-					game->keyActions(c);
-					if(game->getCursorMode())
-					{
-						if(c >= '1' && c <= '9')
-						{
-							EntityList list = game->getUnderCursor();
-							int numPressed = c - '1';
-							if(!list.empty() && numPressed < list.size())
-							{
-								currentItem = list[numPressed];
-							}
-						}
-					}
-				}*/
 				game->keyActions(c);
 			}
-
-			/*if(currentItem != NULL)
-			{
-				currentItem->displayActions(hud);
-			}
-			else
-			{
-				game->displayActions(hud);
-			}*/
-
-			game->displayActions(hud);
 
 			if(!paused && !game->getCursorMode())
 			{
@@ -409,10 +339,7 @@ int main()
 			}
 
 			wclear(gameWnd);
-
 			game->render(gameWnd);
-
-			hud.render();
 
 			if(paused || game->getCursorMode())
 			{
@@ -420,7 +347,6 @@ int main()
 			}
 
 			wrefresh(gameWnd);
-
 			msleep(40);
 		}
 	}

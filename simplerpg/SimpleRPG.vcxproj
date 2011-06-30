@@ -134,6 +134,7 @@ copy "$(ProjectDir)map.txt" "$(OutputPath)"</Command>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Pixel.cpp" />
+    <ClCompile Include="Plant.cpp" />
     <ClCompile Include="Rect.cpp" />
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="UIComponent.cpp" />
@@ -157,6 +158,7 @@ copy "$(ProjectDir)map.txt" "$(OutputPath)"</Command>
     <ClInclude Include="Matrix3x3.h" />
     <ClInclude Include="panel.h" />
     <ClInclude Include="Pixel.h" />
+    <ClInclude Include="Plant.h" />
     <ClInclude Include="Rect.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="UIComponent.h" />

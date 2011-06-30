@@ -30,7 +30,14 @@ public:
 	virtual void setMaxHeight(int height) { mMaxHeight = height; }
 	virtual int getMaxHeight() { return mMaxHeight; }
 
-	virtual void setParent(UIComponent *parent) { mParent = parent; }
+	virtual void setParent(UIComponent *parent)
+	{
+		if(parent == this)
+		{
+			throw "Cannot set parent to itself";
+		}
+		mParent = parent;
+	}
 	virtual UIComponent *getParent() { return mParent; }
 
 	virtual void setVisible(bool visible) { mVisible = visible; }

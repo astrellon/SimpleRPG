@@ -69,6 +69,9 @@
     <ClCompile Include="UISelector.cpp">
       <Filter>Source Files\ui</Filter>
     </ClCompile>
+    <ClCompile Include="Plant.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Map.h">
@@ -133,6 +136,15 @@
     </ClInclude>
     <ClInclude Include="UISelector.h">
       <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="curses.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="panel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Plant.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

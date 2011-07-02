@@ -107,9 +107,6 @@
     <ClInclude Include="IKeyActions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="keyboard.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GameEntityFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -137,14 +134,17 @@
     <ClInclude Include="UISelector.h">
       <Filter>Header Files\ui</Filter>
     </ClInclude>
-    <ClInclude Include="curses.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="panel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Plant.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="curses.h">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="panel.h">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="keyboard.h">
+      <Filter>Header Files\ui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

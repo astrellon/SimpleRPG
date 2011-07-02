@@ -4,8 +4,6 @@
 #include "GameEntity.h"
 #include "Pixel.h"
 
-#include <time.h>
-
 class Animal : public GameEntity
 {
 public:
@@ -84,7 +82,10 @@ protected:
 
 	virtual void doStateIdle(float dt) {}
 	virtual void doStateMoving(float dt);
-	float nextFloat() { return (float)rand() / (float)RAND_MAX; }
+	
+	virtual void doStateHungry(float dt) {}
+	virtual void doStateFindMeat(float dt) {}
+	virtual void doStateFindPlant(float dt) {}
 
 	virtual void saveProperties(ofstream &file);
 	virtual void saveProperty(const int &propertyId, ofstream &file);

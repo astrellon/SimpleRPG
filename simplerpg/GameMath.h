@@ -1,6 +1,7 @@
 #pragma once
 
 #include <math.h>
+#include <time.h>
 
 namespace math
 {
@@ -18,5 +19,10 @@ namespace math
 		if(x < 0)
 			return (int)x - 1;
 		return (int)x;
+	}
+
+	inline float nextFloat()
+	{
+		return (float)rand() / (float)RAND_MAX;
 	}
 }

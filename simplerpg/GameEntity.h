@@ -25,6 +25,7 @@ using namespace boost::algorithm;
 
 #define STATE_IDLE		0
 #define STATE_MOVING	1
+#define STATE_HUNGRY	2
 
 #define PROPERTY_FACING			0
 #define PROPERTY_POSITION		1

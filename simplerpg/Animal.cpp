@@ -36,21 +36,6 @@ Pixel Animal::getGraphic()
 	return GameEntity::getGraphic();
 }
 
-void Animal::update(float dt)
-{
-	switch(mState)
-	{
-	case STATE_IDLE:
-		doStateIdle(dt);
-		break;
-	case STATE_MOVING:
-		doStateMoving(dt);
-		break;
-	default:
-		doStateIdle(dt);
-	}
-}
-
 void Animal::loadProperties(boost::sregex_token_iterator &iter)
 {
 	string propertyName = *iter;
@@ -94,6 +79,23 @@ void Animal::saveProperty(const int &propertyId, ofstream &file)
 		break;
 	default:
 		GameEntity::saveProperty(propertyId, file);
+		break;
+	}
+}
+
+void Animal::update(float dt)
+{
+	switch(mState)
+	{
+	default:
+	case STATE_IDLE:
+		doStateIdle(dt);
+		break;
+	case STATE_MOVING:
+		doStateMoving(dt);
+		break;
+	case STATE_HUNGRY:
+		doStateHungry(dt);
 		break;
 	}
 }

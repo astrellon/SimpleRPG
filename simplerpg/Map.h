@@ -10,6 +10,7 @@
 #include "Pixel.h"
 #include "Vector2.h"
 #include "AStarNode.h"
+#include "GameMath.h"
 
 using namespace std;
 
@@ -38,7 +39,7 @@ public:
 		return mMapData[x][y].tile; 
 	}
 
-	vector<Vector2> *search(Vector2 start, Vector2 end);
+	vector<Vector2f> *search(Vector2f start, Vector2f end);
 
 	void renderMap(Rect rect, WINDOW *wnd);
 
@@ -51,11 +52,11 @@ protected:
 	int mWidth;
 	int mHeight;
 
-	vector<AStarNode *> *getNeighbors(Vector2 position);
+	vector<AStarNode *> *getNeighbors(Vector2f position);
 	bool checkNeighbor(vector<AStarNode *> *nodes, int x, int y);
 
 	map<char, Tile *> mMappedTiles;
 
-	vector<Vector2> *getPath(AStarNode *node);
+	vector<Vector2f> *getPath(AStarNode *node);
 };
 

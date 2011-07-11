@@ -52,7 +52,7 @@ void UIContainer::removeChild(UIComponent &child)
 
 void UIContainer::removeChild(int index)
 {
-	if(index >= 0 && index < mChildren.size())
+	if(index >= 0 && index < (int)mChildren.size())
 	{
 		removeChild(*mChildren[index]);
 	}

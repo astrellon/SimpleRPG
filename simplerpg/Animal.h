@@ -1,8 +1,14 @@
 #pragma once
 
-#include "Game.h"
+#include <ostream>
 #include "GameEntity.h"
-#include "Pixel.h"
+#include "Plant.h"
+#include "UIText.h"
+
+using namespace std;
+
+class Game;
+//class UIText;
 
 class Animal : public GameEntity
 {
@@ -13,43 +19,35 @@ public:
 	Pixel virtual getGraphic();
 	void virtual update(float dt);
 
-	virtual void setDestination(const Vector2 &dest);
-	virtual void setDestination(const MathType &xPos, const MathType &yPos);
-	virtual Vector2 getDestination() { return mDestination; }
+	virtual void setDestination(const Vector2f &dest);
+	virtual void setDestination(const float &xPos, const float &yPos);
+	virtual Vector2f getDestination() { return mDestination; }
 
-	vector<Vector2> *getPath() { return mPath; }
+	vector<Vector2f> *getPath() { return mPath; }
 
 	virtual void updateMovePath();
 
-	virtual void displayActions(UIContainer &hud)
-	{
-		if(!mRedisplay)
-			return;
+	virtual void displayActions(UIContainer &hud);
 
-		GameEntity::displayActions(hud);
+	virtual float getRunningSpeed() { return mRunningSpeed; }
+	virtual void setRunningSpeed(float speed) { mRunningSpeed = speed; }
 
-		*mHudText << "Destination: " << mDestination.x << ", " << mDestination.y << '\n';
-	}
-
-	virtual MathType getRunningSpeed() { return mRunningSpeed; }
-	virtual void setRunningSpeed(MathType speed) { mRunningSpeed = speed; }
-
-	virtual MathType getWalkingSpeed() { return mWalkingSpeed; }
-	virtual void setWalkingSpeed(MathType speed) { mWalkingSpeed = speed; }
+	virtual float getWalkingSpeed() { return mWalkingSpeed; }
+	virtual void setWalkingSpeed(float speed) { mWalkingSpeed = speed; }
 
 	virtual bool getWalking() { return mWalking; }
 	virtual void setWalking(bool walking) { mWalking = walking; }
 
-	virtual MathType getCurrentSpeed() { return getWalking() ? getWalkingSpeed() : getRunningSpeed(); }
+	virtual float getCurrentSpeed() { return getWalking() ? getWalkingSpeed() : getRunningSpeed(); }
 
-	virtual MathType getAggression() { return mAggression; }
-	virtual void setAggression(MathType aggression) { mAggression = aggression; }
+	virtual float getAggression() { return mAggression; }
+	virtual void setAggression(float aggression) { mAggression = aggression; }
 
-	virtual MathType getDiet() { return mDiet; }
-	virtual void setDiet(MathType diet) { mDiet = diet; }
+	virtual float getDiet() { return mDiet; }
+	virtual void setDiet(float diet) { mDiet = diet; }
 
-	virtual MathType getSize() { return mSize; }
-	virtual void setSize(MathType size) { mSize = size; }
+	virtual float getSize() { return mSize; }
+	virtual void setSize(float size) { mSize = size; }
 
 	virtual int getStrength() { return mStrength; }
 	virtual void setStrength(int strength) { mStrength = strength; }
@@ -59,26 +57,30 @@ public:
 
 	virtual string getEntityType() { return "Animal"; }
 
+	virtual void eatPlant(Plant *plant);
+	virtual void eatAnimal(Animal *animal);
+
 protected:
 
-	vector<Vector2> *mPath;
-	Vector2 mDestination;
+	vector<Vector2f> *mPath;
+	Vector2f mDestination;
 	int mState;
 
-	MathType mRunningSpeed;
-	MathType mTurningSpeed;
-	MathType mWalkingSpeed;
-	MathType mAggression;
-	MathType mDiet;
-	MathType mSize;
+	float mRunningSpeed;
+	float mTurningSpeed;
+	float mWalkingSpeed;
+	float mAggression;
+	float mDiet;
+	float mSize;
+
+	float mHunger;
 
 	int mStrength;
 	int mIntelligence;
 
 	bool mWalking;
 
-	float mLineOfSightDistance;
-	float mLineOfSightAngle;
+	virtual void eatEntity(GameEntity *entity);
 
 	virtual void doStateIdle(float dt) {}
 	virtual void doStateMoving(float dt);

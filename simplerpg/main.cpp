@@ -50,21 +50,21 @@ inline void msleep(int ms)
 
 using namespace std;
 
-typedef struct folder_entry
+typedef struct _folder_entry
 {
 	int index;
 	bool isDir;
 	string filename;
 	string formattedName;
 
-	folder_entry(int i, bool d, string f, string ff)
+	_folder_entry(int i, bool d, string f, string ff)
 	{
 		index = i;
 		isDir = d;
 		filename = f;
 		formattedName = ff;
 	}
-};
+} folder_entry;
 
 bool sortFolders(folder_entry i, folder_entry j)
 {
@@ -110,7 +110,7 @@ int main()
 	Tile::registerDefaults();
 
 	Game *game;
-	
+
 	initscr();
 	curs_set(0);
 	init_colours();
@@ -176,7 +176,7 @@ int main()
 		if(inMainMenu)
 		{
 			bool quit = false;
-			while(kbhit())
+			while(_kbhit())
 			{
 				int c = wgetch(mainMenuWnd);
 
@@ -210,7 +210,7 @@ int main()
 							string pathString = currentPath.directory_string();
 							int firstIndex = pathString.find('\\');
 							int lastIndex = pathString.find_last_of('\\');
-							if(firstIndex < pathString.size() - 1 )
+							if(firstIndex < (int)pathString.size() - 1 )
 							{
 								if(lastIndex == firstIndex)
 								{
@@ -220,7 +220,6 @@ int main()
 								currentPath = sub;
 								loadFilelist = true;
 							}
-							
 						}
 						else
 						{
@@ -313,13 +312,17 @@ int main()
 				break;
 			}
 
+			/*if(menuLevel == 1)
+			{
+				cout << "a";
+			}*/
 			mainMenu.render();
 
 			wrefresh(mainMenuWnd);
 		}
 		else
 		{
-			while(kbhit())
+			while(_kbhit())
 			{
 				int c = wgetch(gameWnd);
 

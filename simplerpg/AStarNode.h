@@ -9,8 +9,6 @@ public:
 	AStarNode(Tile *tile = NULL)
 	{
 		reset();
-		position.x = 0;
-		position.y = 0;
 		this->tile = tile;
 	}
 	~AStarNode(void)
@@ -29,7 +27,9 @@ public:
 	double g;
 	double h;
 
-	Vector2 position;
+	// Should be float instead of int because as it's more
+	// flexible.
+	Vector2f position;
 
 	AStarNode *parent;
 

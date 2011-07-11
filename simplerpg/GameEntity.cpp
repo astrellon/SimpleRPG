@@ -12,9 +12,46 @@ GameEntity::~GameEntity(void)
 {
 }
 
-void GameEntity::move(MathType dx, MathType dy, bool inObjectSpace)
+Pixel GameEntity::getGraphic()
 {
-	Vector2 v(dx, dy);
+	return mGraphic;
+}
+void GameEntity::setGraphic(Pixel graphic)
+{
+	mGraphic = graphic;
+}
+
+float GameEntity::getX()
+{
+	return mTransform.zx;
+}
+float GameEntity::getY()
+{
+	return mTransform.zy;
+}
+
+Vector2f GameEntity::getPosition()
+{
+	return Vector2f(mTransform.zx, mTransform.zy);
+}
+
+double GameEntity::getFacing()
+{
+	return mTransform.getAngle();
+}
+void GameEntity::setFacing(double facing)
+{
+	mTransform.setRotation(facing);
+}
+
+Matrix3x3f *GameEntity::getTransform()
+{
+	return &mTransform;
+}
+
+void GameEntity::move(float dx, float dy, bool inObjectSpace)
+{
+	Vector2f v(dx, dy);
 	if(inObjectSpace)
 		mTransform.transformVectorConst(&v);
 
@@ -43,12 +80,12 @@ void GameEntity::move(MathType dx, MathType dy, bool inObjectSpace)
 	}
 }
 
-void GameEntity::move(Vector2 vec, bool inObjectSpace)
+void GameEntity::move(Vector2f vec, bool inObjectSpace)
 {
 	move(vec.x, vec.y, inObjectSpace);
 }
 
-void GameEntity::turn(MathType angle)
+void GameEntity::turn(double angle)
 {
 	mTransform.rotate(angle);
 }
@@ -99,7 +136,7 @@ void GameEntity::saveProperties(ofstream &file)
 
 void GameEntity::saveProperty(const int &propertyId, ofstream &file)
 {
-	Vector2 v;
+	Vector2f v;
 
 	switch(propertyId)
 	{
@@ -122,8 +159,8 @@ void GameEntity::loadProperties(boost::sregex_token_iterator &iter)
 	if(iequals(propertyName, "position"))
 	{
 		iter++;
-		float x = atof(string(*iter++).c_str());
-		float y = atof(string(*iter++).c_str());
+		float x = lexical_cast<float>(*iter++);
+		float y = lexical_cast<float>(*iter++);
 		move(x, y, false);
 	}
 	else if(iequals(propertyName, "name"))
@@ -141,4 +178,35 @@ void GameEntity::loadProperties(boost::sregex_token_iterator &iter)
 		iter++;
 		cout << "Unable to load unknown property '" << propertyName << "'" << endl;
 	}
+}
+
+void GameEntity::displayActions(UIContainer &hud)
+{
+	if(!mRedisplay)
+		return;
+
+	mHudText->clearText();
+	*mHudText << "Entity: " << getEntityName() << '\n';
+	*mHudText << "Facing: " << getFacing() << '\n';
+
+	mRedisplay = false;
+}
+
+void GameEntity::clearDisplay(UIContainer &hud)
+{
+	hud.removeChild(*mHudText);
+	mRedisplay = true;
+
+	delete mHudText;
+}
+
+void GameEntity::setupDisplay(UIContainer &hud)
+{
+	hud.removeAllChildren(false);
+
+	mHudText = new UIText();
+
+	mHudText->setY(1);
+	hud.addChild(*mHudText);
+
 }

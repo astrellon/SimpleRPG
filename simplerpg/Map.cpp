@@ -16,8 +16,8 @@ Map::Map(int width, int height)
 			if(y == 0)
 				tile = 1;
 			mMapData[x][y].tile = Tile::getTile(tile);
-			mMapData[x][y].position.x = x;
-			mMapData[x][y].position.y = y;
+			mMapData[x][y].position.x = (float)x;
+			mMapData[x][y].position.y = (float)y;
 		}
 	}
 }
@@ -64,17 +64,17 @@ inline bool Map::checkNeighbor(vector<AStarNode *> *nodes, int x, int y)
 }
 
 
-vector<AStarNode *> *Map::getNeighbors(Vector2 position)
+vector<AStarNode *> *Map::getNeighbors(Vector2f position)
 {
 	vector<AStarNode *> *nodes = new vector<AStarNode *>();
 
 	int posX = (int)position.x;
 	int posY = (int)position.y;
 
-	bool left = checkNeighbor(nodes, posX - 1, posY);
-	bool top = checkNeighbor(nodes, posX, posY - 1);
-	bool right = checkNeighbor(nodes, posX + 1, posY);
-	bool bottom = checkNeighbor(nodes, posX, posY + 1);
+	bool left =		checkNeighbor(nodes, posX - 1,	posY);
+	bool top =		checkNeighbor(nodes, posX,		posY - 1);
+	bool right =	checkNeighbor(nodes, posX + 1,	posY);
+	bool bottom =	checkNeighbor(nodes, posX,		posY + 1);
 
 	if (left && top)
 		checkNeighbor(nodes, posX - 1, posY - 1);
@@ -88,42 +88,22 @@ vector<AStarNode *> *Map::getNeighbors(Vector2 position)
 	if (bottom && right)
 		checkNeighbor(nodes, posX + 1, posY + 1);
 
-	/*for(int x = -1; x <= 1; x++)
-	{
-		int xx = (int)position.x + x;
-		for(int y = -1; y <= 1; y++)
-		{
-			if(x == 0 && y == 0)
-				continue;
-
-			int yy = (int)position.y + y;
-			if(xx >= 0 && xx < mWidth && yy >= 0 && yy < mHeight)
-			{
-				AStarNode *node = &mMapData[xx][yy];
-				if(node->tile->getPassable())
-				{
-					nodes->push_back(node);
-				}
-			}
-		}
-	}*/
-
 	return nodes;
 }
 
-double manhattanDistance(Vector2 p1, Vector2 p2)
+double manhattanDistance(const Vector2f &p1, const Vector2f &p2)
 {
 	return abs(p1.x - p2.x) + abs(p1.y - p2.y);
 }
 
-vector<Vector2> *Map::search(Vector2 start, Vector2 end)
+vector<Vector2f> *Map::search(Vector2f start, Vector2f end)
 {
 	vector<AStarNode *> openList;
 
 	if (start.x < 0 || start.x >= mWidth ||
 		start.y < 0 || start.y >= mHeight)
 	{
-		return new vector<Vector2>();
+		return NULL;
 	}
 
 	for(int x = 0; x < mWidth; x++)
@@ -134,9 +114,9 @@ vector<Vector2> *Map::search(Vector2 start, Vector2 end)
 		}
 	}
 
-	openList.push_back(&mMapData[(int)start.x][(int)start.y]);
+	openList.push_back(&mMapData[math::round(start.x)][math::round(start.y)]);
 
-	AStarNode *endNode = &mMapData[(int)end.x][(int)end.y];
+	AStarNode *endNode = &mMapData[math::round(end.x)][math::round(end.y)];
 	endNode->parent = NULL;
 
 	vector<AStarNode *> closedList;
@@ -176,18 +156,21 @@ vector<Vector2> *Map::search(Vector2 start, Vector2 end)
 		}
 	}
 	// NO PATH! D:
-	return new vector<Vector2>();
+	return NULL;
 }
 
-vector<Vector2> *Map::getPath(AStarNode *node)
+vector<Vector2f> *Map::getPath(AStarNode *node)
 {
-	vector<Vector2> *path = new vector<Vector2>();
+	vector<Vector2f> *path = new vector<Vector2f>();
 
 	while(node != NULL)
 	{
-		path->insert(path->begin(), node->position);
+		//path->insert(path->begin(), node->position);
+		path->push_back(node->position);
 		node = node->parent;
 	}
+
+	reverse(path->begin(), path->end());
 
 	return path;
 }

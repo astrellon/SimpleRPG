@@ -3,6 +3,8 @@
 #include "GameEntityFactory.h"
 #include "Animal.h"
 
+char *Game::LOOK_FOR_TABLE[] = {"Animal", "Plant"};
+
 Game::Game(void)
 {
 	mScreenSize = Rect(0, 0, 60, 25);
@@ -20,6 +22,10 @@ Game::Game(void)
 	mHud.setX(61);
 	mHud.setY(1);
 	mHud.addChild(mHudText);
+
+	mMenuLevel = 0;
+	mLookFor = 0;
+	mFoundEntity = NULL;
 }
 
 Game::~Game(void)
@@ -53,10 +59,6 @@ void Game::keyActions(const int key)
 			return;
 		}
 	}
-	if(key == 'k' || (getCursorMode() && key == 27))
-	{
-		setCursorMode(!getCursorMode());
-	}
 
 	if(getCursorMode())
 	{
@@ -73,19 +75,12 @@ void Game::keyActions(const int key)
 			cy++;
 
 		setCursorPosition(cx, cy);
-
-		if(key >= '1' && key <= '9')
-		{
-			EntityList list = getUnderCursor();
-			int numPressed = key - '1';
-			if(!list.empty() && numPressed < list.size())
-			{
-				switchKeyItem(list[numPressed], mHud);
-			}
-		}
 	}
-	else
+
+	switch(mMenuLevel)
 	{
+	default:
+	case 0:
 		if (key == 260)
 			moveCamera(-1, 0);
 		if (key == 261)
@@ -94,15 +89,75 @@ void Game::keyActions(const int key)
 			moveCamera(0, -1);
 		if (key == 258)
 			moveCamera(0, 1);
+
+		if (key == 'k')
+		{
+			setCursorMode(true);
+			mMenuLevel = 1;
+		}
+
+		if (key == 'f')
+		{
+			setCursorMode(true);
+			mMenuLevel = 2;
+		}
+		break;
+
+	case 1:
+		
+		if (key == 27 || key == 'k')
+		{
+			setCursorMode(false);
+			mMenuLevel = 0;
+		}
+
+		if(key >= '1' && key <= '9')
+		{
+			EntityList list = getUnderCursor();
+			int numPressed = key - '1';
+			if(!list.empty() && numPressed < (int)list.size())
+			{
+				switchKeyItem(list[numPressed], mHud);
+			}
+		}
+		break;
+	case 2:
+		if (key == 27)
+		{
+			setCursorMode(false);
+			mFoundEntity = NULL;
+			mMenuLevel = 0;
+		}
+
+		if (key == 'x')
+		{
+			int l = sizeof(LOOK_FOR_TABLE) / sizeof(char*);
+			mLookFor++;
+			if (mLookFor >= l)
+				mLookFor = 0;
+		}
+
+		if(key == 'f')
+		{
+			mFoundEntity = findClosestEntity(Vector2f(mCursorX, mCursorY), LOOK_FOR_TABLE[mLookFor]);
+		}
+		break;
 	}
 }
 
-void Game::displayActions(/*UIContainer &hud*/)
+void Game::displayActions()
 {
 	mHudText.clearText();
-
-	if(getCursorMode())
+	
+	switch (mMenuLevel)
 	{
+	default:
+	case 0:
+		mHudText << "Menu\n\n";
+		mHudText << "<11>k</>: Look mode.\n";
+		mHudText << "<11>f</>: Find closest.";
+		break;
+	case 1:
 		if(mSelectedItem != NULL)
 		{
 			mSelectedItem->displayActions(mHud);
@@ -111,14 +166,20 @@ void Game::displayActions(/*UIContainer &hud*/)
 		{
 			displayUnderCursor(mHud);
 		}
-	}
-	else
-	{
-		if(mHudText.getString().empty())
+		break;
+	case 2:
+		mHudText << "Find closest\n";
+		mHudText << "Pos (<12>" << mCursorX << ", " << mCursorY << "</>)\n\n";
+		mHudText << "<11>x</>: Toggle P/A (" << LOOK_FOR_TABLE[mLookFor][0] << ")\n";
+		mHudText << "<11>f</>: Find.\n\n";
+
+		if(mFoundEntity != NULL)
 		{
-			mHudText << "Menu\n\n";
-			mHudText << "<11>k</>: Look mode.";
+			mHudText << "Found: <12>" << mFoundEntity->getEntityName() << "</>";
 		}
+		
+		break;
+
 	}
 }
 
@@ -150,7 +211,7 @@ EntityList Game::getUnderCursor()
 	for(EntityList::iterator iter = mEntities.begin(); iter != mEntities.end(); iter++)
 	{
 		GameEntity *entity = *iter;
-		Vector2 pos = entity->getPosition();
+		Vector2f pos = entity->getPosition();
 		int posX = math::round(pos.x);
 		int posY = math::round(pos.y);
 		if(posX == mCursorX && posY == mCursorY)
@@ -481,4 +542,49 @@ void Game::loadMap(string filename)
 		}
 		endState = false;
 	}
+}
+
+float lengthOfPath(const vector<Vector2f> *path)
+{
+	double length = 0.0;
+	int size = (int)path->size();
+	if (size <= 1)
+		return 0.0f;
+
+	for(int i = 1; i < size; i++)
+	{
+		Vector2f v1 = (*path)[i];
+		Vector2f v2 = (*path)[i - 1];
+		Vector2f diff = v1.sub(v2);
+		length += diff.length();
+	}
+
+	return (float)length;
+}
+
+GameEntity *Game::findClosestEntity(Vector2f position, string entityType)
+{
+	GameEntity *shortestEntity = NULL;
+	float shortest = 1e30f;
+	Map *m = getMap();
+	for(EntityList::iterator iter = mEntities.begin(); iter != mEntities.end(); iter++)
+	{
+		GameEntity *entity = *iter;
+		if(iequals(entity->getEntityType(), entityType))
+		{
+			vector<Vector2f> *path = m->search(position, entity->getPosition());
+			if(path != NULL)
+			{
+				float length = lengthOfPath(path);
+				if(length < shortest)
+				{
+					shortest = length;
+					shortestEntity = entity;
+				}
+				delete path;
+			}
+			
+		}
+	}
+	return shortestEntity;
 }

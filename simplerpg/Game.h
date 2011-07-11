@@ -11,7 +11,6 @@
 
 #include "Map.h"
 #include "Rect.h"
-//#include "HUD.h"
 #include "IKeyActions.h"
 
 #include "UIList.h"
@@ -24,7 +23,7 @@ using namespace std;
 
 typedef vector<GameEntity *> EntityList;
 
-class Game// : public IKeyActions
+class Game
 {
 public:
 	Game(void);
@@ -57,20 +56,13 @@ public:
 	void displayUnderCursor(UIContainer &hud);
 
 	virtual void keyActions(const int key);
-	virtual void displayActions(/*UIContainer &hud*/);
-	/*virtual void setupDisplay(UIContainer &hud)
-	{
-		mHud.addChild(mHudText);
-	}
-	virtual void clearDisplay(UIContainer &hud)
-	{
-		mRedisplay = true;
-		//hud.removeChild(mHud);
-	}*/
+	virtual void displayActions();
 
 	virtual EntityList getUnderCursor();
 
 	void setDebugAnimal(Animal *animal);
+
+	GameEntity *findClosestEntity(Vector2f position, string entityType);
 
 protected:
 	bool mRedisplay;
@@ -83,15 +75,17 @@ protected:
 	bool mUnderCursorDirty;
 
 	Animal *mDebugAnimal;
-
+	GameEntity *mFoundEntity;
 	IKeyActions *mSelectedItem;
 
 	UIList mHud;
 	UIText mHudText;
 
+	int mMenuLevel;
 	int mCursorX;
 	int mCursorY;
 	bool mCursorMode;
+	int mLookFor;
 
 	void switchKeyItem(IKeyActions *item, UIContainer &hud)
 	{
@@ -110,4 +104,6 @@ protected:
 			mHud.addChild(mHudText);
 		}
 	}
+
+	static char *LOOK_FOR_TABLE[];
 };

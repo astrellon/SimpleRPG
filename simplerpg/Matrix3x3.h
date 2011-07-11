@@ -6,20 +6,23 @@
 
 #ifndef M_PI
 #define M_PI 3.1415926535897932384626433832795
-#define M_PI2	M_PI * 2
+#define M_PIF 3.1415926535897932384626433832795f
+#define M_PI2	M_PI * 2.0
+#define M_PIF2	M_PIF * 2.0f
 #endif
 
+template <class T>
 class Matrix3x3
 {
 public:
 	Matrix3x3(void) { identity(); mFacing = 0; }
 	~Matrix3x3(void) {}
 
-	void setRotation(MathType angle)
+	void setRotation(double angle)
 	{
-		xx = cos(angle);
+		xx = (T)cos(angle);
 		yy = xx;
-		yx = sin(angle);
+		yx = (T)sin(angle);
 		xy = -yx;
 		zz = 1;
 		xz = yz = 0;
@@ -32,27 +35,27 @@ public:
 		mFacing = angle;
 	}
 
-	void rotate(MathType angle)
+	void rotate(double angle)
 	{
 		setRotation(angle + mFacing);
 	}
 
-	void transformVectorConst(Vector2 *vec)
+	void transformVectorConst(Vector2<T> *vec)
 	{
-		MathType x = vec->x;
-		MathType y = vec->y;
+		T x = vec->x;
+		T y = vec->y;
 		vec->x = x * xx + y * xy;
 		vec->y = x * yx + y * yy;
 	}
 
-	Vector2 transformVector(Vector2 vec)
+	Vector2<T> transformVector(Vector2<T> vec)
 	{
-		return Vector2(vec.x * xx + vec.y * xy, vec.x * yx + vec.y * yy);
+		return Vector2<T>(vec.x * xx + vec.y * xy, vec.x * yx + vec.y * yy);
 	}
 
-	void multiply(Matrix3x3 rhs)
+	void multiply(Matrix3x3<T> rhs)
 	{
-		Matrix3x3 clone = *this;
+		Matrix3x3<T> clone = *this;
 		xx = clone.xx * rhs.xx +
 			 clone.xy * rhs.yx +
 			 clone.xz * rhs.zx;
@@ -106,34 +109,36 @@ public:
 		printf("%f, %f, %f\n", zx, zy, zz);
 	}
 
-	inline void translate(MathType dx, MathType dy)
+	inline void translate(T dx, T dy)
 	{
 		zx += dx;
 		zy += dy;
 	}
 
-	inline void translate(Vector2 vec)
+	inline void translate(Vector2<T> vec)
 	{
 		zx += vec.x;
 		zy += vec.y;
 	}
 
-	inline MathType getAngle() { return mFacing; }
+	inline double getAngle() { return mFacing; }
 
-	MathType xx;
-	MathType xy;
-	MathType xz;
+	T xx;
+	T xy;
+	T xz;
 
-	MathType yx;
-	MathType yy;
-	MathType yz;
+	T yx;
+	T yy;
+	T yz;
 
-	MathType zx;
-	MathType zy;
-	MathType zz;
+	T zx;
+	T zy;
+	T zz;
 
 protected:
-	MathType mFacing;
+	double mFacing;
 
 };
 
+typedef Matrix3x3<float> Matrix3x3f;
+typedef Matrix3x3<double> Matrix3x3d;

@@ -39,7 +39,7 @@ public:
 		return mMapData[x][y].tile; 
 	}
 
-	vector<Vector2f> *search(Vector2f start, Vector2f end);
+	vector<Vector2f> *search(Vector2i start, Vector2i end);
 
 	void renderMap(Rect rect, WINDOW *wnd);
 

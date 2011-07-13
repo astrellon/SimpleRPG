@@ -7,6 +7,8 @@
 #include <boost/regex.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/math/special_functions/round.hpp>
+using boost::math::round;
 
 #include "Pixel.h"
 #include "GameMath.h"
@@ -108,15 +110,14 @@ public:
 protected:
 	Pixel mGraphic;
 	Game* mGame;
+	Matrix3x3f mTransform;
+	string mName;
 
 	bool mRedisplay;
-
 	UIText *mHudText;
 
-	Matrix3x3f mTransform;
+	float mAmountEaten;
 
-	string mName;
-	
 	// The function which loads each property from the file tokens.
 	// Should increment the iterator at least once.
 	virtual void loadProperties(boost::sregex_token_iterator &iter);

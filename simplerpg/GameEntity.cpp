@@ -6,6 +6,7 @@ GameEntity::GameEntity(Game *game)
 	mGame = game;
 	mGraphic = Pixel('o', 7, false);
 	mName = "GameEntity";
+	mAmountEaten = 0.0f;
 }
 
 GameEntity::~GameEntity(void)
@@ -55,8 +56,8 @@ void GameEntity::move(float dx, float dy, bool inObjectSpace)
 	if(inObjectSpace)
 		mTransform.transformVectorConst(&v);
 
-	int newPosX = math::round(mTransform.zx + v.x);
-	int newPosY = math::round(mTransform.zy + v.y);
+	int newPosX = round(mTransform.zx + v.x);
+	int newPosY = round(mTransform.zy + v.y);
 
 	Tile *tile = mGame->getMap()->getTile(newPosX, newPosY);
 	if(tile != NULL && tile->getPassable())
@@ -65,14 +66,14 @@ void GameEntity::move(float dx, float dy, bool inObjectSpace)
 		return;
 	}
 
-	tile = mGame->getMap()->getTile(math::round(mTransform.zx), newPosY);
+	tile = mGame->getMap()->getTile(round(mTransform.zx), newPosY);
 	if(tile != NULL && tile->getPassable())
 	{
 		mTransform.translate(0, v.y);
 		return;
 	}
 
-	tile = mGame->getMap()->getTile(newPosX, math::round(mTransform.zy));
+	tile = mGame->getMap()->getTile(newPosX, round(mTransform.zy));
 	if(tile != NULL && tile->getPassable())
 	{
 		mTransform.translate(v.x, 0);
@@ -92,8 +93,8 @@ void GameEntity::turn(double angle)
 
 void GameEntity::render(Rect screenSize, WINDOW *wnd)
 {
-	int xPos = math::round(getX()) - screenSize.getX();
-	int yPos = math::round(getY()) - screenSize.getY();
+	int xPos = round(getX()) - screenSize.getX();
+	int yPos = round(getY()) - screenSize.getY();
 
 	if (xPos < 0 || xPos >= screenSize.getWidth() ||
 		yPos < 0 || yPos >= screenSize.getHeight())

@@ -12,7 +12,7 @@
 
 namespace math
 {
-	inline int round(float x)
+	/*inline int round(float x)
 	{
 		x = floor(x + 0.5f);
 		if(x < 0)
@@ -26,7 +26,7 @@ namespace math
 		if(x < 0)
 			return (int)x - 1;
 		return (int)x;
-	}
+	}*/
 
 	inline float nextFloat()
 	{

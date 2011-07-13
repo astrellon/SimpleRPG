@@ -8,7 +8,6 @@
 using namespace std;
 
 class Game;
-//class UIText;
 
 class Animal : public GameEntity
 {
@@ -74,12 +73,18 @@ protected:
 	float mSize;
 
 	float mHunger;
+	float mHealth;
 
 	int mStrength;
 	int mIntelligence;
 
 	bool mWalking;
 
+	float mMetabolicRate;
+
+	//virtual float calculateHunger(float dt);
+	//virtual bool isHungry();
+	
 	virtual void eatEntity(GameEntity *entity);
 
 	virtual void doStateIdle(float dt) {}

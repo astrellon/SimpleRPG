@@ -8,6 +8,8 @@
 
 #include <boost/regex.hpp>
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/math/special_functions/round.hpp>
+using boost::math::round;
 
 #include "Map.h"
 #include "Rect.h"
@@ -19,7 +21,34 @@
 class GameEntity;
 class Animal;
 
-using namespace std;
+typedef struct _FindEntityResult
+{
+	GameEntity *entity;
+	vector<Vector2f> *path;
+
+	_FindEntityResult()
+	{
+		entity = NULL;
+		path = NULL;
+	}
+	_FindEntityResult(GameEntity *e, vector<Vector2f> *p)
+	{
+		entity = e;
+		path = p;
+	}
+	void clear()
+	{
+		entity = NULL;
+		if(path != NULL)
+		{
+			delete path;
+			path = NULL;
+		}
+	}
+} FindEntityResult;
+
+using std::vector;
+using std::string;
 
 typedef vector<GameEntity *> EntityList;
 
@@ -51,7 +80,7 @@ public:
 		mCursorMode = mode;
 		mSelectedItem = NULL;
 	}
-	pair<int, int> getCursorPosition() { return pair<int, int>(mCursorX, mCursorY); }
+	Vector2i getCursorPosition() { return Vector2i(mCursorX, mCursorY); }
 	void setCursorPosition(int xPos, int yPos);
 	void displayUnderCursor(UIContainer &hud);
 
@@ -62,7 +91,7 @@ public:
 
 	void setDebugAnimal(Animal *animal);
 
-	GameEntity *findClosestEntity(Vector2f position, string entityType);
+	FindEntityResult findClosestEntity(Vector2f startPosition, string entityType);
 
 protected:
 	bool mRedisplay;
@@ -75,7 +104,7 @@ protected:
 	bool mUnderCursorDirty;
 
 	Animal *mDebugAnimal;
-	GameEntity *mFoundEntity;
+	FindEntityResult mFoundEntity;
 	IKeyActions *mSelectedItem;
 
 	UIList mHud;
@@ -87,23 +116,7 @@ protected:
 	bool mCursorMode;
 	int mLookFor;
 
-	void switchKeyItem(IKeyActions *item, UIContainer &hud)
-	{
-		if(mSelectedItem != NULL)
-		{
-			mSelectedItem->clearDisplay(hud);
-		}
-		mHud.setScrollY(0);
-		mSelectedItem = item;
-		if(item != NULL)
-		{
-			item->setupDisplay(hud);
-		}
-		else
-		{
-			mHud.addChild(mHudText);
-		}
-	}
+	void switchKeyItem(IKeyActions *item, UIContainer &hud);
 
 	static char *LOOK_FOR_TABLE[];
 };

@@ -96,7 +96,7 @@ double manhattanDistance(const Vector2f &p1, const Vector2f &p2)
 	return abs(p1.x - p2.x) + abs(p1.y - p2.y);
 }
 
-vector<Vector2f> *Map::search(Vector2f start, Vector2f end)
+vector<Vector2f> *Map::search(Vector2i start, Vector2i end)
 {
 	vector<AStarNode *> openList;
 
@@ -114,9 +114,9 @@ vector<Vector2f> *Map::search(Vector2f start, Vector2f end)
 		}
 	}
 
-	openList.push_back(&mMapData[math::round(start.x)][math::round(start.y)]);
+	openList.push_back(&mMapData[start.x][start.y]);
 
-	AStarNode *endNode = &mMapData[math::round(end.x)][math::round(end.y)];
+	AStarNode *endNode = &mMapData[end.x][end.y];
 	endNode->parent = NULL;
 
 	vector<AStarNode *> closedList;

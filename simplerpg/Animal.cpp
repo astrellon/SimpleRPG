@@ -15,6 +15,9 @@ Animal::Animal(Game *game) : GameEntity(game)
 	mDestination = Vector2f(-1, -1);
 
 	mName = "Animal";
+
+	mHealth = 1.0f;
+	mHunger = 0.0f;
 }
 
 Animal::~Animal(void)
@@ -131,12 +134,13 @@ void Animal::doStateMoving(float dt)
 			if(mPath->empty())
 			{
 				mState = STATE_IDLE;
+				delete mPath;
 				break;
 			}
 			continue;
 		}
 		
-		float toFacing = atan2(toNextPos.y, toNextPos.x) - M_PIF / 2.0f;
+		float toFacing = atan2(toNextPos.y, toNextPos.x) - M_PIF * 0.5f;
 
 		float facingDiff = getTurnAmount(facing, toFacing);
 		float maxFacingChange = dt * mTurningSpeed;
@@ -148,7 +152,6 @@ void Animal::doStateMoving(float dt)
 		turn(facingDiff);
 
 		facing = (float)getFacing();
-
 		float turnLeft = getTurnAmount(facing, toFacing);
 
 		if (turnLeft > 0.01f || turnLeft < -0.01f)
@@ -180,8 +183,8 @@ void Animal::setDestination(const float &xPos, const float &yPos)
 void Animal::setDestination(const Vector2f &dest)
 {
 	mDestination = dest;
-	mDestination.x = (float)math::round(mDestination.x);
-	mDestination.y = (float)math::round(mDestination.y);
+	mDestination.x = (float)round(mDestination.x);
+	mDestination.y = (float)round(mDestination.y);
 	updateMovePath();
 }
 
@@ -204,8 +207,8 @@ void Animal::updateMovePath()
 			mPath = NULL;
 		}
 		Vector2f pos = getPosition();
-		pos.x = (float)math::round(pos.x);
-		pos.y = (float)math::round(pos.y);
+		pos.x = (float)round(pos.x);
+		pos.y = (float)round(pos.y);
 		mPath = mGame->getMap()->search(pos, mDestination);
 		mState = STATE_MOVING;
 	}
@@ -245,3 +248,9 @@ void Animal::eatPlant(Plant *plant)
 {
 	eatPlant(plant);
 }
+/*
+float Animal::calculateHunger(float dt)
+{
+
+}
+*/

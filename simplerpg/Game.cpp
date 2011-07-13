@@ -25,7 +25,6 @@ Game::Game(void)
 
 	mMenuLevel = 0;
 	mLookFor = 0;
-	mFoundEntity = NULL;
 }
 
 Game::~Game(void)
@@ -125,7 +124,7 @@ void Game::keyActions(const int key)
 		if (key == 27)
 		{
 			setCursorMode(false);
-			mFoundEntity = NULL;
+			mFoundEntity.clear();
 			mMenuLevel = 0;
 		}
 
@@ -139,7 +138,8 @@ void Game::keyActions(const int key)
 
 		if(key == 'f')
 		{
-			mFoundEntity = findClosestEntity(Vector2f(mCursorX, mCursorY), LOOK_FOR_TABLE[mLookFor]);
+			mFoundEntity.clear();
+			mFoundEntity = findClosestEntity(Vector2i(mCursorX, mCursorY), LOOK_FOR_TABLE[mLookFor]);
 		}
 		break;
 	}
@@ -173,9 +173,9 @@ void Game::displayActions()
 		mHudText << "<11>x</>: Toggle P/A (" << LOOK_FOR_TABLE[mLookFor][0] << ")\n";
 		mHudText << "<11>f</>: Find.\n\n";
 
-		if(mFoundEntity != NULL)
+		if(mFoundEntity.entity != NULL)
 		{
-			mHudText << "Found: <12>" << mFoundEntity->getEntityName() << "</>";
+			mHudText << "Found: <12>" << mFoundEntity.entity->getEntityName() << "</>";
 		}
 		
 		break;
@@ -212,8 +212,8 @@ EntityList Game::getUnderCursor()
 	{
 		GameEntity *entity = *iter;
 		Vector2f pos = entity->getPosition();
-		int posX = math::round(pos.x);
-		int posY = math::round(pos.y);
+		int posX = round(pos.x);
+		int posY = round(pos.y);
 		if(posX == mCursorX && posY == mCursorY)
 		{
 			mUnderCursor.push_back(entity);
@@ -562,9 +562,10 @@ float lengthOfPath(const vector<Vector2f> *path)
 	return (float)length;
 }
 
-GameEntity *Game::findClosestEntity(Vector2f position, string entityType)
+FindEntityResult Game::findClosestEntity(Vector2f position, string entityType)
 {
 	GameEntity *shortestEntity = NULL;
+	vector<Vector2f> *shortestPath = NULL;
 	float shortest = 1e30f;
 	Map *m = getMap();
 	for(EntityList::iterator iter = mEntities.begin(); iter != mEntities.end(); iter++)
@@ -580,11 +581,30 @@ GameEntity *Game::findClosestEntity(Vector2f position, string entityType)
 				{
 					shortest = length;
 					shortestEntity = entity;
+					if(shortestPath != NULL)
+						delete shortestPath;
+					shortestPath = path;
 				}
-				delete path;
 			}
-			
 		}
 	}
-	return shortestEntity;
+	return FindEntityResult(shortestEntity, shortestPath);
+}
+
+void Game::switchKeyItem(IKeyActions *item, UIContainer &hud)
+{
+	if(mSelectedItem != NULL)
+	{
+		mSelectedItem->clearDisplay(hud);
+	}
+	mHud.setScrollY(0);
+	mSelectedItem = item;
+	if(item != NULL)
+	{
+		item->setupDisplay(hud);
+	}
+	else
+	{
+		mHud.addChild(mHudText);
+	}
 }

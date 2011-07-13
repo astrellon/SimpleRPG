@@ -2,6 +2,9 @@
 
 #include <math.h>
 
+#include <boost/math/special_functions/round.hpp>
+using boost::math::round;
+
 #ifndef _WIN32
 inline int abs(int x)
 {
@@ -19,6 +22,27 @@ public:
 	Vector2(void) { x = 0; y = 0; }
 	Vector2(T ix, T iy) { x = ix; y = iy; }
 	~Vector2(void) {}
+
+	operator Vector2<float>()
+	{
+		return Vector2<float>((float)x, (float)y);
+	}
+
+	operator Vector2<double>()
+	{
+		return Vector2<double>((double)x, (double)y);
+	}
+
+	operator Vector2<long double>()
+	{
+		return Vector2<long double>((long double)x, (long double)y);
+	}
+
+	template <class F>
+	operator Vector2<F>()
+	{
+		return Vector2<F>(round(x), round(y));
+	}
 
 	inline Vector2<T> add(Vector2<T> rhs)
 	{

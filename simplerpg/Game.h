@@ -92,6 +92,7 @@ public:
 	void setDebugAnimal(Animal *animal);
 
 	FindEntityResult findClosestEntity(Vector2f startPosition, string entityType);
+	vector<Vector2f> *findPath(Vector2i startPosition, Vector2i endPosition);
 
 protected:
 	bool mRedisplay;
@@ -115,6 +116,8 @@ protected:
 	int mCursorY;
 	bool mCursorMode;
 	int mLookFor;
+
+	int mSaveCounter;
 
 	void switchKeyItem(IKeyActions *item, UIContainer &hud);
 

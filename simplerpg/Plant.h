@@ -10,9 +10,11 @@ public:
 	Plant(Game *game);
 	~Plant();
 
-	Pixel virtual getGraphic();
-
 	virtual string getEntityType() { return "Plant"; }
+
+	virtual void saveProperties(ofstream &file);
+	virtual void saveProperty(const EntityProperty &propertyId, ofstream &file);
+	virtual void loadProperties(boost::sregex_token_iterator &iter);
 
 protected:
 };

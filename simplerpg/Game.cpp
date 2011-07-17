@@ -25,6 +25,7 @@ Game::Game(void)
 
 	mMenuLevel = 0;
 	mLookFor = 0;
+	mSaveCounter = 0;
 }
 
 Game::~Game(void)
@@ -100,6 +101,11 @@ void Game::keyActions(const int key)
 			setCursorMode(true);
 			mMenuLevel = 2;
 		}
+
+		if (key == 's')
+		{
+			saveMap("test.out");
+		}
 		break;
 
 	case 1:
@@ -153,9 +159,18 @@ void Game::displayActions()
 	{
 	default:
 	case 0:
-		mHudText << "Menu\n\n";
+		mHudText << "<15>Menu</>\n\n";
 		mHudText << "<11>k</>: Look mode.\n";
-		mHudText << "<11>f</>: Find closest.";
+		mHudText << "<11>f</>: Find closest.\n";
+		mHudText << "<11>s</>: Save.";
+		if(mSaveCounter > 0)
+		{
+			mSaveCounter--;
+			mHudText << " (Saved)";
+		}
+
+		mHudText << '\n';
+			 
 		break;
 	case 1:
 		if(mSelectedItem != NULL)
@@ -168,10 +183,12 @@ void Game::displayActions()
 		}
 		break;
 	case 2:
-		mHudText << "Find closest\n";
+		mHudText << "<15>Find closest</>\n";
 		mHudText << "Pos (<12>" << mCursorX << ", " << mCursorY << "</>)\n\n";
 		mHudText << "<11>x</>: Toggle P/A (" << LOOK_FOR_TABLE[mLookFor][0] << ")\n";
-		mHudText << "<11>f</>: Find.\n\n";
+		mHudText << "<11>f</>: Find.\n";
+		
+		mHudText << '\n';
 
 		if(mFoundEntity.entity != NULL)
 		{
@@ -255,7 +272,7 @@ void Game::displayUnderCursor(UIContainer &hud)
 	Tile *tile = getMap()->getTile(mCursorX, mCursorY);
 	if(tile != NULL)
 	{
-		mHudText << "Tile: " << tile->getName() << '\n';
+		mHudText << "<15>Tile:</> " << tile->getName() << '\n';
 	}
 
 	int num = 1;
@@ -303,6 +320,11 @@ void Game::moveCamera(int dx, int dy)
 	mScreenSize.setY(mScreenSize.getY() + dy);
 }
 
+vector<Vector2f> *Game::findPath(Vector2i startPosition, Vector2i endPosition)
+{
+	return getMap()->search(startPosition, endPosition);
+}
+
 void Game::saveMap(string filename)
 {
 	ofstream file(filename);
@@ -340,13 +362,13 @@ void Game::saveMap(string filename)
 
 	file << endl << "-- Entities" << endl;
 
-	
 	for(vector<GameEntity *>::iterator iter = mEntities.begin(); iter != mEntities.end(); iter++)
 	{
 		(*iter)->saveToFile(file);
 	}
 
 	file << endl << "-- End";
+	mSaveCounter = 10;
 
 	file.close();
 }

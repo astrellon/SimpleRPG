@@ -1,12 +1,17 @@
 #include "GameEntity.h"
 #include "Game.h"
 
+unsigned int GameEntity::sId = 0;
+
+map<unsigned int, GameEntity *> GameEntity::sEntities;
+
 GameEntity::GameEntity(Game *game)
 {
 	mGame = game;
 	mGraphic = Pixel('o', 7, false);
 	mName = "GameEntity";
 	mAmountEaten = 0.0f;
+	mId = nextId();
 }
 
 GameEntity::~GameEntity(void)
@@ -131,21 +136,29 @@ void GameEntity::saveToFile(ofstream &file)
 
 void GameEntity::saveProperties(ofstream &file)
 {
-	saveProperty(PROPERTY_POSITION, file);
-	saveProperty(PROPERTY_NAME, file);
+	saveProperty(ID, file);
+	saveProperty(POSITION, file);
+	saveProperty(FACING, file);
+	saveProperty(NAME, file);
 }
 
-void GameEntity::saveProperty(const int &propertyId, ofstream &file)
+void GameEntity::saveProperty(const EntityProperty &propertyId, ofstream &file)
 {
 	Vector2f v;
 
 	switch(propertyId)
 	{
-	case PROPERTY_POSITION:
+	case ID:
+		file << "id " << getId() << endl;
+		break;
+	case POSITION:
 		v = getPosition();
 		file << "position " << v.x << ' ' << v.y << endl;
 		break;
-	case PROPERTY_NAME:
+	case FACING:
+		file << "facing " << getFacing() << endl;
+		break;
+	case NAME:
 		file << "name \"" << getEntityName() << "\"" << endl;
 		break;
 	default:
@@ -157,12 +170,23 @@ void GameEntity::saveProperty(const int &propertyId, ofstream &file)
 void GameEntity::loadProperties(boost::sregex_token_iterator &iter)
 {
 	string propertyName = *iter;
-	if(iequals(propertyName, "position"))
+	if(iequals(propertyName, "id"))
+	{
+		iter++;
+		setId(lexical_cast<unsigned int>(*iter++));
+	}
+	else if(iequals(propertyName, "position"))
 	{
 		iter++;
 		float x = lexical_cast<float>(*iter++);
 		float y = lexical_cast<float>(*iter++);
 		move(x, y, false);
+	}
+	else if(iequals(propertyName, "facing"))
+	{
+		iter++;
+		float f = lexical_cast<float>(*iter++);
+		setFacing(f);
 	}
 	else if(iequals(propertyName, "name"))
 	{

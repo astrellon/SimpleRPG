@@ -3,12 +3,12 @@
 #include <iostream>
 #include "curses.h"
 #include <math.h>
+#include <map>
 
 #include <boost/regex.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/math/special_functions/round.hpp>
-using boost::math::round;
 
 #include "Pixel.h"
 #include "GameMath.h"
@@ -17,22 +17,18 @@ using boost::math::round;
 #include "UIComponent.h"
 #include "Rect.h"
 
-using namespace std;
-using namespace boost::algorithm;
+using boost::math::round;
+using boost::algorithm::iequals;
+using std::map;
 using boost::lexical_cast;
-
-// Define different states that the entities can be in.
-#define STATE_IDLE		0
-#define STATE_MOVING	1
-#define STATE_HUNGRY	2
 
 // Different properties that can be used during loading/saving.
 // Not all entities will have these.
-#define PROPERTY_FACING			0
-#define PROPERTY_POSITION		1
-#define PROPERTY_DESTINATION	2
-#define PROPERTY_NAME			3
-#define PROPERTY_GRAPHIC		4
+enum EntityProperty { ID, FACING, POSITION, DESTINATION, NAME, GRAPHIC };
+
+class GameEntity;
+
+typedef map<unsigned int, GameEntity *> EntityMap;
 
 class Game;
 
@@ -107,26 +103,65 @@ public:
 	// the type entity that needs to be saved/loaded.
 	virtual string getEntityType() { return "GameEntity"; }
 
+	static int nextId() { return sId++; }
+	
+	void setId(unsigned int id)
+	{
+		EntityMap::iterator iter = sEntities.find(id);
+		if(iter == sEntities.end())
+		{
+			iter = sEntities.find(mId);
+			if (iter != sEntities.end())
+				sEntities.erase(iter);
+
+			sId = max(sId, id) + 1;
+			mId = id;
+			
+			sEntities[id] = this;
+		}
+		else
+		{
+			throw "Two entities attempting to use the same ID!";
+		}
+	}
+	unsigned int getId() { return mId; }
+
+	static GameEntity *getEntityById(unsigned int id)
+	{
+		EntityMap::iterator iter = sEntities.find(id);
+		if(iter == sEntities.end())
+		{
+			return NULL;
+		}
+		return iter->second;
+	}
+
 protected:
+	unsigned int mId;
 	Pixel mGraphic;
 	Game* mGame;
 	Matrix3x3f mTransform;
 	string mName;
-
+	
 	bool mRedisplay;
 	UIText *mHudText;
 
 	float mAmountEaten;
 
+	static EntityMap sEntities;
+
 	// The function which loads each property from the file tokens.
 	// Should increment the iterator at least once.
 	virtual void loadProperties(boost::sregex_token_iterator &iter);
 	// Saves an individual property based on the property ID to the file stream.
-	virtual void saveProperty(const int &propertyId, ofstream &file);
+	virtual void saveProperty(const EntityProperty &propertyId, ofstream &file);
 	// Calls the appropriate functions to save all the properties for this entity.
 	virtual void saveProperties(ofstream &file);
 
 	// Call when the entity is added into a Game.
 	virtual void onAddedToGame() {}
-	
+
+private:
+	static unsigned int sId;
+
 };

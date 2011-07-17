@@ -24,27 +24,36 @@
 
 -- Entities
 Animal
-facing -2.9342
-position 2.75406 4.16886
-destination 5 1
+id 0
+position 2.92859 3.30684
+facing -3.08701
 name "Fred"
+destination @ 2
 end
 
 Animal
-facing 1.6872
-position 10.8575 4.10027
-destination 5 1
+id 1
+position 9.93701 4.02985
+facing 1.60264
 name "Jeff"
+destination 5 1
 end
 
 Plant
+id 2
 position 5 6
+facing 0
 name "Shrub"
+graphic 5 1 +
 end
 
 Plant
+id 3
 position 6 6
+facing 0
 name "Better Shrub"
+graphic 2 1 *
 end
+
 
 -- End

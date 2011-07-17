@@ -4,6 +4,7 @@
 #include "GameEntity.h"
 #include "Plant.h"
 #include "UIText.h"
+#include "Destination.h"
 
 using namespace std;
 
@@ -18,13 +19,7 @@ public:
 	Pixel virtual getGraphic();
 	void virtual update(float dt);
 
-	virtual void setDestination(const Vector2f &dest);
-	virtual void setDestination(const float &xPos, const float &yPos);
-	virtual Vector2f getDestination() { return mDestination; }
-
-	vector<Vector2f> *getPath() { return mPath; }
-
-	virtual void updateMovePath();
+	Destination *getDestination() { return &mDestination; }
 
 	virtual void displayActions(UIContainer &hud);
 
@@ -48,8 +43,14 @@ public:
 	virtual float getSize() { return mSize; }
 	virtual void setSize(float size) { mSize = size; }
 
+	virtual float getMass() { return mMass; }
+	virtual void setMass(float mass) { mMass = mass; }
+
 	virtual int getStrength() { return mStrength; }
 	virtual void setStrength(int strength) { mStrength = strength; }
+
+	virtual int getDexderity() { return mDexderity; }
+	virtual void setDexderity(int dexderity) { mDexderity = dexderity; }
 
 	virtual int getIntelligence() { return mIntelligence; }
 	virtual void setIntelligence(int intelligence) { mIntelligence = intelligence; }
@@ -59,31 +60,38 @@ public:
 	virtual void eatPlant(Plant *plant);
 	virtual void eatAnimal(Animal *animal);
 
+	virtual void setEnergyNeededPerDay(float energy) { mEnergyNeededPerDay = energy; }
+	virtual float getEnergyNeededPerDay() { return mEnergyNeededPerDay; }
+
+	virtual void setEnergy(float energy) { mEnergy = energy; }
+	virtual float getEnergy() { return mEnergy; }
+
 protected:
 
-	vector<Vector2f> *mPath;
-	Vector2f mDestination;
-	int mState;
-
+	Destination mDestination;
+	
 	float mRunningSpeed;
 	float mTurningSpeed;
 	float mWalkingSpeed;
 	float mAggression;
 	float mDiet;
 	float mSize;
+	float mMass;
 
 	float mHunger;
 	float mHealth;
 
 	int mStrength;
+	int mDexderity;
 	int mIntelligence;
 
 	bool mWalking;
 
-	float mMetabolicRate;
+	float mEnergy;
+	float mEnergyNeededPerDay;
 
-	//virtual float calculateHunger(float dt);
-	//virtual bool isHungry();
+	virtual float calculateKcalPerDay();
+	virtual bool isHungry();
 	
 	virtual void eatEntity(GameEntity *entity);
 
@@ -95,14 +103,9 @@ protected:
 	virtual void doStateFindPlant(float dt) {}
 
 	virtual void saveProperties(ofstream &file);
-	virtual void saveProperty(const int &propertyId, ofstream &file);
+	virtual void saveProperty(const EntityProperty &propertyId, ofstream &file);
 	virtual void loadProperties(boost::sregex_token_iterator &iter);
 
 	float getTurnAmount(float facing, float dest);
-
-	virtual void onAddedToGame()
-	{
-		updateMovePath();
-	}
 };
 

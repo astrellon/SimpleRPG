@@ -22,6 +22,7 @@
 #include "UIList.h"
 #include "UISpacer.h"
 #include "UISelector.h"
+#include "Destination.h"
 
 using namespace boost::filesystem;
 
@@ -99,7 +100,17 @@ Game *startGame(string filename)
 		getchar();
 		return 0;
 	}
+	/*
+	Animal *ani = new Animal(game);
+	ani->move(1, 3);
+	game->addEntity(ani);
+	ani->getDestination()->setDestination(24, 11);
 
+	Animal *ani2 = new Animal(game);
+	ani2->move(1, 1);
+	game->addEntity(ani2);
+	ani2->getDestination()->setEntity(ani);
+	*/
 	return game;
 }
 
@@ -108,7 +119,7 @@ int main()
 	srand( (unsigned int)time(NULL) );
 
 	Tile::registerDefaults();
-
+	
 	Game *game;
 
 	initscr();

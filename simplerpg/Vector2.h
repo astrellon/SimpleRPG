@@ -5,6 +5,12 @@
 #include <boost/math/special_functions/round.hpp>
 using boost::math::round;
 
+#include <string>
+#include <sstream>
+
+using std::string;
+using std::stringstream;
+
 #ifndef _WIN32
 inline int abs(int x)
 {
@@ -22,6 +28,27 @@ public:
 	Vector2(void) { x = 0; y = 0; }
 	Vector2(T ix, T iy) { x = ix; y = iy; }
 	~Vector2(void) {}
+
+	operator string()
+	{
+		stringstream ss;
+		ss << x << ", " << y;
+		return ss.str();
+	}
+
+	string toString(int colour = -1)
+	{
+		stringstream ss;
+		if(colour < 0)
+		{
+			ss << x << ", " << y;
+		}
+		else
+		{
+			ss << '<' << colour << '>' << x << ", " << y << "</>";
+		}
+		return ss.str();
+	}
 
 	operator Vector2<float>()
 	{
@@ -91,8 +118,48 @@ public:
 		}
 	}
 
-	inline double length() { return sqrt(x * x + y * y); }
-	inline double dot(Vector2<T> rhs) { return x * rhs.x + y * rhs.y; }
+	inline double length() { return sqrt((double)(x * x + y * y)); }
+	inline double lengthSqrd() { return (double)(x * x + y * y); }
+	inline double dot(Vector2<T> rhs) { return (double)(x * rhs.x + y * rhs.y); }
+
+	inline Vector2<T> &operator =(const Vector2<T> &rhs)
+	{
+		x = rhs.x;
+		y = rhs.y;
+		return *this;
+	}
+
+	inline Vector2<T> &operator =(const float &rhs)
+	{
+		x = (T)rhs;
+		y = (T)rhs;
+		return *this;
+	}
+
+	inline Vector2<T> &operator =(const double &rhs)
+	{
+		x = (T)rhs;
+		y = (T)rhs;
+		return *this;
+	}
+
+	inline Vector2<T> &operator =(const long double &rhs)
+	{
+		x = (T)rhs;
+		y = (T)rhs;
+		return *this;
+	}
+
+	inline Vector2<T> &operator =(const int &rhs)
+	{
+		x = round(rhs);
+		y = round(rhs);
+		return *this;
+	}
+	inline bool operator ==(const Vector2<T> &rhs) const
+	{
+		return x == rhs.x && y == rhs.y;
+	}
 };
 
 typedef Vector2<float> Vector2f;

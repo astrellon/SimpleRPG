@@ -24,10 +24,10 @@ public:
 	virtual void displayActions(UIContainer &hud);
 
 	virtual float getRunningSpeed() { return mRunningSpeed; }
-	virtual void setRunningSpeed(float speed) { mRunningSpeed = speed; }
+	virtual void  setRunningSpeed(float speed) { mRunningSpeed = speed; }
 
 	virtual float getWalkingSpeed() { return mWalkingSpeed; }
-	virtual void setWalkingSpeed(float speed) { mWalkingSpeed = speed; }
+	virtual void  setWalkingSpeed(float speed) { mWalkingSpeed = speed; }
 
 	virtual bool getWalking() { return mWalking; }
 	virtual void setWalking(bool walking) { mWalking = walking; }
@@ -35,24 +35,24 @@ public:
 	virtual float getCurrentSpeed() { return getWalking() ? getWalkingSpeed() : getRunningSpeed(); }
 
 	virtual float getAggression() { return mAggression; }
-	virtual void setAggression(float aggression) { mAggression = aggression; }
+	virtual void  setAggression(float aggression) { mAggression = aggression; }
 
 	virtual float getDiet() { return mDiet; }
-	virtual void setDiet(float diet) { mDiet = diet; }
+	virtual void  setDiet(float diet) { mDiet = diet; }
 
 	virtual float getSize() { return mSize; }
-	virtual void setSize(float size) { mSize = size; }
+	virtual void  setSize(float size) { mSize = size; }
 
 	virtual float getMass() { return mMass; }
-	virtual void setMass(float mass) { mMass = mass; }
+	virtual void  setMass(float mass) { mMass = mass; }
 
-	virtual int getStrength() { return mStrength; }
+	virtual int  getStrength() { return mStrength; }
 	virtual void setStrength(int strength) { mStrength = strength; }
 
-	virtual int getDexderity() { return mDexderity; }
+	virtual int  getDexderity() { return mDexderity; }
 	virtual void setDexderity(int dexderity) { mDexderity = dexderity; }
 
-	virtual int getIntelligence() { return mIntelligence; }
+	virtual int  getIntelligence() { return mIntelligence; }
 	virtual void setIntelligence(int intelligence) { mIntelligence = intelligence; }
 
 	virtual string getEntityType() { return "Animal"; }
@@ -60,12 +60,25 @@ public:
 	virtual void eatPlant(Plant *plant);
 	virtual void eatAnimal(Animal *animal);
 
-	virtual void setEnergyNeededPerDay(float energy) { mEnergyNeededPerDay = energy; }
 	virtual float getEnergyNeededPerDay() { return mEnergyNeededPerDay; }
-
-	virtual void setEnergy(float energy) { mEnergy = energy; }
+	virtual void  setEnergyNeededPerDay(float energy) { mEnergyNeededPerDay = energy; }
+	
+	virtual void  setEnergy(float energy) { mEnergy = energy; }
 	virtual float getEnergy() { return mEnergy; }
 
+	virtual float getHealth() { return mHealth; }
+	virtual void  setHealth(float health);
+	virtual void  changeHealth(float health);
+
+	virtual float getMaxHealth() { return mMaxHealth; }
+	virtual void  setMaxHealth(float health) { mMaxHealth = health; }
+
+	virtual float setDamageBase() { return mDamageBase; }
+	virtual void  setDamageBase(float damage) { mDamageBase = damage; }
+
+	virtual void killAnimal();
+	virtual bool isDead() { return mHealth <= 0.0f; }
+	
 protected:
 
 	Destination mDestination;
@@ -78,8 +91,11 @@ protected:
 	float mSize;
 	float mMass;
 
-	float mHunger;
+	float mDamageBase;
 	float mHealth;
+	float mMaxHealth;
+
+	float mHunger;
 
 	int mStrength;
 	int mDexderity;

@@ -24,7 +24,7 @@ using boost::lexical_cast;
 
 // Different properties that can be used during loading/saving.
 // Not all entities will have these.
-enum EntityProperty { ID, FACING, POSITION, DESTINATION, NAME, GRAPHIC };
+enum EntityProperty { ID, FACING, POSITION, DESTINATION, NAME, GRAPHIC, HEALTH };
 
 class GameEntity;
 

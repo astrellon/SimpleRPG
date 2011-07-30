@@ -13,6 +13,7 @@ Animal::Animal(Game *game) : GameEntity(game)
 	mName = "Animal";
 
 	mHealth = 1.0f;
+	mMaxHealth = 1.0f;
 	mHunger = 0.0f;
 
 	mEnergyNeededPerDay = 0.0f;
@@ -32,10 +33,23 @@ void Animal::displayActions(UIContainer &hud)
 
 	GameEntity::displayActions(hud);
 
-	*mHudText << "Destination: " << mDestination.getDestination().x << ", " << mDestination.getDestination().y << '\n';
+	static char buff[128];
+	sprintf(buff, "%.1f, %.1f\n", mDestination.getDestination().x, mDestination.getDestination().y);
+
+	*mHudText << "<15>Dest</>: " << buff;
 	GameEntity *target = mDestination.getEntity();
-	*mHudText << "Target: " << (target == NULL ? "null" : target->getEntityName()) << '\n';
-	*mHudText << "TargetId: " << mDestination.getEntityId() << '\n';
+	if(mDestination.getEntityId() != -1)
+	{
+		*mHudText << "<15>Target</>: " << (target == NULL ? "null" : target->getEntityName()) << '\n';
+		*mHudText << "<15>TargetId</>: " << mDestination.getEntityId() << '\n';
+	}
+	
+	sprintf(buff, "<12>%.1f/%.1f</>\n", getHealth(), getMaxHealth());
+	*mHudText << "<15>Health</>: <12>" << buff;
+	if(isDead())
+	{
+		*mHudText << "<7>(Dead)</>\n";
+	}
 }
 
 Pixel Animal::getGraphic()
@@ -72,6 +86,16 @@ void Animal::loadProperties(boost::sregex_token_iterator &iter)
 			mDestination.setDestination(x, y);
 		}
 	}
+	else if(iequals(propertyName, "health"))
+	{
+		iter++;
+		mHealth = lexical_cast<float>(*iter++);
+		if(mHealth < 0.0f)
+		{
+			mHealth = 0.0f;
+		}
+		mMaxHealth = lexical_cast<float>(*iter++);
+	}		
 	else
 	{
 		GameEntity::loadProperties(iter);
@@ -82,6 +106,7 @@ void Animal::saveProperties(ofstream &file)
 {
 	GameEntity::saveProperties(file);
 	saveProperty(DESTINATION, file);
+	saveProperty(HEALTH, file);
 }
 
 void Animal::saveProperty(const EntityProperty &propertyId, ofstream &file)
@@ -99,6 +124,9 @@ void Animal::saveProperty(const EntityProperty &propertyId, ofstream &file)
 			v = dest->getDestination();
 			file << "destination " << v.x << ' ' << v.y << endl;
 		}
+		break;
+	case HEALTH:
+		file << "health " << getHealth() << ' ' << getMaxHealth() << endl;
 		break;
 	default:
 		GameEntity::saveProperty(propertyId, file);
@@ -237,4 +265,29 @@ bool Animal::isHungry()
 	float kcalday = calculateKcalPerDay();
 	float diff = kcalday - getEnergy();
 	return diff < kcalday * 0.5f;
+}
+
+void Animal::changeHealth(float health)
+{
+	setHealth(getHealth() + health);
+}
+
+void Animal::setHealth(float health)
+{
+	if(health < 0 && mHealth > 0)
+	{
+		mHealth = 0;
+		killAnimal();
+		return;
+	}
+	mHealth = health;
+}
+
+void Animal::killAnimal()
+{
+	if(getHealth() > 0)
+	{
+		setHealth(0);
+		return;
+	}
 }

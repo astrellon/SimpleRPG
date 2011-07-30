@@ -211,8 +211,8 @@ void GameEntity::displayActions(UIContainer &hud)
 		return;
 
 	mHudText->clearText();
-	*mHudText << "Entity: " << getEntityName() << '\n';
-	*mHudText << "Facing: " << getFacing() << '\n';
+	*mHudText << "<15>Entity</>: " << getEntityName() << '\n';
+	*mHudText << "<15>Facing</>: " << getFacing() << '\n';
 
 	mRedisplay = false;
 }

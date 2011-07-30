@@ -19,6 +19,15 @@ Animal::Animal(Game *game) : GameEntity(game)
 	mEnergyNeededPerDay = 0.0f;
 	mEnergy = 0.0f;
 
+	mMass = 1.0f;
+	mSize = 1.0f;
+	mDiet = 0.5f;
+	mDamageBase = 1.0f;
+
+	mStrength = 1;
+	mDexderity = 1;
+	mIntelligence = 1;
+	
 	mDestination.setGame(game);
 }
 
@@ -95,7 +104,57 @@ void Animal::loadProperties(boost::sregex_token_iterator &iter)
 			mHealth = 0.0f;
 		}
 		mMaxHealth = lexical_cast<float>(*iter++);
-	}		
+	}
+	else if(iequals(propertyName, "strength"))
+	{
+		iter++;
+		setStrength(lexical_cast<int>(*iter++));
+	}
+	else if(iequals(propertyName, "dexderity"))
+	{
+		iter++;
+		setDexderity(lexical_cast<int>(*iter++));
+	}
+	else if(iequals(propertyName, "intelligence"))
+	{
+		iter++;
+		setIntelligence(lexical_cast<int>(*iter++));
+	}
+	else if(iequals(propertyName, "running_speed"))
+	{
+		iter++;
+		setRunningSpeed(lexical_cast<float>(*iter++));
+	}
+	else if(iequals(propertyName, "walking_speed"))
+	{
+		iter++;
+		setWalkingSpeed(lexical_cast<float>(*iter++));
+	}
+	else if(iequals(propertyName, "turning_speed"))
+	{
+		iter++;
+		setTurningSpeed(lexical_cast<float>(*iter++));
+	}
+	else if(iequals(propertyName, "entity_size"))
+	{
+		iter++;
+		setSize(lexical_cast<float>(*iter++));
+	}
+	else if(iequals(propertyName, "entity_mass"))
+	{
+		iter++;
+		setMass(lexical_cast<float>(*iter++));
+	}
+	else if(iequals(propertyName, "diet"))
+	{
+		iter++;
+		setDiet(lexical_cast<float>(*iter++));
+	}
+	else if(iequals(propertyName, "damage_base"))
+	{
+		iter++;
+		setDamageBase(lexical_cast<float>(*iter++));
+	}
 	else
 	{
 		GameEntity::loadProperties(iter);
@@ -107,6 +166,16 @@ void Animal::saveProperties(ofstream &file)
 	GameEntity::saveProperties(file);
 	saveProperty(DESTINATION, file);
 	saveProperty(HEALTH, file);
+	saveProperty(STRENGTH, file);
+	saveProperty(DEXDERITY, file);
+	saveProperty(INTELLIGENCE, file);
+	saveProperty(RUNNING_SPEED, file);
+	saveProperty(WALKING_SPEED, file);
+	saveProperty(TURNING_SPEED, file);
+	saveProperty(ENTITY_SIZE, file);
+	saveProperty(ENTITY_MASS, file);
+	saveProperty(DIET, file);
+	saveProperty(DAMAGE_BASE, file);
 }
 
 void Animal::saveProperty(const EntityProperty &propertyId, ofstream &file)
@@ -127,6 +196,36 @@ void Animal::saveProperty(const EntityProperty &propertyId, ofstream &file)
 		break;
 	case HEALTH:
 		file << "health " << getHealth() << ' ' << getMaxHealth() << endl;
+		break;
+	case STRENGTH:
+		file << "strength " << getStrength() << endl;
+		break;
+	case DEXDERITY:
+		file << "dexderity " << getDexderity() << endl;
+		break;
+	case INTELLIGENCE:
+		file << "intelligence " << getIntelligence() << endl;
+		break;
+	case RUNNING_SPEED:
+		file << "running_speed " << getRunningSpeed() << endl;
+		break;
+	case WALKING_SPEED:
+		file << "walking_speed " << getWalkingSpeed() << endl;
+		break;
+	case TURNING_SPEED:
+		file << "turning_speed " << getTurningSpeed() << endl;
+		break;
+	case ENTITY_SIZE:
+		file << "entity_size " << getSize() << endl;
+		break;
+	case ENTITY_MASS:
+		file << "entity_mass " << getMass() << endl;
+		break;
+	case DAMAGE_BASE:
+		file << "damage_base " << getDamageBase() << endl;
+		break;
+	case DIET:
+		file << "diet " << getDiet() << endl;
 		break;
 	default:
 		GameEntity::saveProperty(propertyId, file);

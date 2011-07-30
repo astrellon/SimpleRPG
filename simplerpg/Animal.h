@@ -34,6 +34,9 @@ public:
 
 	virtual float getCurrentSpeed() { return getWalking() ? getWalkingSpeed() : getRunningSpeed(); }
 
+	virtual float getTurningSpeed() { return mTurningSpeed; }
+	virtual void  setTurningSpeed(float speed) { mTurningSpeed = speed; }
+
 	virtual float getAggression() { return mAggression; }
 	virtual void  setAggression(float aggression) { mAggression = aggression; }
 
@@ -73,7 +76,7 @@ public:
 	virtual float getMaxHealth() { return mMaxHealth; }
 	virtual void  setMaxHealth(float health) { mMaxHealth = health; }
 
-	virtual float setDamageBase() { return mDamageBase; }
+	virtual float getDamageBase() { return mDamageBase; }
 	virtual void  setDamageBase(float damage) { mDamageBase = damage; }
 
 	virtual void killAnimal();

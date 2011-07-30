@@ -30,6 +30,16 @@ facing -3.08701
 name "Fred"
 destination @ 1
 health 0 10.16
+strength 1
+dexderity 1
+intelligence 1
+running_speed 10
+walking_speed 5.1
+turning_speed 2
+entity_size 1
+entity_mass 1
+diet 0.5
+damage_base 1
 end
 
 Animal
@@ -39,6 +49,16 @@ facing 1.60264
 name "Jeff"
 destination 3 7
 health 8.34 12.78
+strength 1
+dexderity 1
+intelligence 1
+running_speed 10
+walking_speed 1.1
+turning_speed 2
+entity_size 1
+entity_mass 1
+diet 0.5
+damage_base 1
 end
 
 Plant

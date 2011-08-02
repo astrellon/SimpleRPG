@@ -26,7 +26,7 @@ using boost::lexical_cast;
 // Not all entities will have these.
 enum EntityProperty { ID, FACING, POSITION, DESTINATION, NAME, GRAPHIC, HEALTH,
 	STRENGTH, DEXDERITY, INTELLIGENCE, RUNNING_SPEED, WALKING_SPEED, TURNING_SPEED,
-	ENTITY_SIZE, ENTITY_MASS, DIET, DAMAGE_BASE };
+	ENTITY_SIZE, ENTITY_MASS, DIET, DAMAGE_BASE, AMOUNT_EATEN };
 
 class GameEntity;
 
@@ -104,6 +104,9 @@ public:
 	// Returns the type of the entity. This is used by the load and saving functions to determine
 	// the type entity that needs to be saved/loaded.
 	virtual string getEntityType() { return "GameEntity"; }
+
+	virtual float getAmountEaten() { return mAmountEaten; }
+	virtual float beEaten(GameEntity *eater);
 
 	static int nextId() { return sId++; }
 	

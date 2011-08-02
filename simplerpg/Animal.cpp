@@ -123,17 +123,17 @@ void Animal::loadProperties(boost::sregex_token_iterator &iter)
 	else if(iequals(propertyName, "running_speed"))
 	{
 		iter++;
-		setRunningSpeed(lexical_cast<float>(*iter++));
+		setRunningSpeedBase(lexical_cast<float>(*iter++));
 	}
 	else if(iequals(propertyName, "walking_speed"))
 	{
 		iter++;
-		setWalkingSpeed(lexical_cast<float>(*iter++));
+		setWalkingSpeedBase(lexical_cast<float>(*iter++));
 	}
 	else if(iequals(propertyName, "turning_speed"))
 	{
 		iter++;
-		setTurningSpeed(lexical_cast<float>(*iter++));
+		setTurningSpeedBase(lexical_cast<float>(*iter++));
 	}
 	else if(iequals(propertyName, "entity_size"))
 	{
@@ -207,13 +207,13 @@ void Animal::saveProperty(const EntityProperty &propertyId, ofstream &file)
 		file << "intelligence " << getIntelligence() << endl;
 		break;
 	case RUNNING_SPEED:
-		file << "running_speed " << getRunningSpeed() << endl;
+		file << "running_speed " << getRunningSpeedBase() << endl;
 		break;
 	case WALKING_SPEED:
-		file << "walking_speed " << getWalkingSpeed() << endl;
+		file << "walking_speed " << getWalkingSpeedBase() << endl;
 		break;
 	case TURNING_SPEED:
-		file << "turning_speed " << getTurningSpeed() << endl;
+		file << "turning_speed " << getTurningSpeedBase() << endl;
 		break;
 	case ENTITY_SIZE:
 		file << "entity_size " << getSize() << endl;
@@ -327,9 +327,24 @@ float Animal::getTurnAmount(float facing, float dest)
 	return diff;
 }
 
+float Animal::getRunningSpeed()
+{
+	return getRunningSpeedBase();
+}
+
+float Animal::getWalkingSpeed()
+{
+	return getWalkingSpeedBase();
+}
+
+float Animal::getTurningSpeed()
+{
+	return getTurningSpeedBase();
+}
+
 void Animal::eatEntity(GameEntity *entity)
 {
-
+	
 }
 
 void Animal::eatAnimal(Animal *animal)

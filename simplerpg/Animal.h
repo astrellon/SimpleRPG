@@ -23,19 +23,22 @@ public:
 
 	virtual void displayActions(UIContainer &hud);
 
-	virtual float getRunningSpeed() { return mRunningSpeed; }
-	virtual void  setRunningSpeed(float speed) { mRunningSpeed = speed; }
+	virtual float getRunningSpeed();
+	virtual float getRunningSpeedBase() { return mRunningSpeed; }
+	virtual void  setRunningSpeedBase(float speed) { mRunningSpeed = speed; }
 
-	virtual float getWalkingSpeed() { return mWalkingSpeed; }
-	virtual void  setWalkingSpeed(float speed) { mWalkingSpeed = speed; }
+	virtual float getWalkingSpeed();
+	virtual float getWalkingSpeedBase() { return mWalkingSpeed; }
+	virtual void  setWalkingSpeedBase(float speed) { mWalkingSpeed = speed; }
 
 	virtual bool getWalking() { return mWalking; }
 	virtual void setWalking(bool walking) { mWalking = walking; }
 
 	virtual float getCurrentSpeed() { return getWalking() ? getWalkingSpeed() : getRunningSpeed(); }
 
-	virtual float getTurningSpeed() { return mTurningSpeed; }
-	virtual void  setTurningSpeed(float speed) { mTurningSpeed = speed; }
+	virutal float getTurningSpeed();
+	virtual float getTurningSpeedBase() { return mTurningSpeed; }
+	virtual void  setTurningSpeedBase(float speed) { mTurningSpeed = speed; }
 
 	virtual float getAggression() { return mAggression; }
 	virtual void  setAggression(float aggression) { mAggression = aggression; }

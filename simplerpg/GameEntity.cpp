@@ -140,6 +140,7 @@ void GameEntity::saveProperties(ofstream &file)
 	saveProperty(POSITION, file);
 	saveProperty(FACING, file);
 	saveProperty(NAME, file);
+	saveProperty(AMOUNT_EATEN, file);
 }
 
 void GameEntity::saveProperty(const EntityProperty &propertyId, ofstream &file)
@@ -160,6 +161,9 @@ void GameEntity::saveProperty(const EntityProperty &propertyId, ofstream &file)
 		break;
 	case NAME:
 		file << "name \"" << getEntityName() << "\"" << endl;
+		break;
+	case AMOUNT_EATEN:
+		file << "amount_eaten " << getAmountEaten() << endl;
 		break;
 	default:
 		cout << "Unable to save unknown property " << propertyId << endl;
@@ -198,11 +202,21 @@ void GameEntity::loadProperties(boost::sregex_token_iterator &iter)
 		}
 		setEntityName(name);
 	}
+	else if(iequals(propertyName, "amount_eaten"))
+	{
+		iter++;
+		mAmountEaten = lexical_cast<float>(*iter++);
+	}
 	else 
 	{
 		iter++;
 		cout << "Unable to load unknown property '" << propertyName << "'" << endl;
 	}
+}
+
+float GameEntity::beEaten(GameEntity *eater)
+{
+
 }
 
 void GameEntity::displayActions(UIContainer &hud)

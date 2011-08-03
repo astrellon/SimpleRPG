@@ -52,14 +52,14 @@ public:
 	virtual float getMass() { return mMass; }
 	virtual void  setMass(float mass) { mMass = mass; }
 
-	virtual int  getStrength() { return mStrength; }
-	virtual void setStrength(int strength) { mStrength = strength; }
+	virtual float getStrength() { return mStrength; }
+	virtual void  setStrength(float strength) { mStrength = strength; }
 
-	virtual int  getDexterity() { return mDexterity; }
-	virtual void setDexterity(int dexterity) { mDexterity = dexterity; }
+	virtual float getDexterity() { return mDexterity; }
+	virtual void  setDexterity(float dexterity) { mDexterity = dexterity; }
 
-	virtual int  getIntelligence() { return mIntelligence; }
-	virtual void setIntelligence(int intelligence) { mIntelligence = intelligence; }
+	virtual float getIntelligence() { return mIntelligence; }
+	virtual void  setIntelligence(float intelligence) { mIntelligence = intelligence; }
 
 	virtual string getEntityType() { return "Animal"; }
 
@@ -103,9 +103,9 @@ protected:
 
 	float mHunger;
 
-	int mStrength;
-	int mDexterity;
-	int mIntelligence;
+	float mStrength;
+	float mDexterity;
+	float mIntelligence;
 
 	bool mWalking;
 

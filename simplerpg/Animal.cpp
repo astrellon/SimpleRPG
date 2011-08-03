@@ -108,17 +108,17 @@ void Animal::loadProperties(boost::sregex_token_iterator &iter)
 	else if(iequals(propertyName, EntityPropertyNames[STRENGTH]))
 	{
 		iter++;
-		setStrength(lexical_cast<int>(*iter++));
+		setStrength(lexical_cast<float>(*iter++));
 	}
 	else if(iequals(propertyName, EntityPropertyNames[DEXTERITY]))
 	{
 		iter++;
-		setDexterity(lexical_cast<int>(*iter++));
+		setDexterity(lexical_cast<float>(*iter++));
 	}
 	else if(iequals(propertyName, EntityPropertyNames[INTELLIGENCE]))
 	{
 		iter++;
-		setIntelligence(lexical_cast<int>(*iter++));
+		setIntelligence(lexical_cast<float>(*iter++));
 	}
 	else if(iequals(propertyName, EntityPropertyNames[RUNNING_SPEED]))
 	{

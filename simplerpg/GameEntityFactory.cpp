@@ -3,11 +3,11 @@
 
 GameEntity *GameEntityFactory::create(Game *game, string name)
 {
-	if(boost::algorithm::iequals(name, "Animal"))
+	if(iequals(name, "Animal"))
 	{
 		return new Animal(game);
 	}
-	if(boost::algorithm::iequals(name, "Plant"))
+	if(iequals(name, "Plant"))
 	{
 		return new Plant(game);
 	}

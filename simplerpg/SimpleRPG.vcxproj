@@ -127,6 +127,7 @@ copy "$(ProjectDir)map.txt" "$(OutputPath)"</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Action.cpp" />
+    <ClCompile Include="ActionFactory.cpp" />
     <ClCompile Include="Animal.cpp" />
     <ClCompile Include="AStarNode.cpp" />
     <ClCompile Include="Destination.cpp" />
@@ -147,6 +148,7 @@ copy "$(ProjectDir)map.txt" "$(OutputPath)"</Command>
     <ClCompile Include="UIText.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ActionFactory.h" />
     <ClInclude Include="Animal.h" />
     <ClInclude Include="AStarNode.h" />
     <ClInclude Include="curses.h" />

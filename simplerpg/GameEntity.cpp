@@ -7,7 +7,7 @@ map<unsigned int, GameEntity *> GameEntity::sEntities;
 
 extern const char *EntityPropertyNames[] = {"id", "facing", "position", "destination", "name", "graphic",
 	"health", "strength", "dexterity", "intelligence", "running_speed", "walking_speed", "turning_speed",
-	"entity_size", "entity_mass", "diet", "damage_base", "amount_eaten"};
+	"entity_size", "entity_mass", "diet", "damage_base", "amount_eaten", "current_action", "action_history"};
 
 GameEntity::GameEntity(Game *game)
 {
@@ -16,15 +16,17 @@ GameEntity::GameEntity(Game *game)
 	mName = "GameEntity";
 	mAmountEaten = 0.0f;
 	mId = nextId();
+
+	mCurrentAction = new Action(IDLE);
 }
 
 GameEntity::~GameEntity(void)
 {
 }
 
-void GameEntity::setCurrentAction(Action action)
+void GameEntity::setCurrentAction(Action *action)
 {
-	if(mCurrentAction.getAction() != NULL_ACTION)
+	if(mCurrentAction->getAction() != MAX_ID)
 	{
 		mPastActions.push_back(mCurrentAction);
 	}
@@ -84,14 +86,14 @@ void GameEntity::move(float dx, float dy, bool inObjectSpace)
 		return;
 	}
 
-	tile = mGame->getMap()->getTile(round(mTransform.zx), newPosY);
+	tile = mGame->getMap()->getTile((int)round(mTransform.zx), newPosY);
 	if(tile != NULL && tile->getPassable())
 	{
 		mTransform.translate(0, v.y);
 		return;
 	}
 
-	tile = mGame->getMap()->getTile(newPosX, round(mTransform.zy));
+	tile = mGame->getMap()->getTile(newPosX, (int)round(mTransform.zy));
 	if(tile != NULL && tile->getPassable())
 	{
 		mTransform.translate(v.x, 0);
@@ -111,8 +113,8 @@ void GameEntity::turn(double angle)
 
 void GameEntity::render(Rect screenSize, WINDOW *wnd)
 {
-	int xPos = round(getX()) - screenSize.getX();
-	int yPos = round(getY()) - screenSize.getY();
+	int xPos = (int)round(getX()) - screenSize.getX();
+	int yPos = (int)round(getY()) - screenSize.getY();
 
 	if (xPos < 0 || xPos >= screenSize.getWidth() ||
 		yPos < 0 || yPos >= screenSize.getHeight())
@@ -132,6 +134,7 @@ void GameEntity::loadFromFile(boost::sregex_token_iterator &iter)
 		string line = *iter;
 		if(iequals(line, "end"))
 		{
+			iter++;
 			break;
 		}
 		loadProperties(iter);
@@ -154,6 +157,7 @@ void GameEntity::saveProperties(ofstream &file)
 	saveProperty(FACING, file);
 	saveProperty(NAME, file);
 	saveProperty(AMOUNT_EATEN, file);
+	saveProperty(CURRENT_ACTION, file);
 }
 
 void GameEntity::saveProperty(const EntityProperty &propertyId, ofstream &file)
@@ -178,36 +182,36 @@ void GameEntity::saveProperty(const EntityProperty &propertyId, ofstream &file)
 	case AMOUNT_EATEN:
 		file << EntityPropertyNames[AMOUNT_EATEN] << ' ' << getAmountEaten() << endl;
 		break;
+	case CURRENT_ACTION:
+		file << EntityPropertyNames[CURRENT_ACTION] << ' ';
+		getCurrentAction()->saveToFile(file);
+		break;
 	default:
-		cout << "Unable to save unknown property " << propertyId << endl;
+		cout << "Unable to save unknown entity property " << propertyId << endl;
 		break;
 	}
 }
 
 void GameEntity::loadProperties(boost::sregex_token_iterator &iter)
 {
-	string propertyName = *iter;
+	string propertyName = *iter++;
 	if(iequals(propertyName, EntityPropertyNames[ID]))
 	{
-		iter++;
 		setId(lexical_cast<unsigned int>(*iter++));
 	}
 	else if(iequals(propertyName, EntityPropertyNames[POSITION]))
 	{
-		iter++;
 		float x = lexical_cast<float>(*iter++);
 		float y = lexical_cast<float>(*iter++);
 		move(x, y, false);
 	}
 	else if(iequals(propertyName, EntityPropertyNames[FACING]))
 	{
-		iter++;
 		float f = lexical_cast<float>(*iter++);
 		setFacing(f);
 	}
 	else if(iequals(propertyName, EntityPropertyNames[NAME]))
 	{
-		iter++;
 		string name = *iter++;
 		if(name[0] == '"')
 		{
@@ -217,13 +221,21 @@ void GameEntity::loadProperties(boost::sregex_token_iterator &iter)
 	}
 	else if(iequals(propertyName, EntityPropertyNames[AMOUNT_EATEN]))
 	{
-		iter++;
 		mAmountEaten = lexical_cast<float>(*iter++);
+	}
+	else if(iequals(propertyName, EntityPropertyNames[CURRENT_ACTION]))
+	{
+		Action *action = ActionFactory::create(*iter++);
+		if(action == NULL)
+		{
+			return;
+		}
+		action->loadFromFile(iter);
+		mCurrentAction = action;
 	}
 	else 
 	{
-		iter++;
-		cout << "Unable to load unknown property '" << propertyName << "'" << endl;
+		cout << "Unable to load unknown property '" << propertyName << '\'' << endl;
 	}
 }
 
@@ -241,7 +253,7 @@ void GameEntity::displayActions(UIContainer &hud)
 	*mHudText << "<15>Entity</>: " << getEntityName() << '\n';
 	*mHudText << "<15>Facing</>: " << getFacing() << '\n';
 	Action *action = getCurrentAction();
-	*mHudText << "<15>Action</>: " << EntityPropertyNames[action->getAction()] << '\n';
+	*mHudText << "<15>Action</>: " << EntityActionNames[action->getAction()] << '\n';
 
 	mRedisplay = false;
 }

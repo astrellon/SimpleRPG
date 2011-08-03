@@ -28,6 +28,11 @@ id 0
 position 2.92859 3.30684
 facing -3.08701
 name "Fred"
+current_action Action
+action Flee
+complete 1
+step 4
+end
 destination @ 1
 health 0 10.16
 strength 1
@@ -48,6 +53,11 @@ position 9.93701 4.02985
 facing 1.60264
 name "Jeff"
 destination 3 7
+current_action Action
+action Attack
+complete 0
+step 2
+end
 health 8.34 12.78
 strength 1
 dexterity 1

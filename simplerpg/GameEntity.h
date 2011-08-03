@@ -17,17 +17,20 @@
 #include "UIComponent.h"
 #include "Rect.h"
 #include "Action.h"
+#include "ActionFactory.h"
+
+using std::map;
 
 using boost::math::round;
 using boost::algorithm::iequals;
-using std::map;
 using boost::lexical_cast;
 
 // Different properties that can be used during loading/saving.
 // Not all entities will have these.
 enum EntityProperty { ID, FACING, POSITION, DESTINATION, NAME, GRAPHIC, HEALTH,
 	STRENGTH, DEXTERITY, INTELLIGENCE, RUNNING_SPEED, WALKING_SPEED, TURNING_SPEED,
-	ENTITY_SIZE, ENTITY_MASS, DIET, DAMAGE_BASE, AMOUNT_EATEN };
+	ENTITY_SIZE, ENTITY_MASS, DIET, DAMAGE_BASE, AMOUNT_EATEN, CURRENT_ACTION, 
+	ACTION_HISTORY };
 
 const char *EntityPropertyNames[];
 
@@ -144,8 +147,8 @@ public:
 		return iter->second;
 	}
 
-	virtual Action *getCurrentAction() { return &mCurrentAction; }
-	virtual vector<Action> *getPastActions() { return &mPastActions; }
+	virtual Action *getCurrentAction() { return mCurrentAction; }
+	virtual vector<Action *> *getPastActions() { return &mPastActions; }
 
 protected:
 	unsigned int mId;
@@ -153,8 +156,8 @@ protected:
 	Game* mGame;
 	Matrix3x3f mTransform;
 	string mName;
-	Action mCurrentAction;
-	vector<Action> mPastActions;
+	Action *mCurrentAction;
+	vector<Action *> mPastActions;
 	
 	bool mRedisplay;
 	UIText *mHudText;
@@ -163,8 +166,8 @@ protected:
 
 	static EntityMap sEntities;
 
-	virtual void setCurrentAction(Action action);
-
+	virtual void setCurrentAction(Action *action);
+	
 	// The function which loads each property from the file tokens.
 	// Should increment the iterator at least once.
 	virtual void loadProperties(boost::sregex_token_iterator &iter);
@@ -172,7 +175,7 @@ protected:
 	virtual void saveProperty(const EntityProperty &propertyId, ofstream &file);
 	// Calls the appropriate functions to save all the properties for this entity.
 	virtual void saveProperties(ofstream &file);
-
+	
 	// Call when the entity is added into a Game.
 	virtual void onAddedToGame() {}
 

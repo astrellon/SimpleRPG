@@ -187,7 +187,7 @@ void Animal::saveProperty(const EntityProperty &propertyId, ofstream &file)
 	case DESTINATION:
 		dest = getDestination();
 		if(dest->getEntity() != NULL)
-			file << EntityPropertyNames[DESTINATION] << "@ " << dest->getEntity()->getId() << endl;
+			file << EntityPropertyNames[DESTINATION] << " @ " << dest->getEntity()->getId() << endl;
 		else
 		{
 			v = dest->getDestination();
@@ -235,6 +235,20 @@ void Animal::saveProperty(const EntityProperty &propertyId, ofstream &file)
 
 void Animal::update(float dt)
 {
+	Action *action = getCurrentAction();
+	
+	switch(action->getAction())
+	{
+	default:
+	case IDLE:
+		// Do nothing!
+	case EAT:
+	case FLEE:
+	case ATTACK:
+		// Do some more nothing.
+		action->getCompleted();
+	}
+	
 	doStateMoving(dt);
 }
 

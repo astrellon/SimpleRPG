@@ -7,7 +7,8 @@
 #include "Animal.h"
 #include "Plant.h"
 
-using namespace std;
+using std::string;
+using boost::algorithm::iequals;
 
 class Game;
 
@@ -15,5 +16,4 @@ class GameEntityFactory
 {
 public:
 	static GameEntity *create(Game *game, string name);
-
 };

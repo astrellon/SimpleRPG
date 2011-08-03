@@ -126,6 +126,7 @@ copy "$(ProjectDir)map.txt" "$(OutputPath)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Action.cpp" />
     <ClCompile Include="Animal.cpp" />
     <ClCompile Include="AStarNode.cpp" />
     <ClCompile Include="Destination.cpp" />
@@ -150,6 +151,7 @@ copy "$(ProjectDir)map.txt" "$(OutputPath)"</Command>
     <ClInclude Include="AStarNode.h" />
     <ClInclude Include="curses.h" />
     <ClInclude Include="Destination.h" />
+    <ClInclude Include="Action.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameEntity.h" />
     <ClInclude Include="GameEntityFactory.h" />

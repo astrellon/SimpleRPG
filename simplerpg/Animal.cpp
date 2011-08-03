@@ -25,7 +25,7 @@ Animal::Animal(Game *game) : GameEntity(game)
 	mDamageBase = 1.0f;
 
 	mStrength = 1;
-	mDexderity = 1;
+	mDexterity = 1;
 	mIntelligence = 1;
 	
 	mDestination.setGame(game);
@@ -79,7 +79,7 @@ Pixel Animal::getGraphic()
 void Animal::loadProperties(boost::sregex_token_iterator &iter)
 {
 	string propertyName = *iter;
-	if(iequals(propertyName, "destination"))
+	if(iequals(propertyName, EntityPropertyNames[DESTINATION]))
 	{
 		iter++;
 		string typeCheck = *iter++;
@@ -95,7 +95,7 @@ void Animal::loadProperties(boost::sregex_token_iterator &iter)
 			mDestination.setDestination(x, y);
 		}
 	}
-	else if(iequals(propertyName, "health"))
+	else if(iequals(propertyName, EntityPropertyNames[HEALTH]))
 	{
 		iter++;
 		mHealth = lexical_cast<float>(*iter++);
@@ -105,52 +105,52 @@ void Animal::loadProperties(boost::sregex_token_iterator &iter)
 		}
 		mMaxHealth = lexical_cast<float>(*iter++);
 	}
-	else if(iequals(propertyName, "strength"))
+	else if(iequals(propertyName, EntityPropertyNames[STRENGTH]))
 	{
 		iter++;
 		setStrength(lexical_cast<int>(*iter++));
 	}
-	else if(iequals(propertyName, "dexderity"))
+	else if(iequals(propertyName, EntityPropertyNames[DEXTERITY]))
 	{
 		iter++;
-		setDexderity(lexical_cast<int>(*iter++));
+		setDexterity(lexical_cast<int>(*iter++));
 	}
-	else if(iequals(propertyName, "intelligence"))
+	else if(iequals(propertyName, EntityPropertyNames[INTELLIGENCE]))
 	{
 		iter++;
 		setIntelligence(lexical_cast<int>(*iter++));
 	}
-	else if(iequals(propertyName, "running_speed"))
+	else if(iequals(propertyName, EntityPropertyNames[RUNNING_SPEED]))
 	{
 		iter++;
 		setRunningSpeedBase(lexical_cast<float>(*iter++));
 	}
-	else if(iequals(propertyName, "walking_speed"))
+	else if(iequals(propertyName, EntityPropertyNames[WALKING_SPEED]))
 	{
 		iter++;
 		setWalkingSpeedBase(lexical_cast<float>(*iter++));
 	}
-	else if(iequals(propertyName, "turning_speed"))
+	else if(iequals(propertyName, EntityPropertyNames[TURNING_SPEED]))
 	{
 		iter++;
 		setTurningSpeedBase(lexical_cast<float>(*iter++));
 	}
-	else if(iequals(propertyName, "entity_size"))
+	else if(iequals(propertyName, EntityPropertyNames[ENTITY_SIZE]))
 	{
 		iter++;
 		setSize(lexical_cast<float>(*iter++));
 	}
-	else if(iequals(propertyName, "entity_mass"))
+	else if(iequals(propertyName, EntityPropertyNames[ENTITY_MASS]))
 	{
 		iter++;
 		setMass(lexical_cast<float>(*iter++));
 	}
-	else if(iequals(propertyName, "diet"))
+	else if(iequals(propertyName, EntityPropertyNames[DIET]))
 	{
 		iter++;
 		setDiet(lexical_cast<float>(*iter++));
 	}
-	else if(iequals(propertyName, "damage_base"))
+	else if(iequals(propertyName, EntityPropertyNames[DAMAGE_BASE]))
 	{
 		iter++;
 		setDamageBase(lexical_cast<float>(*iter++));
@@ -167,7 +167,7 @@ void Animal::saveProperties(ofstream &file)
 	saveProperty(DESTINATION, file);
 	saveProperty(HEALTH, file);
 	saveProperty(STRENGTH, file);
-	saveProperty(DEXDERITY, file);
+	saveProperty(DEXTERITY, file);
 	saveProperty(INTELLIGENCE, file);
 	saveProperty(RUNNING_SPEED, file);
 	saveProperty(WALKING_SPEED, file);
@@ -187,45 +187,45 @@ void Animal::saveProperty(const EntityProperty &propertyId, ofstream &file)
 	case DESTINATION:
 		dest = getDestination();
 		if(dest->getEntity() != NULL)
-			file << "destination @ " << dest->getEntity()->getId() << endl;
+			file << EntityPropertyNames[DESTINATION] << "@ " << dest->getEntity()->getId() << endl;
 		else
 		{
 			v = dest->getDestination();
-			file << "destination " << v.x << ' ' << v.y << endl;
+			file << EntityPropertyNames[DESTINATION] << ' ' << v.x << ' ' << v.y << endl;
 		}
 		break;
 	case HEALTH:
-		file << "health " << getHealth() << ' ' << getMaxHealth() << endl;
+		file << EntityPropertyNames[HEALTH] << ' ' << getHealth() << ' ' << getMaxHealth() << endl;
 		break;
 	case STRENGTH:
-		file << "strength " << getStrength() << endl;
+		file << EntityPropertyNames[STRENGTH] << ' ' << getStrength() << endl;
 		break;
-	case DEXDERITY:
-		file << "dexderity " << getDexderity() << endl;
+	case DEXTERITY:
+		file << EntityPropertyNames[DEXTERITY] << ' ' << getDexterity() << endl;
 		break;
 	case INTELLIGENCE:
-		file << "intelligence " << getIntelligence() << endl;
+		file << EntityPropertyNames[INTELLIGENCE] << ' ' << getIntelligence() << endl;
 		break;
 	case RUNNING_SPEED:
-		file << "running_speed " << getRunningSpeedBase() << endl;
+		file << EntityPropertyNames[RUNNING_SPEED] << ' ' << getRunningSpeedBase() << endl;
 		break;
 	case WALKING_SPEED:
-		file << "walking_speed " << getWalkingSpeedBase() << endl;
+		file << EntityPropertyNames[WALKING_SPEED] << ' ' << getWalkingSpeedBase() << endl;
 		break;
 	case TURNING_SPEED:
-		file << "turning_speed " << getTurningSpeedBase() << endl;
+		file << EntityPropertyNames[TURNING_SPEED] << ' ' << getTurningSpeedBase() << endl;
 		break;
 	case ENTITY_SIZE:
-		file << "entity_size " << getSize() << endl;
+		file << EntityPropertyNames[ENTITY_SIZE] << ' ' << getSize() << endl;
 		break;
 	case ENTITY_MASS:
-		file << "entity_mass " << getMass() << endl;
+		file << EntityPropertyNames[ENTITY_MASS] << ' ' << getMass() << endl;
 		break;
 	case DAMAGE_BASE:
-		file << "damage_base " << getDamageBase() << endl;
+		file << EntityPropertyNames[DAMAGE_BASE] << ' ' << getDamageBase() << endl;
 		break;
 	case DIET:
-		file << "diet " << getDiet() << endl;
+		file << EntityPropertyNames[DIET] << ' ' << getDiet() << endl;
 		break;
 	default:
 		GameEntity::saveProperty(propertyId, file);
@@ -366,7 +366,7 @@ float Animal::calculateKcalPerDay()
 	//if (mEnergyNeededPerDay > 0)
 	return mEnergyNeededPerDay;
 
-	/*float energy = pow(getSize() * getMass(), 0.277f) * (getStrength() * getDexderity()) * 10.36 - 459.622;
+	/*float energy = pow(getSize() * getMass(), 0.277f) * (getStrength() * getDexterity()) * 10.36 - 459.622;
 	// Only works within a small range of animals, does not work for large or very small ones. 
 	if (energy < 0.0f)
 		return 0.0f;

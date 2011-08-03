@@ -36,7 +36,7 @@ public:
 
 	virtual float getCurrentSpeed() { return getWalking() ? getWalkingSpeed() : getRunningSpeed(); }
 
-	virutal float getTurningSpeed();
+	virtual float getTurningSpeed();
 	virtual float getTurningSpeedBase() { return mTurningSpeed; }
 	virtual void  setTurningSpeedBase(float speed) { mTurningSpeed = speed; }
 
@@ -55,8 +55,8 @@ public:
 	virtual int  getStrength() { return mStrength; }
 	virtual void setStrength(int strength) { mStrength = strength; }
 
-	virtual int  getDexderity() { return mDexderity; }
-	virtual void setDexderity(int dexderity) { mDexderity = dexderity; }
+	virtual int  getDexterity() { return mDexterity; }
+	virtual void setDexterity(int dexterity) { mDexterity = dexterity; }
 
 	virtual int  getIntelligence() { return mIntelligence; }
 	virtual void setIntelligence(int intelligence) { mIntelligence = intelligence; }
@@ -104,7 +104,7 @@ protected:
 	float mHunger;
 
 	int mStrength;
-	int mDexderity;
+	int mDexterity;
 	int mIntelligence;
 
 	bool mWalking;

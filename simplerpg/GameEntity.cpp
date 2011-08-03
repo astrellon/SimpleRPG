@@ -5,6 +5,10 @@ unsigned int GameEntity::sId = 0;
 
 map<unsigned int, GameEntity *> GameEntity::sEntities;
 
+extern const char *EntityPropertyNames[] = {"id", "facing", "position", "destination", "name", "graphic",
+	"health", "strength", "dexterity", "intelligence", "running_speed", "walking_speed", "turning_speed",
+	"entity_size", "entity_mass", "diet", "damage_base", "amount_eaten"};
+
 GameEntity::GameEntity(Game *game)
 {
 	mGame = game;
@@ -16,6 +20,15 @@ GameEntity::GameEntity(Game *game)
 
 GameEntity::~GameEntity(void)
 {
+}
+
+void GameEntity::setCurrentAction(Action action)
+{
+	if(mCurrentAction.getAction() != NULL_ACTION)
+	{
+		mPastActions.push_back(mCurrentAction);
+	}
+	mCurrentAction = action;
 }
 
 Pixel GameEntity::getGraphic()
@@ -150,20 +163,20 @@ void GameEntity::saveProperty(const EntityProperty &propertyId, ofstream &file)
 	switch(propertyId)
 	{
 	case ID:
-		file << "id " << getId() << endl;
+		file << EntityPropertyNames[ID] << ' ' << getId() << endl;
 		break;
 	case POSITION:
 		v = getPosition();
-		file << "position " << v.x << ' ' << v.y << endl;
+		file << EntityPropertyNames[POSITION] << ' ' << v.x << ' ' << v.y << endl;
 		break;
 	case FACING:
-		file << "facing " << getFacing() << endl;
+		file << EntityPropertyNames[FACING] << ' ' << getFacing() << endl;
 		break;
 	case NAME:
-		file << "name \"" << getEntityName() << "\"" << endl;
+		file << EntityPropertyNames[NAME] << " \"" << getEntityName() << '\"' << endl;
 		break;
 	case AMOUNT_EATEN:
-		file << "amount_eaten " << getAmountEaten() << endl;
+		file << EntityPropertyNames[AMOUNT_EATEN] << ' ' << getAmountEaten() << endl;
 		break;
 	default:
 		cout << "Unable to save unknown property " << propertyId << endl;
@@ -174,25 +187,25 @@ void GameEntity::saveProperty(const EntityProperty &propertyId, ofstream &file)
 void GameEntity::loadProperties(boost::sregex_token_iterator &iter)
 {
 	string propertyName = *iter;
-	if(iequals(propertyName, "id"))
+	if(iequals(propertyName, EntityPropertyNames[ID]))
 	{
 		iter++;
 		setId(lexical_cast<unsigned int>(*iter++));
 	}
-	else if(iequals(propertyName, "position"))
+	else if(iequals(propertyName, EntityPropertyNames[POSITION]))
 	{
 		iter++;
 		float x = lexical_cast<float>(*iter++);
 		float y = lexical_cast<float>(*iter++);
 		move(x, y, false);
 	}
-	else if(iequals(propertyName, "facing"))
+	else if(iequals(propertyName, EntityPropertyNames[FACING]))
 	{
 		iter++;
 		float f = lexical_cast<float>(*iter++);
 		setFacing(f);
 	}
-	else if(iequals(propertyName, "name"))
+	else if(iequals(propertyName, EntityPropertyNames[NAME]))
 	{
 		iter++;
 		string name = *iter++;
@@ -202,7 +215,7 @@ void GameEntity::loadProperties(boost::sregex_token_iterator &iter)
 		}
 		setEntityName(name);
 	}
-	else if(iequals(propertyName, "amount_eaten"))
+	else if(iequals(propertyName, EntityPropertyNames[AMOUNT_EATEN]))
 	{
 		iter++;
 		mAmountEaten = lexical_cast<float>(*iter++);
@@ -216,7 +229,7 @@ void GameEntity::loadProperties(boost::sregex_token_iterator &iter)
 
 float GameEntity::beEaten(GameEntity *eater)
 {
-
+	return 0.0f;
 }
 
 void GameEntity::displayActions(UIContainer &hud)
@@ -227,6 +240,8 @@ void GameEntity::displayActions(UIContainer &hud)
 	mHudText->clearText();
 	*mHudText << "<15>Entity</>: " << getEntityName() << '\n';
 	*mHudText << "<15>Facing</>: " << getFacing() << '\n';
+	Action *action = getCurrentAction();
+	*mHudText << "<15>Action</>: " << EntityPropertyNames[action->getAction()] << '\n';
 
 	mRedisplay = false;
 }

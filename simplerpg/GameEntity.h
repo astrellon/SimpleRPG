@@ -16,6 +16,7 @@
 #include "UIText.h"
 #include "UIComponent.h"
 #include "Rect.h"
+#include "Action.h"
 
 using boost::math::round;
 using boost::algorithm::iequals;
@@ -25,8 +26,10 @@ using boost::lexical_cast;
 // Different properties that can be used during loading/saving.
 // Not all entities will have these.
 enum EntityProperty { ID, FACING, POSITION, DESTINATION, NAME, GRAPHIC, HEALTH,
-	STRENGTH, DEXDERITY, INTELLIGENCE, RUNNING_SPEED, WALKING_SPEED, TURNING_SPEED,
+	STRENGTH, DEXTERITY, INTELLIGENCE, RUNNING_SPEED, WALKING_SPEED, TURNING_SPEED,
 	ENTITY_SIZE, ENTITY_MASS, DIET, DAMAGE_BASE, AMOUNT_EATEN };
+
+const char *EntityPropertyNames[];
 
 class GameEntity;
 
@@ -141,12 +144,17 @@ public:
 		return iter->second;
 	}
 
+	virtual Action *getCurrentAction() { return &mCurrentAction; }
+	virtual vector<Action> *getPastActions() { return &mPastActions; }
+
 protected:
 	unsigned int mId;
 	Pixel mGraphic;
 	Game* mGame;
 	Matrix3x3f mTransform;
 	string mName;
+	Action mCurrentAction;
+	vector<Action> mPastActions;
 	
 	bool mRedisplay;
 	UIText *mHudText;
@@ -154,6 +162,8 @@ protected:
 	float mAmountEaten;
 
 	static EntityMap sEntities;
+
+	virtual void setCurrentAction(Action action);
 
 	// The function which loads each property from the file tokens.
 	// Should increment the iterator at least once.

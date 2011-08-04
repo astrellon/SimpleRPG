@@ -252,7 +252,6 @@ void GameEntity::loadProperties(boost::sregex_token_iterator &iter)
 		boost::sregex_token_iterator end;
 		while(iter != end && !iequals(line, "end"))
 		{
-			line = *iter++;
 			Action *action = ActionFactory::create(line);
 			{
 				if(action == NULL)
@@ -263,6 +262,7 @@ void GameEntity::loadProperties(boost::sregex_token_iterator &iter)
 				action->loadFromFile(iter);
 				mPastActions.push_back(action);
 			}
+			line = *iter++;
 		}
 	}
 	else 

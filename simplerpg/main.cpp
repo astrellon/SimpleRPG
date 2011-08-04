@@ -96,9 +96,9 @@ Game *startGame(string filename)
 	game->loadMap(filename);
 	if(game->getMap() == NULL)
 	{
-		cout << "Unable to load map!" << endl << "Exiting program, press enter." << endl;
+		cerr << "Unable to load map!" << endl << "Exiting program, press enter." << endl;
 		getchar();
-		return 0;
+		return NULL;
 	}
 
 	return game;
@@ -106,6 +106,9 @@ Game *startGame(string filename)
 
 int main()
 {
+	ofstream logfile("logfile.log");
+	cout.rdbuf(logfile.rdbuf());
+
 	srand( (unsigned int)time(NULL) );
 
 	Tile::registerDefaults();
@@ -317,6 +320,10 @@ int main()
 
 			wrefresh(mainMenuWnd);
 		}
+		else if(game == NULL)
+		{
+			break;
+		}
 		else
 		{
 			while(_kbhit())
@@ -359,6 +366,11 @@ int main()
 	delwin(gameWnd);
 	delwin(mainMenuWnd);
 	endwin();
+
+	if(logfile)
+	{
+		logfile.close();
+	}
 
 	cout << "Thanks for playing!" << endl;
 

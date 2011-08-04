@@ -36,6 +36,16 @@ Animal
 		step 4
 	end
 	action_history
+		Action
+			action Attack
+			complete 1
+			step 3
+		end
+		Action
+			action Eat
+			complete 1
+			step 6
+		end
 	end
 	destination @ 1
 	health 0 10.16

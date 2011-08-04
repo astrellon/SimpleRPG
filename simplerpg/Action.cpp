@@ -68,7 +68,8 @@ void Action::loadProperties(boost::sregex_token_iterator &iter)
 	if(iequals(propertyName, ActionPropertyNames[ACTION]))
 	{
 		string action = *iter++;
-		setAction(EntityActionLookup[action]);
+		EntityAction a = EntityActionLookup[action];
+		setAction(a);
 
 	}
 	else if(iequals(propertyName, ActionPropertyNames[COMPLETE]))

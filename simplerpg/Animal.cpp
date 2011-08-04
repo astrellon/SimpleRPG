@@ -236,12 +236,15 @@ void Animal::saveProperty(const EntityProperty &propertyId, ofstream &file)
 void Animal::update(float dt)
 {
 	Action *action = getCurrentAction();
+
+	// If not in danger.
 	
 	switch(action->getAction())
 	{
 	default:
 	case IDLE:
 		// Do nothing!
+		break;
 	case EAT:
 	case FLEE:
 	case ATTACK:

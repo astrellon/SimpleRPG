@@ -17,14 +17,14 @@ using namespace std;
 using boost::algorithm::iequals;
 using boost::lexical_cast;
 
-enum EntityAction { IDLE, EAT, FLEE, ATTACK, MAX_ID };
-enum ActionProperty { ACTION, COMPLETE, STEP };
+enum EntityAction { IDLE, EAT, FLEE, ATTACK, SLEEP, BREED, MAX_ID };
+enum ActionProperty { ACTION, COMPLETE, STEP, TARGET };
 
 class Action
 {
 public:
-	Action(EntityAction action);
 	Action();
+	Action(EntityAction action);
 	~Action();
 
 	virtual void setAction(EntityAction action) { mAction = action; }
@@ -49,6 +49,7 @@ public:
 	static map<string, EntityAction> EntityActionLookup;
 	static const char *EntityActionNames[];
 	static const char *ActionPropertyNames[];
+	static const float EntityActionPriority[];
 
 protected:
 

@@ -6,5 +6,9 @@ Action *ActionFactory::create(string name)
 	{
 		return new Action();
 	}
+	else if(iequals(name, "TargetAction"))
+	{
+		return new TargetAction();
+	}
 	return NULL;
 }

@@ -139,6 +139,7 @@ copy "$(ProjectDir)map.txt" "$(OutputPath)"</Command>
     <ClCompile Include="Pixel.cpp" />
     <ClCompile Include="Plant.cpp" />
     <ClCompile Include="Rect.cpp" />
+    <ClCompile Include="TargetAction.cpp" />
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="UIComponent.cpp" />
     <ClCompile Include="UIContainer.cpp" />
@@ -166,6 +167,7 @@ copy "$(ProjectDir)map.txt" "$(OutputPath)"</Command>
     <ClInclude Include="Pixel.h" />
     <ClInclude Include="Plant.h" />
     <ClInclude Include="Rect.h" />
+    <ClInclude Include="TargetAction.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="UIComponent.h" />
     <ClInclude Include="UIContainer.h" />
@@ -175,6 +177,9 @@ copy "$(ProjectDir)map.txt" "$(OutputPath)"</Command>
     <ClInclude Include="UISpacer.h" />
     <ClInclude Include="UIText.h" />
     <ClInclude Include="Vector2.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="map.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

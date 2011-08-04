@@ -1,8 +1,9 @@
 #include "Action.h"
 
 map<string, EntityAction> Action::EntityActionLookup;
-const char *Action::EntityActionNames[] = { "Idle", "Eat", "Flee", "Attack", "Invalid_action" };
-const char *Action::ActionPropertyNames[] = { "action", "complete", "step" };
+const char *Action::EntityActionNames[] = { "Idle", "Eat", "Flee", "Attack", "Sleep", "Breed", "Invalid_action" };
+const char *Action::ActionPropertyNames[] = { "action", "complete", "step", "target" };
+const float Action::EntityActionPriority[] = { 0.0f, 0.8f, 1.0f, 0.5f, 0.7f, 0.4f, 0.0f };
 
 bool Action::initLookupMap = false;
 
@@ -32,6 +33,8 @@ void Action::init()
 		EntityActionLookup[EntityActionNames[EAT]] = EAT;
 		EntityActionLookup[EntityActionNames[FLEE]] = FLEE;
 		EntityActionLookup[EntityActionNames[ATTACK]] = ATTACK;
+		EntityActionLookup[EntityActionNames[SLEEP]] = SLEEP;
+		EntityActionLookup[EntityActionNames[BREED]] = BREED;
 		EntityActionLookup[EntityActionNames[MAX_ID]] = MAX_ID;
 		initLookupMap = true;
 	}
@@ -51,6 +54,8 @@ void Action::loadFromFile(boost::sregex_token_iterator &iter)
 		}
 		loadProperties(iter);
 	}
+
+	cout << "Finished loading " << getActionType() << endl;
 }
 
 void Action::saveToFile(ofstream &file)
@@ -67,10 +72,7 @@ void Action::loadProperties(boost::sregex_token_iterator &iter)
 	string propertyName = *iter++;
 	if(iequals(propertyName, ActionPropertyNames[ACTION]))
 	{
-		string action = *iter++;
-		EntityAction a = EntityActionLookup[action];
-		setAction(a);
-
+		setAction(EntityActionLookup[*iter++]);
 	}
 	else if(iequals(propertyName, ActionPropertyNames[COMPLETE]))
 	{

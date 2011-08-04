@@ -36,10 +36,11 @@ Animal
 		step 4
 	end
 	action_history
-		Action
+		TargetAction
 			action Attack
 			complete 1
 			step 3
+			target 1
 		end
 		Action
 			action Eat

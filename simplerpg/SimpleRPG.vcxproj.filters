@@ -81,6 +81,9 @@
     <ClCompile Include="ActionFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TargetAction.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Map.h">
@@ -164,5 +167,11 @@
     <ClInclude Include="ActionFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TargetAction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="map.txt" />
   </ItemGroup>
 </Project>

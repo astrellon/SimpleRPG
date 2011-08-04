@@ -26,7 +26,7 @@ void Plant::saveProperty(const EntityProperty &propertyId, ofstream &file)
 	switch(propertyId)
 	{
 	case GRAPHIC:
-		file << "graphic " << graphic.getColour() << ' ' << (graphic.bold ? '1' : '0') << ' ' << graphic.graphic << endl;
+		file << Game::getOutputTabs() << "graphic " << graphic.getColour() << ' ' << (graphic.bold ? '1' : '0') << ' ' << graphic.graphic << endl;
 		break;
 	default:
 		GameEntity::saveProperty(propertyId, file);

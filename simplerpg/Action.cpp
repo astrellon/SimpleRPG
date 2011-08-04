@@ -1,9 +1,8 @@
 #include "Action.h"
 
 map<string, EntityAction> Action::EntityActionLookup;
-
-extern const char *EntityActionNames[] = { "Idle", "Eat", "Flee", "Attack", "Invalid_action" };
-extern const char *ActionPropertyNames[] = { "action", "complete", "step" };
+const char *Action::EntityActionNames[] = { "Idle", "Eat", "Flee", "Attack", "Invalid_action" };
+const char *Action::ActionPropertyNames[] = { "action", "complete", "step" };
 
 bool Action::initLookupMap = false;
 
@@ -56,11 +55,11 @@ void Action::loadFromFile(boost::sregex_token_iterator &iter)
 
 void Action::saveToFile(ofstream &file)
 {
-	file << getActionType() << endl;
-
+	file << Game::getOutputTabs() << getActionType() << endl;
+	Game::changeOutputFileLevel(1);
 	saveProperties(file);
-
-	file << "end" << endl;
+	Game::changeOutputFileLevel(-1);
+	file << Game::getOutputTabs() << "end" << endl;
 }
 
 void Action::loadProperties(boost::sregex_token_iterator &iter)
@@ -91,13 +90,13 @@ void Action::saveProperty(const ActionProperty &propertyId, ofstream &file)
 	switch(propertyId)
 	{
 	case ACTION:
-		file << ActionPropertyNames[ACTION] << ' ' << EntityActionNames[getAction()] << endl;
+		file << Game::getOutputTabs() << ActionPropertyNames[ACTION] << ' ' << EntityActionNames[getAction()] << endl;
 		break;
 	case COMPLETE:
-		file << ActionPropertyNames[COMPLETE] << ' ' << (getCompleted() ? '1' : '0') << endl;
+		file << Game::getOutputTabs() << ActionPropertyNames[COMPLETE] << ' ' << (getCompleted() ? '1' : '0') << endl;
 		break;
 	case STEP:
-		file << ActionPropertyNames[STEP] << ' ' << getStep() << endl;
+		file << Game::getOutputTabs() << ActionPropertyNames[STEP] << ' ' << getStep() << endl;
 		break;
 	default:
 		cout << "Unable to save unknown action property " << propertyId << endl;

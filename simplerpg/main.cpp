@@ -313,10 +313,6 @@ int main()
 				break;
 			}
 
-			/*if(menuLevel == 1)
-			{
-				cout << "a";
-			}*/
 			mainMenu.render();
 
 			wrefresh(mainMenuWnd);
@@ -337,7 +333,12 @@ int main()
 				game->keyActions(c);
 			}
 
-			if(!paused && !game->getCursorMode())
+			if(!game->getGameRunning())
+			{
+				break;
+			}
+
+			if(!paused && !game->getCursorMode() && !game->getGamePaused())
 			{
 				game->update(0.04f);
 			}
@@ -345,7 +346,7 @@ int main()
 			wclear(gameWnd);
 			game->render(gameWnd);
 
-			if(paused || game->getCursorMode())
+			if(paused || game->getCursorMode() || game->getGamePaused())
 			{
 				pausedText.render(false);
 			}
@@ -358,6 +359,8 @@ int main()
 	delwin(gameWnd);
 	delwin(mainMenuWnd);
 	endwin();
+
+	cout << "Thanks for playing!" << endl;
 
 	return 0;
 }

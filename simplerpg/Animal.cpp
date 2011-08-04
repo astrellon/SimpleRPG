@@ -187,45 +187,45 @@ void Animal::saveProperty(const EntityProperty &propertyId, ofstream &file)
 	case DESTINATION:
 		dest = getDestination();
 		if(dest->getEntity() != NULL)
-			file << EntityPropertyNames[DESTINATION] << " @ " << dest->getEntity()->getId() << endl;
+			file << Game::getOutputTabs() << EntityPropertyNames[DESTINATION] << " @ " << dest->getEntity()->getId() << endl;
 		else
 		{
 			v = dest->getDestination();
-			file << EntityPropertyNames[DESTINATION] << ' ' << v.x << ' ' << v.y << endl;
+			file << Game::getOutputTabs() << EntityPropertyNames[DESTINATION] << ' ' << v.x << ' ' << v.y << endl;
 		}
 		break;
 	case HEALTH:
-		file << EntityPropertyNames[HEALTH] << ' ' << getHealth() << ' ' << getMaxHealth() << endl;
+		file << Game::getOutputTabs() << EntityPropertyNames[HEALTH] << ' ' << getHealth() << ' ' << getMaxHealth() << endl;
 		break;
 	case STRENGTH:
-		file << EntityPropertyNames[STRENGTH] << ' ' << getStrength() << endl;
+		file << Game::getOutputTabs() << EntityPropertyNames[STRENGTH] << ' ' << getStrength() << endl;
 		break;
 	case DEXTERITY:
-		file << EntityPropertyNames[DEXTERITY] << ' ' << getDexterity() << endl;
+		file << Game::getOutputTabs() << EntityPropertyNames[DEXTERITY] << ' ' << getDexterity() << endl;
 		break;
 	case INTELLIGENCE:
-		file << EntityPropertyNames[INTELLIGENCE] << ' ' << getIntelligence() << endl;
+		file << Game::getOutputTabs() << EntityPropertyNames[INTELLIGENCE] << ' ' << getIntelligence() << endl;
 		break;
 	case RUNNING_SPEED:
-		file << EntityPropertyNames[RUNNING_SPEED] << ' ' << getRunningSpeedBase() << endl;
+		file << Game::getOutputTabs() << EntityPropertyNames[RUNNING_SPEED] << ' ' << getRunningSpeedBase() << endl;
 		break;
 	case WALKING_SPEED:
-		file << EntityPropertyNames[WALKING_SPEED] << ' ' << getWalkingSpeedBase() << endl;
+		file << Game::getOutputTabs() << EntityPropertyNames[WALKING_SPEED] << ' ' << getWalkingSpeedBase() << endl;
 		break;
 	case TURNING_SPEED:
-		file << EntityPropertyNames[TURNING_SPEED] << ' ' << getTurningSpeedBase() << endl;
+		file << Game::getOutputTabs() << EntityPropertyNames[TURNING_SPEED] << ' ' << getTurningSpeedBase() << endl;
 		break;
 	case ENTITY_SIZE:
-		file << EntityPropertyNames[ENTITY_SIZE] << ' ' << getSize() << endl;
+		file << Game::getOutputTabs() << EntityPropertyNames[ENTITY_SIZE] << ' ' << getSize() << endl;
 		break;
 	case ENTITY_MASS:
-		file << EntityPropertyNames[ENTITY_MASS] << ' ' << getMass() << endl;
+		file << Game::getOutputTabs() << EntityPropertyNames[ENTITY_MASS] << ' ' << getMass() << endl;
 		break;
 	case DAMAGE_BASE:
-		file << EntityPropertyNames[DAMAGE_BASE] << ' ' << getDamageBase() << endl;
+		file << Game::getOutputTabs() << EntityPropertyNames[DAMAGE_BASE] << ' ' << getDamageBase() << endl;
 		break;
 	case DIET:
-		file << EntityPropertyNames[DIET] << ' ' << getDiet() << endl;
+		file << Game::getOutputTabs() << EntityPropertyNames[DIET] << ' ' << getDiet() << endl;
 		break;
 	default:
 		GameEntity::saveProperty(propertyId, file);

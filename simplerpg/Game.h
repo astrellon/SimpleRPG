@@ -94,8 +94,42 @@ public:
 	FindEntityResult findClosestEntity(Vector2f startPosition, string entityType);
 	vector<Vector2f> *findPath(Vector2i startPosition, Vector2i endPosition);
 
+	virtual bool getGameRunning() { return mGameRunning; }
+	virtual bool getGamePaused() { return mGamePaused; }
+	virtual void setGamePaused(bool paused) { mGamePaused = paused; }
+
+	static void changeOutputFileLevel(int diff)
+	{
+		setOutputFileLevel(getOutputFileLevel() + diff);
+		
+	}
+	static void setOutputFileLevel(int level)
+	{
+		sOutputFileLevel = level;
+		if (sOutputFileLevel < 0)
+			sOutputFileLevel = 0;
+	}
+	static int getOutputFileLevel() { return sOutputFileLevel; }
+
+	static string getOutputTabs()
+	{
+		if(sOldOutputFileLevel != sOutputFileLevel)
+		{
+			sOutputTabString = "";
+			sOutputTabString.reserve(sOutputFileLevel);
+			for(int i = 0; i < sOutputFileLevel; i++)
+			{
+				sOutputTabString += '\t';
+			}
+			sOldOutputFileLevel = sOutputFileLevel;
+		}
+		return sOutputTabString;
+	}
+
 protected:
 	bool mRedisplay;
+	bool mGameRunning;
+	bool mGamePaused;
 	void clearCanvas();
 
 	Map *mMap;
@@ -121,5 +155,9 @@ protected:
 
 	void switchKeyItem(IKeyActions *item, UIContainer &hud);
 
-	static char *LOOK_FOR_TABLE[];
+	static const char *LOOK_FOR_TABLE[];
+	static int sOutputFileLevel;
+	static int sOldOutputFileLevel;
+	static string sOutputTabString;
+	
 };

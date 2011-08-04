@@ -3,7 +3,10 @@
 #include "GameEntityFactory.h"
 #include "Animal.h"
 
-char *Game::LOOK_FOR_TABLE[] = {"Animal", "Plant"};
+const char *Game::LOOK_FOR_TABLE[] = {"Animal", "Plant"};
+int Game::sOutputFileLevel = 0;
+int Game::sOldOutputFileLevel = -1;
+string Game::sOutputTabString;
 
 Game::Game(void)
 {
@@ -26,6 +29,9 @@ Game::Game(void)
 	mMenuLevel = 0;
 	mLookFor = 0;
 	mSaveCounter = 0;
+
+	mGameRunning = true;
+	mGamePaused = false;
 }
 
 Game::~Game(void)
@@ -44,6 +50,11 @@ void Game::keyActions(const int key)
 	if (key == 50)
 	{
 		mHud.scrollY(-1);
+	}
+	// Numpad 5
+	if (key == 53)
+	{
+		mHud.setScrollY(0);
 	}
 
 	if(mSelectedItem != NULL)
@@ -106,6 +117,12 @@ void Game::keyActions(const int key)
 		{
 			saveMap("test.out");
 		}
+
+		if (key == 'q')
+		{
+			mMenuLevel = 3;
+			setGamePaused(true);
+		}
 		break;
 
 	case 1:
@@ -148,6 +165,26 @@ void Game::keyActions(const int key)
 			mFoundEntity = findClosestEntity(Vector2i(mCursorX, mCursorY), LOOK_FOR_TABLE[mLookFor]);
 		}
 		break;
+	case 3:
+		if (key == 'y' || key == 'q')
+		{
+			// QUIT!.
+			mGameRunning = false;
+		}
+		
+		if (key == 's')
+		{
+			saveMap("test.out");
+			// QUIT!.
+			mGameRunning = false;
+		}
+
+		if (key == 'n' || key == 27)
+		{
+			mMenuLevel = 0;
+			setGamePaused(false);
+		}
+		break;
 	}
 }
 
@@ -170,6 +207,7 @@ void Game::displayActions()
 		}
 
 		mHudText << '\n';
+		mHudText << "\n<11>q</>: Quit.\n";
 			 
 		break;
 	case 1:
@@ -194,6 +232,12 @@ void Game::displayActions()
 		{
 			mHudText << "Found: <12>" << mFoundEntity.entity->getEntityName() << "</>";
 		}
+		break;
+	case 3:
+		mHudText << "<15>Are you sure\nyou want to quit?\n\n</>";
+		mHudText << "<11>y</>: Quit (no save).\n";
+		mHudText << "<11>s</>: Save and quit.\n";
+		mHudText << "<11>n</>: Go back.\n";
 		
 		break;
 

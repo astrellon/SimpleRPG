@@ -24,67 +24,93 @@
 
 -- Entities
 Animal
-id 0
-position 2.92859 3.30684
-facing -3.08701
-name "Fred"
-current_action Action
-action Flee
-complete 1
-step 4
-end
-destination @ 1
-health 0 10.16
-strength 1
-dexterity 1
-intelligence 1
-running_speed 10
-walking_speed 5.1
-turning_speed 2
-entity_size 1
-entity_mass 1
-diet 0.5
-damage_base 1
+	id 0
+	position 2.92859 3.30684
+	facing -3.08701
+	name "Fred"
+	amount_eaten 0
+	current_action
+	Action
+		action Flee
+		complete 1
+		step 4
+	end
+	action_history
+	end
+	destination @ 1
+	health 0 10.16
+	strength 1
+	dexterity 1
+	intelligence 1
+	running_speed 10
+	walking_speed 5.1
+	turning_speed 2
+	entity_size 1
+	entity_mass 1
+	diet 0.5
+	damage_base 1
 end
 
 Animal
-id 1
-position 9.93701 4.02985
-facing 1.60264
-name "Jeff"
-destination 3 7
-current_action Action
-action Attack
-complete 0
-step 2
-end
-health 8.34 12.78
-strength 1
-dexterity 1
-intelligence 1
-running_speed 10
-walking_speed 1.1
-turning_speed 2
-entity_size 1
-entity_mass 1
-diet 0.5
-damage_base 1
-end
-
-Plant
-id 2
-position 5 6
-facing 0
-name "Shrub"
-graphic 5 1 +
+	id 1
+	position 9.93701 4.02985
+	facing 1.60264
+	name "Jeff"
+	amount_eaten 0
+	current_action
+	Action
+		action Attack
+		complete 0
+		step 2
+	end
+	action_history
+	end
+	destination 3 7
+	health 8.34 12.78
+	strength 1
+	dexterity 1
+	intelligence 1
+	running_speed 10
+	walking_speed 1.1
+	turning_speed 2
+	entity_size 1
+	entity_mass 1
+	diet 0.5
+	damage_base 1
 end
 
 Plant
-id 3
-position 6 6
-facing 0
-name "Better Shrub"
-graphic 2 1 *
+	id 2
+	position 5 6
+	facing 0
+	name "Shrub"
+	amount_eaten 0
+	current_action
+	Action
+		action Idle
+		complete 0
+		step 0
+	end
+	action_history
+	end
+	graphic 5 1 +
+end
+
+Plant
+	id 3
+	position 6 6
+	facing 0
+	name "Better Shrub"
+	amount_eaten 0
+	current_action
+	Action
+		action Idle
+		complete 0
+		step 0
+	end
+	action_history
+	end
+	graphic 2 1 *
 end
 
 

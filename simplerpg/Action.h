@@ -10,6 +10,8 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/lexical_cast.hpp>
 
+#include "Game.h"
+
 using namespace std;
 
 using boost::algorithm::iequals;
@@ -17,9 +19,6 @@ using boost::lexical_cast;
 
 enum EntityAction { IDLE, EAT, FLEE, ATTACK, MAX_ID };
 enum ActionProperty { ACTION, COMPLETE, STEP };
-
-const char *EntityActionNames[];
-const char *ActionPropertyNames[];
 
 class Action
 {
@@ -48,6 +47,8 @@ public:
 	virtual string getActionType() { return "Action"; }
 
 	static map<string, EntityAction> EntityActionLookup;
+	static const char *EntityActionNames[];
+	static const char *ActionPropertyNames[];
 
 protected:
 

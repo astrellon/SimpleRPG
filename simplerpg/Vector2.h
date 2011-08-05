@@ -68,7 +68,7 @@ public:
 	template <class F>
 	operator Vector2<F>()
 	{
-		return Vector2<F>(round(x), round(y));
+		return Vector2<F>((F)round(x), (F)round(y));
 	}
 
 	inline Vector2<T> add(Vector2<T> rhs)

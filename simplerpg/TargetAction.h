@@ -1,7 +1,9 @@
 #pragma once
 
 #include "Action.h"
-#include "GameEntity.h";
+#include "Destination.h"
+#include "Vector2.h"
+#include "GameEntity.h"
 
 class TargetAction : public Action
 {
@@ -10,18 +12,12 @@ public:
 	TargetAction(EntityAction action);
 	~TargetAction();
 
-	virtual GameEntity *getTarget();
-	virtual void setTarget(GameEntity *target);
-
-	virtual unsigned int &getTargetId();
-	virtual void setTargetId(const unsigned int &targetId);
+	Destination *getTarget();
 
 	virtual string getActionType() { return "TargetAction"; }
 
 protected:
-
-	GameEntity *mTarget;
-	unsigned int mTargetId;
+	Destination mTarget;
 
 	// The function which loads each property from the file tokens.
 	// Should increment the iterator at least once.

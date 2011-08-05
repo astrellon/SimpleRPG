@@ -19,7 +19,7 @@ public:
 	Pixel virtual getGraphic();
 	void virtual update(float dt);
 
-	Destination *getDestination() { return &mDestination; }
+	Destination *getDestination();
 
 	virtual void displayActions(UIContainer &hud);
 
@@ -118,11 +118,9 @@ protected:
 	virtual void eatEntity(GameEntity *entity);
 
 	virtual void doStateIdle(float dt) {}
-	virtual void doStateMoving(float dt);
+	virtual void moveAnimal(float dt);
 	
-	virtual void doStateHungry(float dt) {}
-	virtual void doStateFindMeat(float dt) {}
-	virtual void doStateFindPlant(float dt) {}
+	virtual void doActionEat(float dt);
 
 	virtual void saveProperties(ofstream &file);
 	virtual void saveProperty(const EntityProperty &propertyId, ofstream &file);

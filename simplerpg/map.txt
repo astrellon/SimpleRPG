@@ -30,17 +30,18 @@ Animal
 	name "Fred"
 	amount_eaten 0
 	current_action
-	Action
+	TargetAction
 		action Flee
 		complete 1
 		step 4
+		target @ 3
 	end
 	action_history
 		TargetAction
 			action Attack
 			complete 1
 			step 3
-			target 1
+			target @ 2
 		end
 		Action
 			action Eat

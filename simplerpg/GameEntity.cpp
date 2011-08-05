@@ -76,8 +76,8 @@ void GameEntity::move(float dx, float dy, bool inObjectSpace)
 	if(inObjectSpace)
 		mTransform.transformVectorConst(&v);
 
-	int newPosX = round(mTransform.zx + v.x);
-	int newPosY = round(mTransform.zy + v.y);
+	int newPosX = (int)round(mTransform.zx + v.x);
+	int newPosY = (int)round(mTransform.zy + v.y);
 
 	Tile *tile = mGame->getMap()->getTile(newPosX, newPosY);
 	if(tile != NULL && tile->getPassable())
@@ -286,6 +286,7 @@ void GameEntity::displayActions(UIContainer &hud)
 	*mHudText << "<15>Facing</>: " << getFacing() << '\n';
 	Action *action = getCurrentAction();
 	*mHudText << "<15>Action</>: " << Action::EntityActionNames[action->getAction()] << '\n';
+	*mHudText << "<15>Step</>:   " << action->getStep() << '\n';
 
 	mRedisplay = false;
 }

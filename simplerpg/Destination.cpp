@@ -1,4 +1,5 @@
 #include "Destination.h"
+#include "GameEntity.h"
 
 Destination::Destination()
 {
@@ -16,31 +17,31 @@ void Destination::clear()
 	mPath.clear();
 	mEntity = NULL;
 	mEntityId = -1;
-	mDestination = -1.0f;
-	mOldDestination = -1;
+	mLocation = -1.0f;
+	mOldLocation = -1;
 	mOldStart = -1;
 	mPathDirty = false;
 }
 
-void Destination::setDestination(const Vector2f &location)
+void Destination::setLocation(const Vector2f &location)
 {
 	setEntity(NULL);
-	mDestination = location;
+	mLocation = location;
 	mPathDirty = true;
 }
 
-void Destination::setDestination(const float &x, const float &y)
+void Destination::setLocation(const float &x, const float &y)
 {
-	setDestination(Vector2f(x, y));
+	setLocation(Vector2f(x, y));
 }
 
-Vector2f Destination::getDestination()
+Vector2f Destination::getLocation()
 {
 	if(getEntity() != NULL)
 	{
 		return getEntity()->getPosition();
 	}
-	return mDestination;
+	return mLocation;
 }
 
 void Destination::setEntity(GameEntity *entity)
@@ -84,7 +85,7 @@ unsigned int Destination::getEntityId()
 vector<Vector2f> Destination::getPath(Vector2f &startPosition)
 {
 	if(mPathDirty || 
-		mOldDestination.sub(getDestination()).lengthSqrd() >= 1 ||
+		mOldLocation.sub(getLocation()).lengthSqrd() >= 1 ||
 		mOldStart.sub(startPosition).lengthSqrd() >= 1)
 	{
 		updatePath(startPosition);
@@ -95,8 +96,8 @@ vector<Vector2f> Destination::getPath(Vector2f &startPosition)
 
 void Destination::updatePath(Vector2f &startPosition)
 {
-	Vector2f dest = getDestination();
-	mOldDestination = dest;
+	Vector2f dest = getLocation();
+	mOldLocation = dest;
 	mPathDirty = false;
 	if(dest.x < 0 || dest.y < 0)
 	{
@@ -112,5 +113,14 @@ void Destination::updatePath(Vector2f &startPosition)
 			mPath = *p;
 			delete p;
 		}
+	}
+}
+
+void Destination::clearPath()
+{
+	if(!mPath.empty())
+	{
+		mPath.clear();
+		mPathDirty = true;
 	}
 }

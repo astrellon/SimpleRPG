@@ -35,6 +35,16 @@ Animal::~Animal(void)
 {
 }
 
+Destination *Animal::getDestination()
+{
+	TargetAction *action = dynamic_cast<TargetAction *>(getCurrentAction());
+	if(action != NULL)
+	{
+		return action->getTarget();
+	}
+	return &mDestination;
+}
+
 void Animal::displayActions(UIContainer &hud)
 {
 	if(!mRedisplay)
@@ -43,7 +53,7 @@ void Animal::displayActions(UIContainer &hud)
 	GameEntity::displayActions(hud);
 
 	static char buff[128];
-	sprintf(buff, "%.1f, %.1f\n", mDestination.getDestination().x, mDestination.getDestination().y);
+	sprintf(buff, "%.1f, %.1f\n", mDestination.getLocation().x, mDestination.getLocation().y);
 
 	*mHudText << "<15>Dest</>: " << buff;
 	GameEntity *target = mDestination.getEntity();
@@ -92,7 +102,7 @@ void Animal::loadProperties(boost::sregex_token_iterator &iter)
 		{
 			float x = lexical_cast<float>(typeCheck);
 			float y = lexical_cast<float>(*iter++);
-			mDestination.setDestination(x, y);
+			mDestination.setLocation(x, y);
 		}
 	}
 	else if(iequals(propertyName, EntityPropertyNames[HEALTH]))
@@ -190,7 +200,7 @@ void Animal::saveProperty(const EntityProperty &propertyId, ofstream &file)
 			file << Game::getOutputTabs() << EntityPropertyNames[DESTINATION] << " @ " << dest->getEntity()->getId() << endl;
 		else
 		{
-			v = dest->getDestination();
+			v = dest->getLocation();
 			file << Game::getOutputTabs() << EntityPropertyNames[DESTINATION] << ' ' << v.x << ' ' << v.y << endl;
 		}
 		break;
@@ -236,26 +246,31 @@ void Animal::saveProperty(const EntityProperty &propertyId, ofstream &file)
 void Animal::update(float dt)
 {
 	Action *action = getCurrentAction();
-
-	// If not in danger.
+	// If not in danger. Continue doing the same action.
 	
 	switch(action->getAction())
 	{
 	default:
 	case IDLE:
 		// Do nothing!
+		if(isHungry())
+		{
+			setCurrentAction(new TargetAction(EAT));
+		}
 		break;
 	case EAT:
+		doActionEat(dt);
+		break;
 	case FLEE:
 	case ATTACK:
 		// Do some more nothing.
 		action->getCompleted();
 	}
 	
-	doStateMoving(dt);
+	moveAnimal(dt);
 }
 
-void Animal::doStateMoving(float dt)
+void Animal::moveAnimal(float dt)
 {
 	Vector2f pos = getPosition();
 	vector<Vector2f> path = mDestination.getPath(pos);
@@ -357,6 +372,82 @@ float Animal::getWalkingSpeed()
 float Animal::getTurningSpeed()
 {
 	return getTurningSpeedBase();
+}
+
+void Animal::doActionEat(float dt)
+{
+	TargetAction *action = dynamic_cast<TargetAction *>(getCurrentAction());
+
+	if(action == NULL)
+	{
+		cout << "Error! Current action is not a target action for Eat action!" << endl;
+		setCurrentAction(new TargetAction(EAT));
+		return;
+	}
+
+	if(action->getStep() == 0)
+	{
+		FindEntityResult result;
+		if(getDiet() < 0.5f)
+		{
+			result = mGame->findClosestEntity(getPosition(), "Plant");
+		}
+		else if(getDiet() >= 0.5f)
+		{
+			result = mGame->findClosestEntity(getPosition(), "Animal");
+		}
+
+		if(result.entity != NULL && result.path != NULL)
+		{
+			action->getTarget()->setEntity(result.entity);
+			result.clear();
+			action->nextStep();
+		}
+	}
+	else if(action->getStep() == 1)
+	{
+		// Direct distance between this animal and the target.
+		double simpleDist = getPosition().sub(action->getTarget()->getEntity()->getPosition()).length();
+		if(simpleDist <= 1.0f)
+		{
+			action->nextStep();
+		}
+	}
+	else if(action->getStep() == 2)
+	{
+		Animal *animal = dynamic_cast<Animal *>(action->getTarget()->getEntity());
+		Plant *plant = dynamic_cast<Plant *>(action->getTarget()->getEntity());
+		if(animal != NULL)
+		{
+			if(!animal->isDead())
+			{
+				// Attack animal.
+				action->nextStep();
+			}
+			else
+			{
+				action->nextStep();
+			}
+		}
+		else if(plant != NULL)
+		{
+			action->nextStep();
+		}
+		else
+		{
+			cout << getEntityName() << " cannot eat " << action->getTarget()->getEntity()->getEntityType() << endl;
+			setCurrentAction(new Action(IDLE));
+			return;
+		}
+	}
+	else if(action->getStep() >= 3)
+	{
+		eatEntity(action->getTarget()->getEntity());
+		if(!isHungry())
+		{
+			setCurrentAction(new Action(IDLE));
+		}
+	}
 }
 
 void Animal::eatEntity(GameEntity *entity)

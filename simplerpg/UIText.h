@@ -28,41 +28,6 @@ public:
 	virtual void setWordWrap(bool wrap) { mWordWrap = wrap; }
 
 	virtual void clearText() { mText.str(""); }
-	
-	inline UIText &operator<<(const UIText &t)
-	{
-		mText << t.mText;
-		newText();
-		return *this;
-	}
-
-	inline UIText &operator<<(const char *c)
-	{
-		mText << c;
-		newText();
-		return *this;
-	}
-
-	inline UIText &operator<<(const string &s)
-	{
-		mText << s;
-		newText();
-		return *this;
-	}
-
-	inline UIText &operator<<(const int &i)
-	{
-		mText << i;
-		newText();
-		return *this;
-	}
-
-	inline UIText &operator<<(const unsigned int &i)
-	{
-		mText << i;
-		newText();
-		return *this;
-	}
 
 	inline UIText &operator<<(const bool &b)
 	{
@@ -71,34 +36,21 @@ public:
 		return *this;
 	}
 
-	inline UIText &operator<<(const char &c)
+	inline UIText &operator<<(const UIText &t)
 	{
-		mText << c;
+		mText << t.mText;
 		newText();
 		return *this;
 	}
 
-	inline UIText &operator<<(const unsigned char &c)
+	template <class T>
+	inline UIText &operator<<(const T &t)
 	{
-		mText << c;
+		mText << t;
 		newText();
 		return *this;
 	}
-
-	inline UIText &operator<<(const float &f)
-	{
-		mText << f;
-		newText();
-		return *this;
-	}
-
-	inline UIText &operator<<(const double &f)
-	{
-		mText << f;
-		newText();
-		return *this;
-	}
-
+	
 	virtual int getMeasuredHeight();
 	virtual int getMeasuredWidth();
 

@@ -21,6 +21,8 @@ using boost::math::round;
 class GameEntity;
 class Animal;
 
+enum MenuLevel { MENU_MAIN, MENU_LOOK, MENU_FIND, MENU_QUIT };
+
 typedef struct _FindEntityResult
 {
 	GameEntity *entity;
@@ -145,7 +147,7 @@ protected:
 	UIList mHud;
 	UIText mHudText;
 
-	int mMenuLevel;
+	MenuLevel mMenuLevel;
 	int mCursorX;
 	int mCursorY;
 	bool mCursorMode;

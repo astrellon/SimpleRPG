@@ -26,7 +26,7 @@ Game::Game(void)
 	mHud.setY(1);
 	mHud.addChild(mHudText);
 
-	mMenuLevel = 0;
+	mMenuLevel = MENU_MAIN;
 	mLookFor = 0;
 	mSaveCounter = 0;
 
@@ -91,7 +91,7 @@ void Game::keyActions(const int key)
 	switch(mMenuLevel)
 	{
 	default:
-	case 0:
+	case MENU_MAIN:
 		if (key == 260)
 			moveCamera(-1, 0);
 		if (key == 261)
@@ -104,13 +104,13 @@ void Game::keyActions(const int key)
 		if (key == 'k')
 		{
 			setCursorMode(true);
-			mMenuLevel = 1;
+			mMenuLevel = MENU_LOOK;
 		}
 
 		if (key == 'f')
 		{
 			setCursorMode(true);
-			mMenuLevel = 2;
+			mMenuLevel = MENU_FIND;
 		}
 
 		if (key == 's')
@@ -120,17 +120,17 @@ void Game::keyActions(const int key)
 
 		if (key == 'q')
 		{
-			mMenuLevel = 3;
+			mMenuLevel = MENU_QUIT;
 			setGamePaused(true);
 		}
 		break;
 
-	case 1:
+	case MENU_LOOK:
 		
 		if (key == 27 || key == 'k')
 		{
 			setCursorMode(false);
-			mMenuLevel = 0;
+			mMenuLevel = MENU_MAIN;
 		}
 
 		if(key >= '1' && key <= '9')
@@ -143,12 +143,12 @@ void Game::keyActions(const int key)
 			}
 		}
 		break;
-	case 2:
+	case MENU_FIND:
 		if (key == 27)
 		{
 			setCursorMode(false);
 			mFoundEntity.clear();
-			mMenuLevel = 0;
+			mMenuLevel = MENU_MAIN;
 		}
 
 		if (key == 'x')
@@ -165,7 +165,7 @@ void Game::keyActions(const int key)
 			mFoundEntity = findClosestEntity(Vector2i(mCursorX, mCursorY), LOOK_FOR_TABLE[mLookFor]);
 		}
 		break;
-	case 3:
+	case MENU_QUIT:
 		if (key == 'y' || key == 'q')
 		{
 			// QUIT!.
@@ -181,7 +181,7 @@ void Game::keyActions(const int key)
 
 		if (key == 'n' || key == 27)
 		{
-			mMenuLevel = 0;
+			mMenuLevel = MENU_MAIN;
 			setGamePaused(false);
 		}
 		break;
@@ -195,7 +195,7 @@ void Game::displayActions()
 	switch (mMenuLevel)
 	{
 	default:
-	case 0:
+	case MENU_MAIN:
 		mHudText << "<15>Menu</>\n\n";
 		mHudText << "<11>k</>: Look mode.\n";
 		mHudText << "<11>f</>: Find closest.\n";
@@ -210,7 +210,7 @@ void Game::displayActions()
 		mHudText << "\n<11>q</>: Quit.\n";
 			 
 		break;
-	case 1:
+	case MENU_LOOK:
 		if(mSelectedItem != NULL)
 		{
 			mSelectedItem->displayActions(mHud);
@@ -220,7 +220,7 @@ void Game::displayActions()
 			displayUnderCursor(mHud);
 		}
 		break;
-	case 2:
+	case MENU_FIND:
 		mHudText << "<15>Find closest</>\n";
 		mHudText << "Pos (<12>" << mCursorX << ", " << mCursorY << "</>)\n\n";
 		mHudText << "<11>x</>: Toggle P/A (" << LOOK_FOR_TABLE[mLookFor][0] << ")\n";
@@ -233,7 +233,7 @@ void Game::displayActions()
 			mHudText << "Found: <12>" << mFoundEntity.entity->getEntityName() << "</>";
 		}
 		break;
-	case 3:
+	case MENU_QUIT:
 		mHudText << "<15>Are you sure\nyou want to quit?\n\n</>";
 		mHudText << "<11>y</>: Quit (no save).\n";
 		mHudText << "<11>s</>: Save and quit.\n";

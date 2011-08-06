@@ -380,7 +380,7 @@ void Animal::doActionEat(float dt)
 
 	if(action == NULL)
 	{
-		cout << "Error! Current action is not a target action for Eat action!" << endl;
+		clog << "Error! Current action is not a target action for Eat action!" << endl;
 		setCurrentAction(new TargetAction(EAT));
 		return;
 	}
@@ -435,7 +435,7 @@ void Animal::doActionEat(float dt)
 		}
 		else
 		{
-			cout << getEntityName() << " cannot eat " << action->getTarget()->getEntity()->getEntityType() << endl;
+			clog << getEntityName() << " cannot eat " << action->getTarget()->getEntity()->getEntityType() << endl;
 			setCurrentAction(new Action(IDLE));
 			return;
 		}

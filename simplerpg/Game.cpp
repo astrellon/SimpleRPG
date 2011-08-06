@@ -371,7 +371,7 @@ void Game::saveMap(string filename)
 	FormattedFile file(filename);
 	if(!file.isOpen())
 	{
-		cout << "Failed to open file " << filename << " for saving." << endl;
+		clog << "Failed to open file " << filename << " for saving." << endl;
 		return;
 	}
 
@@ -419,7 +419,7 @@ void Game::loadMap(string filename)
 	ifstream file(filename);
 	if(!file.is_open())
 	{
-		cout << "Failed to open file " << filename << endl;
+		clog << "Failed to open file " << filename << endl;
 		return;
 	}
 
@@ -493,26 +493,26 @@ void Game::loadMap(string filename)
 			{
 				// Change to tiles.
 				state = STATE_READ_TILES;
-				cout << "Switching to reading tiles." << endl;
+				clog << "Switching to reading tiles." << endl;
 			}
 			else if(boost::algorithm::iequals(line, "Map"))
 			{
 				state = STATE_READ_MAP;
-				cout << "Switching to reading map." << endl;
+				clog << "Switching to reading map." << endl;
 			}
 			else if(boost::algorithm::iequals(line, "Entities"))
 			{
 				state = STATE_READ_ENTITIES;
-				cout << "Switching to reading entities." << endl;
+				clog << "Switching to reading entities." << endl;
 			}
 			else if(boost::algorithm::iequals(line, "End"))
 			{
 				state = STATE_END_OF_FILE;
-				cout << "Switching to end of file state." << endl;
+				clog << "Switching to end of file state." << endl;
 			}
 			else
 			{
-				cout << "Unknown state " << line << endl;
+				clog << "Unknown state " << line << endl;
 				break;
 			}
 			continue;
@@ -520,11 +520,11 @@ void Game::loadMap(string filename)
 
 		if(!endState)
 		{
-			cout << "Line: >" << line << "<" << endl;
+			clog << "Line: >" << line << "<" << endl;
 		}
 		else
 		{
-			cout << "Ending state." << endl;
+			clog << "Ending state." << endl;
 		}
 
 		switch(state)
@@ -535,7 +535,7 @@ void Game::loadMap(string filename)
 		case STATE_READ_TILES:
 			if(endState)
 			{
-				cout << "Tiles do nothing on end state." << endl;
+				clog << "Tiles do nothing on end state." << endl;
 				break;
 			}
 
@@ -553,7 +553,7 @@ void Game::loadMap(string filename)
 		case STATE_READ_MAP:
 			if(endState)
 			{
-				cout << "Create map and add to game." << endl;
+				clog << "Create map and add to game." << endl;
 				map = new Map(width, mapData.size());
 				map->setMappedTiles(tileMap);
 				for(unsigned int y = 0; y < mapData.size(); y++)
@@ -575,7 +575,7 @@ void Game::loadMap(string filename)
 			}
 			else if(line.length() != width)
 			{
-				cout << "ERROR With map data, needs to be square!." << endl;
+				clog << "ERROR With map data, needs to be square!." << endl;
 				state = -1;
 				break;
 			}
@@ -585,14 +585,14 @@ void Game::loadMap(string filename)
 		case STATE_READ_ENTITIES:
 			if(endState)
 			{
-				cout << "End state for entities." << endl;
+				clog << "End state for entities." << endl;
 				break;
 			}
 
 			GameEntity *entity = GameEntityFactory::create(this, line);
 			if(entity == NULL)
 			{
-				cout << "Error parsing entity " << line << endl;
+				clog << "Error parsing entity " << line << endl;
 			}
 			else
 			{

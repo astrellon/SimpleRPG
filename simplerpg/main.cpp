@@ -108,7 +108,7 @@ Game *startGame(string filename)
 int main()
 {
 	ofstream logfile("logfile.log");
-	cout.rdbuf(logfile.rdbuf());
+	clog.rdbuf(logfile.rdbuf());
 
 	srand( (unsigned int)time(NULL) );
 

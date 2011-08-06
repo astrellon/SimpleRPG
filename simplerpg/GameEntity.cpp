@@ -198,7 +198,7 @@ void GameEntity::saveProperty(const EntityProperty &propertyId, FormattedFile &f
 		file << "end\n";
 		break;
 	default:
-		cout << "Unable to save unknown entity property " << propertyId << endl;
+		clog << "Unable to save unknown entity property " << propertyId << endl;
 		break;
 	}
 }
@@ -240,7 +240,7 @@ void GameEntity::loadProperties(boost::sregex_token_iterator &iter)
 		Action *action = ActionFactory::create(line);
 		if(action == NULL)
 		{
-			cout << "Error! Could not create action '" << line << "' instance." << endl;
+			clog << "Error! Could not create action '" << line << "' instance." << endl;
 			return;
 		}
 		action->loadFromFile(iter);
@@ -256,7 +256,7 @@ void GameEntity::loadProperties(boost::sregex_token_iterator &iter)
 			{
 				if(action == NULL)
 				{
-					cout << "Error! Could not create action '" << line << "' instance." << endl;
+					clog << "Error! Could not create action '" << line << "' instance." << endl;
 					continue;
 				}
 				action->loadFromFile(iter);
@@ -267,7 +267,7 @@ void GameEntity::loadProperties(boost::sregex_token_iterator &iter)
 	}
 	else 
 	{
-		cout << "Unable to load unknown property '" << propertyName << '\'' << endl;
+		clog << "Unable to load unknown property '" << propertyName << '\'' << endl;
 	}
 }
 

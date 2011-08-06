@@ -55,7 +55,7 @@ void Action::loadFromFile(boost::sregex_token_iterator &iter)
 		loadProperties(iter);
 	}
 
-	cout << "Finished loading " << getActionType() << endl;
+	clog << "Finished loading " << getActionType() << endl;
 }
 
 void Action::saveToFile(FormattedFile &file)
@@ -84,7 +84,7 @@ void Action::loadProperties(boost::sregex_token_iterator &iter)
 	}
 	else
 	{
-		cout << "Unable to load unknown property '" << propertyName << '\'' << endl;
+		clog << "Unable to load unknown property '" << propertyName << '\'' << endl;
 	}
 }
 
@@ -102,7 +102,7 @@ void Action::saveProperty(const ActionProperty &propertyId, FormattedFile &file)
 		file << ActionPropertyNames[STEP] << ' ' << getStep() << '\n';
 		break;
 	default:
-		cout << "Unable to save unknown action property " << propertyId << endl;
+		clog << "Unable to save unknown action property " << propertyId << endl;
 		break;
 	}
 }

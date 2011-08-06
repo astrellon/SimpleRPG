@@ -141,16 +141,16 @@ void GameEntity::loadFromFile(boost::sregex_token_iterator &iter)
 	}
 }
 
-void GameEntity::saveToFile(ofstream &file)
+void GameEntity::saveToFile(FormattedFile &file)
 {
-	file << Game::getOutputTabs() << getEntityType() << endl;
-	Game::changeOutputFileLevel(1);
+	file << getEntityType() << '\n';
+	file.changeTabLevel(1);
 	saveProperties(file);
-	Game::changeOutputFileLevel(-1);
-	file << Game::getOutputTabs() << "end" << endl << endl;
+	file.changeTabLevel(-1);
+	file << "end\n\n";
 }
 
-void GameEntity::saveProperties(ofstream &file)
+void GameEntity::saveProperties(FormattedFile &file)
 {
 	saveProperty(ID, file);
 	saveProperty(POSITION, file);
@@ -161,41 +161,41 @@ void GameEntity::saveProperties(ofstream &file)
 	saveProperty(ACTION_HISTORY, file);
 }
 
-void GameEntity::saveProperty(const EntityProperty &propertyId, ofstream &file)
+void GameEntity::saveProperty(const EntityProperty &propertyId, FormattedFile &file)
 {
 	Vector2f v;
 
 	switch(propertyId)
 	{
 	case ID:
-		file << Game::getOutputTabs() << EntityPropertyNames[ID] << ' ' << getId() << endl;
+		file << EntityPropertyNames[ID] << ' ' << getId() << '\n';
 		break;
 	case POSITION:
 		v = getPosition();
-		file << Game::getOutputTabs() << EntityPropertyNames[POSITION] << ' ' << v.x << ' ' << v.y << endl;
+		file << EntityPropertyNames[POSITION] << ' ' << v.x << ' ' << v.y << '\n';
 		break;
 	case FACING:
-		file << Game::getOutputTabs() << EntityPropertyNames[FACING] << ' ' << getFacing() << endl;
+		file << EntityPropertyNames[FACING] << ' ' << getFacing() << '\n';
 		break;
 	case NAME:
-		file << Game::getOutputTabs() << EntityPropertyNames[NAME] << " \"" << getEntityName() << '\"' << endl;
+		file << EntityPropertyNames[NAME] << " \"" << getEntityName() << "\"\n";
 		break;
 	case AMOUNT_EATEN:
-		file << Game::getOutputTabs() << EntityPropertyNames[AMOUNT_EATEN] << ' ' << getAmountEaten() << endl;
+		file << EntityPropertyNames[AMOUNT_EATEN] << ' ' << getAmountEaten() << '\n';
 		break;
 	case CURRENT_ACTION:
-		file << Game::getOutputTabs() << EntityPropertyNames[CURRENT_ACTION] << endl;
+		file << EntityPropertyNames[CURRENT_ACTION] << '\n';
 		getCurrentAction()->saveToFile(file);
 		break;
 	case ACTION_HISTORY:
-		file << Game::getOutputTabs() << EntityPropertyNames[ACTION_HISTORY] << endl;
-		Game::changeOutputFileLevel(1);
+		file << EntityPropertyNames[ACTION_HISTORY] << '\n';
+		file.changeTabLevel(1);
 		for(vector<Action *>::iterator iter = getPastActions()->begin(); iter != getPastActions()->end(); iter++)
 		{
 			(*iter)->saveToFile(file);
 		}
-		Game::changeOutputFileLevel(-1);
-		file << Game::getOutputTabs() << "end" << endl;
+		file.changeTabLevel(-1);
+		file << "end\n";
 		break;
 	default:
 		cout << "Unable to save unknown entity property " << propertyId << endl;

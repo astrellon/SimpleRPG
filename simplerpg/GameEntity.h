@@ -18,6 +18,7 @@
 #include "Rect.h"
 #include "Action.h"
 #include "ActionFactory.h"
+#include "FormattedFile.h"
 
 using std::map;
 
@@ -90,7 +91,7 @@ public:
 	virtual void loadFromFile(boost::sregex_token_iterator &iter);
 	// Saves the entity to a file stream. Must be in the same format that can be tokenized and
 	// loaded using the loadFromFile function.
-	virtual void saveToFile(ofstream &file);
+	virtual void saveToFile(FormattedFile &file);
 	
 	// If this entity currently has focus, this function is called with the last key that was pressed.
 	// This can be called multiple times a frame if multiple keys have been pressed.
@@ -172,9 +173,9 @@ protected:
 	// Should increment the iterator at least once.
 	virtual void loadProperties(boost::sregex_token_iterator &iter);
 	// Saves an individual property based on the property ID to the file stream.
-	virtual void saveProperty(const EntityProperty &propertyId, ofstream &file);
+	virtual void saveProperty(const EntityProperty &propertyId, FormattedFile &file);
 	// Calls the appropriate functions to save all the properties for this entity.
-	virtual void saveProperties(ofstream &file);
+	virtual void saveProperties(FormattedFile &file);
 	
 	// Call when the entity is added into a Game.
 	virtual void onAddedToGame() {}

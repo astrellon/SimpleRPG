@@ -11,6 +11,7 @@
 #include <boost/lexical_cast.hpp>
 
 #include "Game.h"
+#include "FormattedFile.h"
 
 using namespace std;
 
@@ -42,7 +43,7 @@ public:
 	virtual void loadFromFile(boost::sregex_token_iterator &iter);
 	// Saves the entity to a file stream. Must be in the same format that can be tokenized and
 	// loaded using the loadFromFile function.
-	virtual void saveToFile(ofstream &file);
+	virtual void saveToFile(FormattedFile &file);
 
 	virtual string getActionType() { return "Action"; }
 
@@ -63,9 +64,9 @@ protected:
 	// Should increment the iterator at least once.
 	virtual void loadProperties(boost::sregex_token_iterator &iter);
 	// Saves an individual property based on the property ID to the file stream.
-	virtual void saveProperty(const ActionProperty &propertyId, ofstream &file);
+	virtual void saveProperty(const ActionProperty &propertyId, FormattedFile &file);
 	// Calls the appropriate functions to save all the properties for this entity.
-	virtual void saveProperties(ofstream &file);
+	virtual void saveProperties(FormattedFile &file);
 
 private:
 

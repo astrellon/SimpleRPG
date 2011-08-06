@@ -14,6 +14,7 @@ using boost::math::round;
 #include "Map.h"
 #include "Rect.h"
 #include "IKeyActions.h"
+#include "FormattedFile.h"
 
 #include "UIList.h"
 #include "UIText.h"
@@ -100,34 +101,6 @@ public:
 	virtual bool getGamePaused() { return mGamePaused; }
 	virtual void setGamePaused(bool paused) { mGamePaused = paused; }
 
-	static void changeOutputFileLevel(int diff)
-	{
-		setOutputFileLevel(getOutputFileLevel() + diff);
-		
-	}
-	static void setOutputFileLevel(int level)
-	{
-		sOutputFileLevel = level;
-		if (sOutputFileLevel < 0)
-			sOutputFileLevel = 0;
-	}
-	static int getOutputFileLevel() { return sOutputFileLevel; }
-
-	static string getOutputTabs()
-	{
-		if(sOldOutputFileLevel != sOutputFileLevel)
-		{
-			sOutputTabString = "";
-			sOutputTabString.reserve(sOutputFileLevel);
-			for(int i = 0; i < sOutputFileLevel; i++)
-			{
-				sOutputTabString += '\t';
-			}
-			sOldOutputFileLevel = sOutputFileLevel;
-		}
-		return sOutputTabString;
-	}
-
 protected:
 	bool mRedisplay;
 	bool mGameRunning;
@@ -158,8 +131,4 @@ protected:
 	void switchKeyItem(IKeyActions *item, UIContainer &hud);
 
 	static const char *LOOK_FOR_TABLE[];
-	static int sOutputFileLevel;
-	static int sOldOutputFileLevel;
-	static string sOutputTabString;
-	
 };

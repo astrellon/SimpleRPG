@@ -38,7 +38,7 @@ void TargetAction::loadProperties(boost::sregex_token_iterator &iter)
 	}
 }
 
-void TargetAction::saveProperty(const ActionProperty &propertyId, ofstream &file)
+void TargetAction::saveProperty(const ActionProperty &propertyId, FormattedFile &file)
 {
 	Destination *dest = NULL;
 	Vector2f v;
@@ -48,12 +48,12 @@ void TargetAction::saveProperty(const ActionProperty &propertyId, ofstream &file
 		dest = getTarget();
 		if(dest->getEntity() != NULL)
 		{
-			file << Game::getOutputTabs() << ActionPropertyNames[TARGET] << " @ " << dest->getEntity()->getId() << endl;
+			file << ActionPropertyNames[TARGET] << " @ " << dest->getEntity()->getId() << '\n';
 		}
 		else
 		{
 			v = dest->getLocation();
-			file << Game::getOutputTabs() << ActionPropertyNames[TARGET] << ' ' << v.x << ' ' << v.y << endl;
+			file << ActionPropertyNames[TARGET] << ' ' << v.x << ' ' << v.y << '\n';
 		}
 		break;
 	default:
@@ -62,7 +62,7 @@ void TargetAction::saveProperty(const ActionProperty &propertyId, ofstream &file
 	}
 }
 
-void TargetAction::saveProperties(ofstream &file)
+void TargetAction::saveProperties(FormattedFile &file)
 {
 	Action::saveProperties(file);
 	saveProperty(TARGET, file);

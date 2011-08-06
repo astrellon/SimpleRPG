@@ -58,13 +58,13 @@ void Action::loadFromFile(boost::sregex_token_iterator &iter)
 	cout << "Finished loading " << getActionType() << endl;
 }
 
-void Action::saveToFile(ofstream &file)
+void Action::saveToFile(FormattedFile &file)
 {
-	file << Game::getOutputTabs() << getActionType() << endl;
-	Game::changeOutputFileLevel(1);
+	file << getActionType() << '\n';
+	file.changeTabLevel(1);
 	saveProperties(file);
-	Game::changeOutputFileLevel(-1);
-	file << Game::getOutputTabs() << "end" << endl;
+	file.changeTabLevel(-1);
+	file << "end\n";
 }
 
 void Action::loadProperties(boost::sregex_token_iterator &iter)
@@ -88,18 +88,18 @@ void Action::loadProperties(boost::sregex_token_iterator &iter)
 	}
 }
 
-void Action::saveProperty(const ActionProperty &propertyId, ofstream &file)
+void Action::saveProperty(const ActionProperty &propertyId, FormattedFile &file)
 {
 	switch(propertyId)
 	{
 	case ACTION:
-		file << Game::getOutputTabs() << ActionPropertyNames[ACTION] << ' ' << EntityActionNames[getAction()] << endl;
+		file << ActionPropertyNames[ACTION] << ' ' << EntityActionNames[getAction()] << '\n';
 		break;
 	case COMPLETE:
-		file << Game::getOutputTabs() << ActionPropertyNames[COMPLETE] << ' ' << (getCompleted() ? '1' : '0') << endl;
+		file << ActionPropertyNames[COMPLETE] << ' ' << (getCompleted() ? '1' : '0') << '\n';
 		break;
 	case STEP:
-		file << Game::getOutputTabs() << ActionPropertyNames[STEP] << ' ' << getStep() << endl;
+		file << ActionPropertyNames[STEP] << ' ' << getStep() << '\n';
 		break;
 	default:
 		cout << "Unable to save unknown action property " << propertyId << endl;
@@ -107,7 +107,7 @@ void Action::saveProperty(const ActionProperty &propertyId, ofstream &file)
 	}
 }
 
-void Action::saveProperties(ofstream &file)
+void Action::saveProperties(FormattedFile &file)
 {
 	saveProperty(ACTION, file);
 	saveProperty(COMPLETE, file);

@@ -84,6 +84,9 @@
     <ClCompile Include="TargetAction.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FormattedFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Map.h">
@@ -168,6 +171,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TargetAction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FormattedFile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

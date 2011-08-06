@@ -14,19 +14,19 @@ Plant::~Plant()
 
 }
 
-void Plant::saveProperties(ofstream &file)
+void Plant::saveProperties(FormattedFile &file)
 {
 	GameEntity::saveProperties(file);
 	saveProperty(GRAPHIC, file);
 }
 
-void Plant::saveProperty(const EntityProperty &propertyId, ofstream &file)
+void Plant::saveProperty(const EntityProperty &propertyId, FormattedFile &file)
 {
 	Pixel graphic = getGraphic();
 	switch(propertyId)
 	{
 	case GRAPHIC:
-		file << Game::getOutputTabs() << "graphic " << graphic.getColour() << ' ' << (graphic.bold ? '1' : '0') << ' ' << graphic.graphic << endl;
+		file << "graphic " << graphic.getColour() << ' ' << (graphic.bold ? '1' : '0') << ' ' << graphic.graphic << '\n';
 		break;
 	default:
 		GameEntity::saveProperty(propertyId, file);

@@ -23,6 +23,7 @@
 #include "UISpacer.h"
 #include "UISelector.h"
 #include "Destination.h"
+#include "FormattedFile.h"
 
 using namespace boost::filesystem;
 
@@ -367,7 +368,7 @@ int main()
 	delwin(mainMenuWnd);
 	endwin();
 
-	if(logfile)
+	if (logfile.is_open())
 	{
 		logfile.close();
 	}

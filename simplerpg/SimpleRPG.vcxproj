@@ -131,6 +131,7 @@ copy "$(ProjectDir)map.txt" "$(OutputPath)"</Command>
     <ClCompile Include="Animal.cpp" />
     <ClCompile Include="AStarNode.cpp" />
     <ClCompile Include="Destination.cpp" />
+    <ClCompile Include="FormattedFile.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameEntity.cpp" />
     <ClCompile Include="GameEntityFactory.cpp" />
@@ -155,6 +156,7 @@ copy "$(ProjectDir)map.txt" "$(OutputPath)"</Command>
     <ClInclude Include="curses.h" />
     <ClInclude Include="Destination.h" />
     <ClInclude Include="Action.h" />
+    <ClInclude Include="FormattedFile.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameEntity.h" />
     <ClInclude Include="GameEntityFactory.h" />

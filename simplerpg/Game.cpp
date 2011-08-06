@@ -4,9 +4,6 @@
 #include "Animal.h"
 
 const char *Game::LOOK_FOR_TABLE[] = {"Animal", "Plant"};
-int Game::sOutputFileLevel = 0;
-int Game::sOldOutputFileLevel = -1;
-string Game::sOutputTabString;
 
 Game::Game(void)
 {
@@ -371,28 +368,28 @@ vector<Vector2f> *Game::findPath(Vector2i startPosition, Vector2i endPosition)
 
 void Game::saveMap(string filename)
 {
-	ofstream file(filename);
-	if(!file.is_open())
+	FormattedFile file(filename);
+	if(!file.isOpen())
 	{
 		cout << "Failed to open file " << filename << " for saving." << endl;
 		return;
 	}
 
-	file << "// Auto generated map file." << endl;
+	file << "// Auto generated map file.\n";
 
 	Map *gameMap = getMap();
 
 	map<char, Tile *> *tileMap = gameMap->getMappedTiles();
 	map<Tile *, char> tileLookup;
 	
-	file << "-- Tiles" << endl;
+	file << "-- Tiles\n";
 	for(map<char, Tile *>::iterator iter = tileMap->begin(); iter != tileMap->end(); iter++)
 	{
-		file << iter->first << ' ' << iter->second->getCode() << endl;
+		file << iter->first << ' ' << iter->second->getCode() << '\n';
 		tileLookup[iter->second] = iter->first;
 	}
 
-	file << endl << "-- Map" << endl;
+	file << "\n-- Map\n";
 
 	for(int y = 0; y < gameMap->getHeight(); y++)
 	{
@@ -401,20 +398,20 @@ void Game::saveMap(string filename)
 			Tile *tile = gameMap->getTile(x, y);
 			file << tileLookup[tile];
 		}
-		file << endl;
+		file << '\n';
 	}
 
-	file << endl << "-- Entities" << endl;
+	file << "\n-- Entities\n";
 
 	for(vector<GameEntity *>::iterator iter = mEntities.begin(); iter != mEntities.end(); iter++)
 	{
 		(*iter)->saveToFile(file);
 	}
 
-	file << endl << "-- End";
+	file << "\n-- End";
 	mSaveCounter = 10;
 
-	file.close();
+	file.closeFile();
 }
 
 void Game::loadMap(string filename)

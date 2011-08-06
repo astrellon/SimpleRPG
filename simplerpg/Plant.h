@@ -12,8 +12,8 @@ public:
 
 	virtual string getEntityType() { return "Plant"; }
 
-	virtual void saveProperties(ofstream &file);
-	virtual void saveProperty(const EntityProperty &propertyId, ofstream &file);
+	virtual void saveProperties(FormattedFile &file);
+	virtual void saveProperty(const EntityProperty &propertyId, FormattedFile &file);
 	virtual void loadProperties(boost::sregex_token_iterator &iter);
 
 protected:

@@ -122,8 +122,8 @@ protected:
 	
 	virtual void doActionEat(float dt);
 
-	virtual void saveProperties(ofstream &file);
-	virtual void saveProperty(const EntityProperty &propertyId, ofstream &file);
+	virtual void saveProperties(FormattedFile &file);
+	virtual void saveProperty(const EntityProperty &propertyId, FormattedFile &file);
 	virtual void loadProperties(boost::sregex_token_iterator &iter);
 
 	float getTurnAmount(float facing, float dest);

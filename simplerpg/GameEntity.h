@@ -117,36 +117,10 @@ public:
 
 	static int nextId() { return sId++; }
 	
-	void setId(unsigned int id)
-	{
-		EntityMap::iterator iter = sEntities.find(id);
-		if(iter == sEntities.end())
-		{
-			iter = sEntities.find(mId);
-			if (iter != sEntities.end())
-				sEntities.erase(iter);
-
-			sId = max(sId, id) + 1;
-			mId = id;
-			
-			sEntities[id] = this;
-		}
-		else
-		{
-			throw "Two entities attempting to use the same ID!";
-		}
-	}
+	void setId(unsigned int id);
 	unsigned int getId() { return mId; }
 
-	static GameEntity *getEntityById(unsigned int id)
-	{
-		EntityMap::iterator iter = sEntities.find(id);
-		if(iter == sEntities.end())
-		{
-			return NULL;
-		}
-		return iter->second;
-	}
+	static GameEntity *getEntityById(unsigned int id);
 
 	virtual Action *getCurrentAction() { return mCurrentAction; }
 	virtual vector<Action *> *getPastActions() { return &mPastActions; }

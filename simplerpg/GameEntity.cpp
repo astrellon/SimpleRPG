@@ -309,3 +309,33 @@ void GameEntity::setupDisplay(UIContainer &hud)
 	hud.addChild(*mHudText);
 
 }
+
+void GameEntity::setId( unsigned int id )
+{
+	EntityMap::iterator iter = sEntities.find(id);
+	if(iter == sEntities.end())
+	{
+		iter = sEntities.find(mId);
+		if (iter != sEntities.end())
+			sEntities.erase(iter);
+
+		sId = max(sId, id) + 1;
+		mId = id;
+
+		sEntities[id] = this;
+	}
+	else
+	{
+		throw "Two entities attempting to use the same ID!";
+	}
+}
+
+GameEntity * GameEntity::getEntityById( unsigned int id )
+{
+	EntityMap::iterator iter = sEntities.find(id);
+	if(iter == sEntities.end())
+	{
+		return NULL;
+	}
+	return iter->second;
+}

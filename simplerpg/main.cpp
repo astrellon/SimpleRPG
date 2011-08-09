@@ -24,6 +24,7 @@
 #include "UISelector.h"
 #include "Destination.h"
 #include "FormattedFile.h"
+#include "Debug.h"
 
 using namespace boost::filesystem;
 
@@ -266,6 +267,8 @@ int main()
 			case 1:
 				mainItem1.setVisible(false);
 				mainItem2.setVisible(true);
+
+				Debug::setBreak(0, 1);
 
 				if(loadFilelist)
 				{

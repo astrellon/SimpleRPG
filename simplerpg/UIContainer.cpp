@@ -98,9 +98,15 @@ void UIContainer::renderRaw(bool nullRender, bool overrideFormat)
 	mMeasuredWidth = 0;
 	mMeasuredHeight = 0;
 
+	if(Debug::isBreak(0))
+	{
+		cout << "woo";
+	}
+
 	for(vector<UIComponent *>::iterator iter = mChildren.begin(); iter != mChildren.end(); iter++)
 	{
 		UIComponent *comp = *iter;
+		
 		if(!comp->getVisible())
 		{
 			continue;

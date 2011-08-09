@@ -113,6 +113,7 @@ copy "$(ProjectDir)map.txt" "$(OutputPath)"</Command>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <FloatingPointModel>Precise</FloatingPointModel>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -130,6 +131,7 @@ copy "$(ProjectDir)map.txt" "$(OutputPath)"</Command>
     <ClCompile Include="ActionFactory.cpp" />
     <ClCompile Include="Animal.cpp" />
     <ClCompile Include="AStarNode.cpp" />
+    <ClCompile Include="Debug.cpp" />
     <ClCompile Include="Destination.cpp" />
     <ClCompile Include="FormattedFile.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -154,6 +156,7 @@ copy "$(ProjectDir)map.txt" "$(OutputPath)"</Command>
     <ClInclude Include="Animal.h" />
     <ClInclude Include="AStarNode.h" />
     <ClInclude Include="curses.h" />
+    <ClInclude Include="Debug.h" />
     <ClInclude Include="Destination.h" />
     <ClInclude Include="Action.h" />
     <ClInclude Include="FormattedFile.h" />

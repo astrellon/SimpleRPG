@@ -1,8 +1,10 @@
 #pragma once
 
 #include <vector>
+#include <iostream>
 
 #include "UIComponent.h"
+#include "Debug.h"
 
 using namespace std;
 

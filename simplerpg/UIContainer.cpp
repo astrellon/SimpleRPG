@@ -31,22 +31,38 @@ bool UIContainer::containsChild(UIComponent &child)
 	return found != mChildren.end();
 }
 
+bool UIContainer::containsChild(UIComponent *child)
+{
+	vector<UIComponent *>::iterator found = findChild(child);
+	return found != mChildren.end();
+}
+
 void UIContainer::addChild(UIComponent &child)
+{
+	addChild(&child);
+}
+
+void UIContainer::addChild(UIComponent *child)
 {
 	if(!containsChild(child))
 	{
-		mChildren.push_back(&child);
-		child.setParent(this);
+		mChildren.push_back(child);
+		child->setParent(this);
 	}
 }
 
 void UIContainer::removeChild(UIComponent &child)
 {
-	vector<UIComponent *>::iterator found = findChild(&child);
+	removeChild(&child);
+}
+
+void UIContainer::removeChild(UIComponent *child)
+{
+	vector<UIComponent *>::iterator found = findChild(child);
 	if(found != mChildren.end())
 	{
 		mChildren.erase(found);
-		child.setParent(NULL);
+		child->setParent(NULL);
 	}
 }
 
@@ -97,11 +113,6 @@ void UIContainer::renderRaw(bool nullRender, bool overrideFormat)
 
 	mMeasuredWidth = 0;
 	mMeasuredHeight = 0;
-
-	if(Debug::isBreak(0))
-	{
-		cout << "woo";
-	}
 
 	for(vector<UIComponent *>::iterator iter = mChildren.begin(); iter != mChildren.end(); iter++)
 	{

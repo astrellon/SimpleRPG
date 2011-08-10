@@ -72,8 +72,6 @@ protected:
 
 	virtual void renderRaw(bool nullRender = false, bool overrideFormat = false);
 
-	//static boost::regex lineBreakup;
-
 	void inline newText()
 	{
 		mRedisplay = true;

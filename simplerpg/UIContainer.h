@@ -15,9 +15,12 @@ public:
 	~UIContainer();
 
 	virtual void addChild(UIComponent &child);
+	virtual void addChild(UIComponent *child);
 	virtual bool containsChild(UIComponent &child);
+	virtual bool containsChild(UIComponent *child);
 	virtual void removeChild(UIComponent &child);
 	virtual void removeChild(int index);
+	virtual void removeChild(UIComponent *child);
 	virtual void removeAllChildren(bool clearChildren = false);
 
 	virtual int getNumChildren() { return mChildren.size(); }

@@ -155,7 +155,7 @@ int main()
 	currentPathText << "Error";
 	mainItem2.addChild(currentPathText);
 
-	mainItem2.addChild(UISpacer());
+	mainItem2.addChild(new UISpacer());
 
 	UISelector mainItem2FileList;
 	mainItem2FileList.setSelectionIndex(0);
@@ -163,7 +163,7 @@ int main()
 	mainItem2.addChild(mainItem2FileList);
 	
 	mainMenu.addChild(title);
-	mainMenu.addChild(UISpacer());
+	mainMenu.addChild(new UISpacer());
 	mainMenu.addChild(mainItem1);
 	mainMenu.addChild(mainItem2);
 
@@ -268,8 +268,6 @@ int main()
 				mainItem1.setVisible(false);
 				mainItem2.setVisible(true);
 
-				Debug::setBreak(0, 1);
-
 				if(loadFilelist)
 				{
 					loadFilelist = false;
@@ -295,15 +293,13 @@ int main()
 							if(is_directory(*dir_iter))
 							{
 								dir = true;
-								stringstream ss;
-								ss << "<12>" << filename << "</>";
-								formatted = ss.str();
+								formatted = "<12>" + filename + "</>";
 							}
 
 							folderEntries.push_back(folder_entry(i++, dir, filename, formatted));
 						}
 					}
-
+					
 					mainItem2FileList.removeAllChildren(true);
 					mainItem2FileList.setSelectionIndex(0);
 
@@ -316,7 +312,6 @@ int main()
 						mainItem2FileList.addChild(*entry);
 					}
 				}
-
 				break;
 			}
 

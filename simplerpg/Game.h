@@ -22,7 +22,7 @@ using boost::math::round;
 class GameEntity;
 class Animal;
 
-enum MenuLevel { MENU_MAIN, MENU_LOOK, MENU_FIND, MENU_QUIT };
+enum MenuLevel { MENU_MAIN, MENU_LOOK, MENU_FIND, MENU_QUIT, MENU_OPTIONS };
 
 typedef struct _FindEntityResult
 {
@@ -114,6 +114,8 @@ protected:
 	int mHudWidth;
 	int mGameWidth;
 	int mGameHeight;
+
+	int mLastKey;
 
 	Map *mMap;
 	Rect mScreenSize;

@@ -31,6 +31,8 @@ Game::Game(int width, int height)
 
 	mGameRunning = true;
 	mGamePaused = false;
+
+	mLastKey = -1;
 }
 
 Game::~Game(void)
@@ -60,6 +62,7 @@ void Game::setHudWidth(int width)
 
 void Game::keyActions(const int key)
 {
+	mLastKey = key;
 	// Numpad 8
 	if (key == 56)
 	{
@@ -142,6 +145,12 @@ void Game::keyActions(const int key)
 			mMenuLevel = MENU_QUIT;
 			setGamePaused(true);
 		}
+
+		if (key == 'o')
+		{
+			mMenuLevel = MENU_OPTIONS;
+			setGamePaused(true);
+		}
 		break;
 
 	case MENU_LOOK:
@@ -204,6 +213,25 @@ void Game::keyActions(const int key)
 			setGamePaused(false);
 		}
 		break;
+	case MENU_OPTIONS:
+		if (key == 27)
+		{
+			mMenuLevel = MENU_MAIN;
+			setGamePaused(false);
+		}
+
+		// Numpad -
+		if (key == 464)
+		{
+			setHudWidth(getHudWidth() - 1);
+		}
+		// Numpad +
+		if (key == 465)
+		{
+			setHudWidth(getHudWidth() + 1);
+		}
+
+		break;
 	}
 }
 
@@ -218,15 +246,21 @@ void Game::displayActions()
 		mHudText << "<15>Menu</>\n\n";
 		mHudText << "<11>k</>: Look mode.\n";
 		mHudText << "<11>f</>: Find closest.\n";
+		mHudText << "<11>o</>: Options.\n";
 		mHudText << "<11>s</>: Save.";
 		if(mSaveCounter > 0)
 		{
 			mSaveCounter--;
 			mHudText << " (Saved)";
 		}
-
 		mHudText << '\n';
+
 		mHudText << "\n<11>q</>: Quit.\n";
+
+#if _DEBUG
+		mHudText << "\n\nLast key: <12>" << mLastKey << "</>\n";
+#endif
+		
 			 
 		break;
 	case MENU_LOOK:
@@ -258,6 +292,10 @@ void Game::displayActions()
 		mHudText << "<11>s</>: Save and quit.\n";
 		mHudText << "<11>n</>: Go back.\n";
 		
+		break;
+	case MENU_OPTIONS:
+		mHudText << "<15>Options:</>\n\n";
+		mHudText << "Menu size: <12>" << getHudWidth() << "</> <11>+</>/<11>-</>\n";
 		break;
 
 	}

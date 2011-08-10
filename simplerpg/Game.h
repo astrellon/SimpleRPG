@@ -58,8 +58,12 @@ typedef vector<GameEntity *> EntityList;
 class Game
 {
 public:
-	Game(void);
+	Game(int width, int height);
 	~Game(void);
+
+	void resize(int width, int height);
+	void setHudWidth(int width);
+	int getHudWidth() { return mHudWidth; }
 
 	Map *getMap() { return mMap; }
 	void setMap(Map *map) { mMap = map; }
@@ -106,6 +110,10 @@ protected:
 	bool mGameRunning;
 	bool mGamePaused;
 	void clearCanvas();
+
+	int mHudWidth;
+	int mGameWidth;
+	int mGameHeight;
 
 	Map *mMap;
 	Rect mScreenSize;

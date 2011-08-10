@@ -89,12 +89,15 @@ void init_colours()
 	init_pair(9, 0, 8);
 }
 
-WINDOW *gameWnd;
-WINDOW *mainMenuWnd;
+WINDOW *gameWnd = NULL;
+WINDOW *mainMenuWnd = NULL;
+
+int windowWidth = 100;
+int windowHeight = 40;
 
 Game *startGame(string filename)
 {
-	Game *game = new Game();
+	Game *game = new Game(windowWidth, windowHeight);
 	game->loadMap(filename);
 	if(game->getMap() == NULL)
 	{
@@ -106,8 +109,23 @@ Game *startGame(string filename)
 	return game;
 }
 
+void resizeScreen(int width, int height)
+{
+	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+	SMALL_RECT displayArea = {0, 0, width - 1, height - 1};
+	COORD si = {width, height};
+
+	SetConsoleScreenBufferSize(hOut, si);
+	SetConsoleWindowInfo(hOut, true, &displayArea);
+
+	windowWidth = width;
+	windowHeight = height;
+}
+
 int main()
 {
+	resizeScreen(windowWidth, windowHeight);
+	
 	ofstream logfile("logfile.log");
 	clog.rdbuf(logfile.rdbuf());
 
@@ -121,8 +139,9 @@ int main()
 	curs_set(0);
 	init_colours();
 
-	mainMenuWnd = newwin(25, 80, 0, 0);
-	gameWnd = newwin(25, 80, 0, 0);
+	mainMenuWnd = newwin(windowHeight, windowWidth, 0, 0);
+	gameWnd = newwin(windowHeight, windowWidth, 0, 0);
+
 	cbreak();
 	noecho();
 	keypad(gameWnd, true);
@@ -159,7 +178,7 @@ int main()
 
 	UISelector mainItem2FileList;
 	mainItem2FileList.setSelectionIndex(0);
-	mainItem2FileList.setMaxHeight(18);
+	mainItem2FileList.setMaxHeight(windowHeight - 7);
 	mainItem2.addChild(mainItem2FileList);
 	
 	mainMenu.addChild(title);
@@ -200,6 +219,11 @@ int main()
 					}
 					break;
 				case 1:
+					if (c == 27)
+					{
+						menuLevel = 0;
+						break;
+					}
 					if (c == 259)
 					{
 						mainItem2FileList.scrollSelection(-1);

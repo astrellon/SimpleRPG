@@ -5,8 +5,8 @@ UIComponent::UIComponent()
 	mXPosition = 0;
 	mYPosition = 0;
 
-	mMaxWidth = 80;
-	mMaxHeight = 25;
+	mMaxWidth = 1000;
+	mMaxHeight = 1000;
 
 	mParent = NULL;
 	mWnd = NULL;

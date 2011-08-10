@@ -5,9 +5,10 @@
 
 const char *Game::LOOK_FOR_TABLE[] = {"Animal", "Plant"};
 
-Game::Game(void)
+Game::Game(int width, int height)
 {
-	mScreenSize = Rect(0, 0, 60, 25);
+	mHudWidth = 30;
+	
 	mMap = NULL;
 
 	mCursorX = -1;
@@ -19,9 +20,10 @@ Game::Game(void)
 
 	mSelectedItem = NULL;
 
-	mHud.setX(61);
-	mHud.setY(1);
+	mHud.scrollY(1);
 	mHud.addChild(mHudText);
+
+	resize(width, height);
 
 	mMenuLevel = MENU_MAIN;
 	mLookFor = 0;
@@ -34,6 +36,26 @@ Game::Game(void)
 Game::~Game(void)
 {
 	
+}
+
+void Game::resize(int width, int height)
+{
+	mScreenSize = Rect(0, 0, width - mHudWidth - 1, height);
+	mHud.setX(width - mHudWidth);
+	mHud.setMaxHeight(height);
+	mHud.setMaxWidth(mHudWidth);
+
+	mGameWidth = width;
+	mGameHeight = height;
+}
+
+void Game::setHudWidth(int width)
+{
+	if (width < 0)
+		width = 0;
+
+	mHudWidth = width;
+	resize(mGameWidth, mGameHeight);
 }
 
 void Game::keyActions(const int key)
@@ -231,7 +253,7 @@ void Game::displayActions()
 		}
 		break;
 	case MENU_QUIT:
-		mHudText << "<15>Are you sure\nyou want to quit?\n\n</>";
+		mHudText << "<15>Are you sure you want to quit?\n\n</>";
 		mHudText << "<11>y</>: Quit (no save).\n";
 		mHudText << "<11>s</>: Save and quit.\n";
 		mHudText << "<11>n</>: Go back.\n";

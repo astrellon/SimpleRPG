@@ -1,0 +1,97 @@
+#pragma once
+
+#include <boost/regex.hpp>
+#include <string>
+
+using std::string;
+
+class FormattedFileIterator
+{
+public:
+	FormattedFileIterator(boost::sregex_token_iterator *iter, bool ignoreComments)
+	{
+		mIgnoreComments = ignoreComments;
+		mIter = iter;
+
+		if(mIgnoreComments && isComment(**iter))
+		{
+			nextNonComment();
+		}
+	}
+	~FormattedFileIterator() {}
+
+	FormattedFileIterator &operator ++()
+	{
+		if(mIgnoreComments)
+		{
+			nextNonComment();
+		}
+		else
+		{
+			++(*mIter);
+		}
+		return *this;
+	}
+
+	void nextNonComment()
+	{
+		if(atEnd())
+		{
+			return;
+		}
+
+		do
+		{
+			++(*mIter);
+			if(atEnd())
+			{
+				break;
+			}
+			string check = *(*mIter);
+			if(!isComment(check))
+			{
+				break;
+			}
+			
+		} while(true);
+	}
+
+	bool atEnd()
+	{
+		return *mIter == mEnd;
+	}
+
+	string operator*()
+	{
+		return **mIter;
+	}
+
+protected:
+	boost::sregex_token_iterator *mIter;
+	boost::sregex_token_iterator mEnd;
+	bool mIgnoreComments;
+
+	bool isComment(const string &line)
+	{
+		if(line.size() >= 2)
+		{
+			char c0 = line[0];
+			char c1 = line[1];
+			// All comments start with a / character
+			if(c0 != '/')
+			{
+				return false;
+			}
+			// All comments have either a / or * as their second character.
+			if(c1 != '/' && c1 != '*')
+			{
+				return false;
+			}
+			// If we haven't returned by now, it isn't a comment.
+			return true;
+		}
+		// If the line is less than 2 characters long then it cannot be
+		// a comment.
+		return false;
+	}
+};

@@ -5,7 +5,6 @@
 #include <math.h>
 #include <map>
 
-#include <boost/regex.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/math/special_functions/round.hpp>
@@ -19,6 +18,7 @@
 #include "Action.h"
 #include "ActionFactory.h"
 #include "FormattedFile.h"
+#include "FormattedFileIterator.h"
 
 using std::map;
 
@@ -88,7 +88,7 @@ public:
 
 	// Loads an entity from tokens split up from a file. Entity must at least increment the iterator
 	// if it does not load anything.
-	virtual void loadFromFile(boost::sregex_token_iterator &iter);
+	virtual void loadFromFile(FormattedFileIterator &iter);
 	// Saves the entity to a file stream. Must be in the same format that can be tokenized and
 	// loaded using the loadFromFile function.
 	virtual void saveToFile(FormattedFile &file);
@@ -145,7 +145,7 @@ protected:
 	
 	// The function which loads each property from the file tokens.
 	// Should increment the iterator at least once.
-	virtual void loadProperties(boost::sregex_token_iterator &iter);
+	virtual void loadProperties(FormattedFileIterator &iter);
 	// Saves an individual property based on the property ID to the file stream.
 	virtual void saveProperty(const EntityProperty &propertyId, FormattedFile &file);
 	// Calls the appropriate functions to save all the properties for this entity.

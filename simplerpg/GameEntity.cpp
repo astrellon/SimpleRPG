@@ -125,16 +125,14 @@ void GameEntity::render(Rect screenSize, WINDOW *wnd)
 	getGraphic().render(wnd, xPos, yPos);
 }
 
-void GameEntity::loadFromFile(boost::sregex_token_iterator &iter)
+void GameEntity::loadFromFile(FormattedFileIterator &iter)
 {
-	boost::sregex_token_iterator end;
-
-	while(iter != end)
+	while(!iter.atEnd())
 	{
 		string line = *iter;
 		if(iequals(line, "end"))
 		{
-			iter++;
+			++iter;
 			break;
 		}
 		loadProperties(iter);
@@ -203,27 +201,28 @@ void GameEntity::saveProperty(const EntityProperty &propertyId, FormattedFile &f
 	}
 }
 
-void GameEntity::loadProperties(boost::sregex_token_iterator &iter)
+void GameEntity::loadProperties(FormattedFileIterator &iter)
 {
-	string propertyName = *iter++;
+	string propertyName = *iter;
+	++iter;
 	if(iequals(propertyName, EntityPropertyNames[ID]))
 	{
-		setId(lexical_cast<unsigned int>(*iter++));
+		setId(lexical_cast<unsigned int>(*iter)); ++iter;
 	}
 	else if(iequals(propertyName, EntityPropertyNames[POSITION]))
 	{
-		float x = lexical_cast<float>(*iter++);
-		float y = lexical_cast<float>(*iter++);
+		float x = lexical_cast<float>(*iter); ++iter;
+		float y = lexical_cast<float>(*iter); ++iter;
 		move(x, y, false);
 	}
 	else if(iequals(propertyName, EntityPropertyNames[FACING]))
 	{
-		float f = lexical_cast<float>(*iter++);
+		float f = lexical_cast<float>(*iter); ++iter;
 		setFacing(f);
 	}
 	else if(iequals(propertyName, EntityPropertyNames[NAME]))
 	{
-		string name = *iter++;
+		string name = *iter; ++iter;
 		if(name[0] == '"')
 		{
 			name = name.substr(1, name.size() - 2);
@@ -232,11 +231,11 @@ void GameEntity::loadProperties(boost::sregex_token_iterator &iter)
 	}
 	else if(iequals(propertyName, EntityPropertyNames[AMOUNT_EATEN]))
 	{
-		mAmountEaten = lexical_cast<float>(*iter++);
+		mAmountEaten = lexical_cast<float>(*iter); ++iter;
 	}
 	else if(iequals(propertyName, EntityPropertyNames[CURRENT_ACTION]))
 	{
-		string line = *iter++;
+		string line = *iter; ++iter;
 		Action *action = ActionFactory::create(line);
 		if(action == NULL)
 		{
@@ -248,9 +247,8 @@ void GameEntity::loadProperties(boost::sregex_token_iterator &iter)
 	}
 	else if(iequals(propertyName, EntityPropertyNames[ACTION_HISTORY]))
 	{
-		string line = *iter++;
-		boost::sregex_token_iterator end;
-		while(iter != end && !iequals(line, "end"))
+		string line = *iter; ++iter;
+		while(!iter.atEnd() && !iequals(line, "end"))
 		{
 			Action *action = ActionFactory::create(line);
 			{
@@ -262,7 +260,7 @@ void GameEntity::loadProperties(boost::sregex_token_iterator &iter)
 				action->loadFromFile(iter);
 				mPastActions.push_back(action);
 			}
-			line = *iter++;
+			line = *iter; ++iter;
 		}
 	}
 	else 

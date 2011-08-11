@@ -54,7 +54,7 @@ void Animal::displayActions(UIContainer &hud)
 
 	static char buff[128];
 	sprintf(buff, "%.1f, %.1f\n", mDestination.getLocation().x, mDestination.getLocation().y);
-
+	
 	*mHudText << "<15>Dest</>: " << buff;
 	GameEntity *target = mDestination.getEntity();
 	if(mDestination.getEntityId() != -1)
@@ -86,84 +86,84 @@ Pixel Animal::getGraphic()
 	return GameEntity::getGraphic();
 }
 
-void Animal::loadProperties(boost::sregex_token_iterator &iter)
+void Animal::loadProperties(FormattedFileIterator &iter)
 {
 	string propertyName = *iter;
 	if(iequals(propertyName, EntityPropertyNames[DESTINATION]))
 	{
-		iter++;
-		string typeCheck = *iter++;
+		++iter;
+		string typeCheck = *iter; ++iter;
 		if(typeCheck[0] == '@')
 		{
-			unsigned int following = lexical_cast<unsigned int>(*iter++);
+			unsigned int following = lexical_cast<unsigned int>(*iter); ++iter;
 			mDestination.setEntityId(following);
 		}
 		else
 		{
 			float x = lexical_cast<float>(typeCheck);
-			float y = lexical_cast<float>(*iter++);
+			float y = lexical_cast<float>(*iter); ++iter;
 			mDestination.setLocation(x, y);
 		}
 	}
 	else if(iequals(propertyName, EntityPropertyNames[HEALTH]))
 	{
-		iter++;
-		mHealth = lexical_cast<float>(*iter++);
+		++iter;
+		mHealth = lexical_cast<float>(*iter); ++iter;
 		if(mHealth < 0.0f)
 		{
 			mHealth = 0.0f;
 		}
-		mMaxHealth = lexical_cast<float>(*iter++);
+		mMaxHealth = lexical_cast<float>(*iter); ++iter;
 	}
 	else if(iequals(propertyName, EntityPropertyNames[STRENGTH]))
 	{
-		iter++;
-		setStrength(lexical_cast<float>(*iter++));
+		++iter;
+		setStrength(lexical_cast<float>(*iter)); ++iter;
 	}
 	else if(iequals(propertyName, EntityPropertyNames[DEXTERITY]))
 	{
-		iter++;
-		setDexterity(lexical_cast<float>(*iter++));
+		++iter;
+		setDexterity(lexical_cast<float>(*iter)); ++iter;
 	}
 	else if(iequals(propertyName, EntityPropertyNames[INTELLIGENCE]))
 	{
-		iter++;
-		setIntelligence(lexical_cast<float>(*iter++));
+		++iter;
+		setIntelligence(lexical_cast<float>(*iter)); ++iter;
 	}
 	else if(iequals(propertyName, EntityPropertyNames[RUNNING_SPEED]))
 	{
-		iter++;
-		setRunningSpeedBase(lexical_cast<float>(*iter++));
+		++iter;
+		setRunningSpeedBase(lexical_cast<float>(*iter)); ++iter;
 	}
 	else if(iequals(propertyName, EntityPropertyNames[WALKING_SPEED]))
 	{
-		iter++;
-		setWalkingSpeedBase(lexical_cast<float>(*iter++));
+		++iter;
+		setWalkingSpeedBase(lexical_cast<float>(*iter)); ++iter;
 	}
 	else if(iequals(propertyName, EntityPropertyNames[TURNING_SPEED]))
 	{
-		iter++;
-		setTurningSpeedBase(lexical_cast<float>(*iter++));
+		++iter;
+		setTurningSpeedBase(lexical_cast<float>(*iter)); ++iter;
 	}
 	else if(iequals(propertyName, EntityPropertyNames[ENTITY_SIZE]))
 	{
-		iter++;
-		setSize(lexical_cast<float>(*iter++));
+		++iter;
+		setSize(lexical_cast<float>(*iter)); ++iter;
 	}
 	else if(iequals(propertyName, EntityPropertyNames[ENTITY_MASS]))
 	{
-		iter++;
-		setMass(lexical_cast<float>(*iter++));
+		++iter;
+		setMass(lexical_cast<float>(*iter)); ++iter;
 	}
 	else if(iequals(propertyName, EntityPropertyNames[DIET]))
 	{
-		iter++;
-		setDiet(lexical_cast<float>(*iter++));
+		++iter;
+		setDiet(lexical_cast<float>(*iter)); ++iter;
 	}
 	else if(iequals(propertyName, EntityPropertyNames[DAMAGE_BASE]))
 	{
-		iter++;
-		setDamageBase(lexical_cast<float>(*iter++));
+		++iter;
+		setDamageBase(lexical_cast<float>(*iter)); ++iter;
 	}
 	else
 	{

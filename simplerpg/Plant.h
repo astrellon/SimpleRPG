@@ -14,7 +14,7 @@ public:
 
 	virtual void saveProperties(FormattedFile &file);
 	virtual void saveProperty(const EntityProperty &propertyId, FormattedFile &file);
-	virtual void loadProperties(boost::sregex_token_iterator &iter);
+	virtual void loadProperties(FormattedFileIterator &iter);
 
 protected:
 };

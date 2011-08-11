@@ -389,12 +389,12 @@ int main()
 	delwin(gameWnd);
 	delwin(mainMenuWnd);
 	endwin();
-
+	
 	if (logfile.is_open())
 	{
 		logfile.close();
 	}
-
+	
 	cout << "Thanks for playing!" << endl;
 
 	return 0;

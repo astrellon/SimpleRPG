@@ -33,15 +33,15 @@ void Plant::saveProperty(const EntityProperty &propertyId, FormattedFile &file)
 	}
 }
 
-void Plant::loadProperties(boost::sregex_token_iterator &iter)
+void Plant::loadProperties(FormattedFileIterator &iter)
 {
 	string propertyName = *iter;
 	if(iequals(propertyName, "graphic"))
 	{
-		iter++;
-		mGraphic.setColour(lexical_cast<int>(*iter++));
-		mGraphic.bold = (lexical_cast<bool>(*iter++));
-		mGraphic.graphic = string(*iter++)[0];
+		++iter;
+		mGraphic.setColour(lexical_cast<int>(*iter));	++iter;
+		mGraphic.bold = (lexical_cast<bool>(*iter));	++iter;
+		mGraphic.graphic = string(*iter)[0];			++iter;
 	}
 	else
 	{

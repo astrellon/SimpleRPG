@@ -4,25 +4,36 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <map>
 #include "curses.h"
 
 #include <boost/regex.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/math/special_functions/round.hpp>
-using boost::math::round;
+#include <boost/lexical_cast.hpp>
 
 #include "Map.h"
 #include "Rect.h"
 #include "IKeyActions.h"
 #include "FormattedFile.h"
+#include "FormattedFileIterator.h"
 
 #include "UIList.h"
 #include "UIText.h"
+
+using std::vector;
+using std::string;
+using std::map;
+
+using boost::math::round;
+using boost::algorithm::iequals;
+using boost::lexical_cast;
 
 class GameEntity;
 class Animal;
 
 enum MenuLevel { MENU_MAIN, MENU_LOOK, MENU_FIND, MENU_QUIT, MENU_OPTIONS };
+enum GameOption { HUD_WIDTH };
 
 typedef struct _FindEntityResult
 {
@@ -49,9 +60,6 @@ typedef struct _FindEntityResult
 		}
 	}
 } FindEntityResult;
-
-using std::vector;
-using std::string;
 
 typedef vector<GameEntity *> EntityList;
 
@@ -136,7 +144,13 @@ protected:
 	bool mCursorMode;
 	int mLookFor;
 
+	// Used to display the "(Saved)" text in the menu when the game has been saved.
+	// Counts down to zero when the graphic will disappear.
 	int mSaveCounter;
+
+	void saveOptions(FormattedFile &file);
+	void saveOption(const GameOption &option, FormattedFile &file);
+	void loadOptions(string option, FormattedFileIterator &iter);
 
 	void switchKeyItem(IKeyActions *item, UIContainer &hud);
 

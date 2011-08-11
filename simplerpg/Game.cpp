@@ -257,11 +257,10 @@ void Game::displayActions()
 
 		mHudText << "\n<11>q</>: Quit.\n";
 
-#if _DEBUG
+#if _DEBUG_RPG
 		mHudText << "\n\nLast key: <12>" << mLastKey << "</>\n";
 #endif
 		
-			 
 		break;
 	case MENU_LOOK:
 		if(mSelectedItem != NULL)
@@ -437,12 +436,15 @@ void Game::saveMap(string filename)
 
 	file << "// Auto generated map file.\n";
 
+	file << "-- Options\n";
+	saveOptions(file);
+
 	Map *gameMap = getMap();
 
 	map<char, Tile *> *tileMap = gameMap->getMappedTiles();
 	map<Tile *, char> tileLookup;
-	
-	file << "-- Tiles\n";
+
+	file << "\n-- Tiles\n";
 	for(map<char, Tile *>::iterator iter = tileMap->begin(); iter != tileMap->end(); iter++)
 	{
 		file << iter->first << ' ' << iter->second->getCode() << '\n';
@@ -469,7 +471,7 @@ void Game::saveMap(string filename)
 	}
 
 	file << "\n-- End";
-	mSaveCounter = 10;
+	mSaveCounter = 20;
 
 	file.closeFile();
 }
@@ -498,13 +500,16 @@ void Game::loadMap(string filename)
 		// Everything that's not whitespace.
 		"(\\S+)");
 
-	boost::sregex_token_iterator iter(fileStr.begin(), fileStr.end(), readFileRegex, 0), end;
+	boost::sregex_token_iterator boostIter(fileStr.begin(), fileStr.end(), readFileRegex, 0), end;
+
+	FormattedFileIterator iter(&boostIter, true);
 
 	static const int STATE_EMPTY = 0;
 	static const int STATE_READ_TILES = 1;
 	static const int STATE_READ_MAP = 2;
 	static const int STATE_READ_ENTITIES = 3;
 	static const int STATE_END_OF_FILE = 4;
+	static const int STATE_OPTIONS = 5;
 
 	vector<string> mapData;
 	int width = 0;
@@ -520,21 +525,18 @@ void Game::loadMap(string filename)
 	// Indicates to the state machine that the current state is done, call finish code.
 	bool endState = false;
 
-	while(iter != end)
+	while(!iter.atEnd())
 	{
 		string line;
 		if(!endState)
 		{
-			line = *iter++;
+			line = *iter;
+			++iter;
 		}
 
-		// Ignore comments
+		// Comments are ignored by the FormattedFileIterator.
 		if(line.length() >= 2)
 		{
-			if(line[0] == '/' && (line[1] == '/' || line[1] == '*'))
-			{
-				continue;
-			}
 			if(line[0] == '-' && line[1] == '-')
 			{
 				changeState = true;
@@ -549,26 +551,31 @@ void Game::loadMap(string filename)
 		if(changeState && !endState)
 		{
 			changeState = false;
-			if(boost::algorithm::iequals(line, "Tiles"))
+			if(iequals(line, "Tiles"))
 			{
 				// Change to tiles.
 				state = STATE_READ_TILES;
 				clog << "Switching to reading tiles." << endl;
 			}
-			else if(boost::algorithm::iequals(line, "Map"))
+			else if(iequals(line, "Map"))
 			{
 				state = STATE_READ_MAP;
 				clog << "Switching to reading map." << endl;
 			}
-			else if(boost::algorithm::iequals(line, "Entities"))
+			else if(iequals(line, "Entities"))
 			{
 				state = STATE_READ_ENTITIES;
 				clog << "Switching to reading entities." << endl;
 			}
-			else if(boost::algorithm::iequals(line, "End"))
+			else if(iequals(line, "End"))
 			{
 				state = STATE_END_OF_FILE;
 				clog << "Switching to end of file state." << endl;
+			}
+			else if(iequals(line, "Options"))
+			{
+				state = STATE_OPTIONS;
+				clog << "Switch to reading options." << endl;
 			}
 			else
 			{
@@ -591,6 +598,16 @@ void Game::loadMap(string filename)
 		{
 		default:
 		case STATE_EMPTY:
+			break;
+		case STATE_OPTIONS:
+			if(endState)
+			{
+				clog << "Finished reading options." << endl;
+				break;
+			}
+
+			loadOptions(line, iter);
+
 			break;
 		case STATE_READ_TILES:
 			if(endState)
@@ -729,5 +746,35 @@ void Game::switchKeyItem(IKeyActions *item, UIContainer &hud)
 	else
 	{
 		mHud.addChild(mHudText);
+	}
+}
+
+void Game::saveOptions(FormattedFile &file)
+{
+	saveOption(HUD_WIDTH, file);
+}
+
+void Game::saveOption(const GameOption &option, FormattedFile &file)
+{
+	switch(option)
+	{
+	case HUD_WIDTH:
+		file << "hud_width " << mHudWidth << '\n';
+		break;
+	default:
+		break;
+	}
+}
+
+void Game::loadOptions(string option, FormattedFileIterator &iter)
+{
+	if(iequals(option, "hud_width"))
+	{
+		setHudWidth(lexical_cast<int>(*iter));
+		++iter;
+	}
+	else
+	{
+		clog << "Unknown option '" << option << "'" << endl;
 	}
 }

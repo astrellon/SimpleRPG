@@ -1,4 +1,7 @@
 // Auto generated map file.
+-- Options
+hud_width 30
+
 -- Tiles
 # 4
 , 2

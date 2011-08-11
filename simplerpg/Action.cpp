@@ -40,16 +40,14 @@ void Action::init()
 	}
 }
 
-void Action::loadFromFile(boost::sregex_token_iterator &iter)
+void Action::loadFromFile(FormattedFileIterator &iter)
 {
-	boost::sregex_token_iterator end;
-
-	while(iter != end)
+	while(!iter.atEnd())
 	{
 		string line = *iter;
 		if(iequals(line, "end"))
 		{
-			iter++;
+			++iter;
 			break;
 		}
 		loadProperties(iter);
@@ -67,20 +65,20 @@ void Action::saveToFile(FormattedFile &file)
 	file << "end\n";
 }
 
-void Action::loadProperties(boost::sregex_token_iterator &iter)
+void Action::loadProperties(FormattedFileIterator &iter)
 {
-	string propertyName = *iter++;
+	string propertyName = *iter;	++iter;
 	if(iequals(propertyName, ActionPropertyNames[ACTION]))
 	{
-		setAction(EntityActionLookup[*iter++]);
+		setAction(EntityActionLookup[*iter]); ++iter;
 	}
 	else if(iequals(propertyName, ActionPropertyNames[COMPLETE]))
 	{
-		setCompleted(lexical_cast<bool>(*iter++));
+		setCompleted(lexical_cast<bool>(*iter)); ++iter;
 	}
 	else if(iequals(propertyName, ActionPropertyNames[STEP]))
 	{
-		setStep(lexical_cast<int>(*iter++));
+		setStep(lexical_cast<int>(*iter));	++iter;
 	}
 	else
 	{

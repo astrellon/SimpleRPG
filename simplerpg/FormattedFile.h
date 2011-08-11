@@ -7,8 +7,6 @@
 
 #include <boost/regex.hpp>
 
-#include "Game.h"
-
 using std::ofstream;
 using std::string;
 using std::stringstream;

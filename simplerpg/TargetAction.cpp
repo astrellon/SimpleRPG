@@ -13,22 +13,22 @@ Destination *TargetAction::getTarget()
 	return &mTarget;
 }
 
-void TargetAction::loadProperties(boost::sregex_token_iterator &iter)
+void TargetAction::loadProperties(FormattedFileIterator &iter)
 {
 	string propertyName = *iter;
 	if(iequals(propertyName, ActionPropertyNames[TARGET]))
 	{
-		iter++;
-		string typeCheck = *iter++;
+		++iter;
+		string typeCheck = *iter; ++iter;
 		if(typeCheck[0] == '@')
 		{
-			unsigned int following = lexical_cast<unsigned int>(*iter++);
+			unsigned int following = lexical_cast<unsigned int>(*iter); ++iter;
 			mTarget.setEntityId(following);
 		}
 		else
 		{
 			float x = lexical_cast<float>(typeCheck);
-			float y = lexical_cast<float>(*iter++);
+			float y = lexical_cast<float>(*iter); ++iter;
 			mTarget.setLocation(x, y);
 		}
 	}

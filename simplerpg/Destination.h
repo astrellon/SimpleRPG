@@ -1,13 +1,22 @@
 #pragma once
 
 #include <vector>
+#include <string>
+
 #include "Vector2.h"
 #include "Game.h"
-//#include "GameEntity.h"
 
-class GameEntity;
+#include "FormattedFileIterator.h"
+#include "FormattedFile.h"
+
+#include <boost/lexical_cast.hpp>
 
 using std::vector;
+using std::string;
+
+using boost::lexical_cast;
+
+class GameEntity;
 
 class Destination
 {
@@ -31,6 +40,9 @@ public:
 	unsigned int getEntityId();
 
 	vector<Vector2f> getPath(Vector2f &startPosition);
+
+	void saveDestination(string propertyName, FormattedFile &file);
+	void loadDestination(FormattedFileIterator &iter);
 
 	void clearPath();
 

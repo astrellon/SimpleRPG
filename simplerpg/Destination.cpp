@@ -35,6 +35,35 @@ void Destination::setLocation(const float &x, const float &y)
 	setLocation(Vector2f(x, y));
 }
 
+void Destination::saveDestination(string propertyName, FormattedFile &file)
+{
+	if(getEntity() != NULL)
+	{
+		file << propertyName << " @ " << getEntity()->getId() << '\n';
+	}
+	else
+	{
+		Vector2f v = getLocation();
+		file << propertyName << ' ' << v.x << ' ' << v.y << '\n';
+	}
+}
+
+void Destination::loadDestination(FormattedFileIterator &iter)
+{
+	string typeCheck = *iter; ++iter;
+	if(typeCheck[0] == '@')
+	{
+		unsigned int following = lexical_cast<unsigned int>(*iter); ++iter;
+		setEntityId(following);
+	}
+	else
+	{
+		float x = lexical_cast<float>(typeCheck);
+		float y = lexical_cast<float>(*iter); ++iter;
+		setLocation(x, y);
+	}
+}
+
 Vector2f Destination::getLocation()
 {
 	if(getEntity() != NULL)

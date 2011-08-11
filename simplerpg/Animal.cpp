@@ -92,18 +92,7 @@ void Animal::loadProperties(FormattedFileIterator &iter)
 	if(iequals(propertyName, EntityPropertyNames[DESTINATION]))
 	{
 		++iter;
-		string typeCheck = *iter; ++iter;
-		if(typeCheck[0] == '@')
-		{
-			unsigned int following = lexical_cast<unsigned int>(*iter); ++iter;
-			mDestination.setEntityId(following);
-		}
-		else
-		{
-			float x = lexical_cast<float>(typeCheck);
-			float y = lexical_cast<float>(*iter); ++iter;
-			mDestination.setLocation(x, y);
-		}
+		mDestination.loadDestination(iter);
 	}
 	else if(iequals(propertyName, EntityPropertyNames[HEALTH]))
 	{
@@ -190,19 +179,10 @@ void Animal::saveProperties(FormattedFile &file)
 
 void Animal::saveProperty(const EntityProperty &propertyId, FormattedFile &file)
 {
-	Vector2f v;
-	Destination *dest = NULL;
 	switch(propertyId)
 	{
 	case DESTINATION:
-		dest = getDestination();
-		if(dest->getEntity() != NULL)
-			file << EntityPropertyNames[DESTINATION] << " @ " << dest->getEntity()->getId() << '\n';
-		else
-		{
-			v = dest->getLocation();
-			file << EntityPropertyNames[DESTINATION] << ' ' << v.x << ' ' << v.y << '\n';
-		}
+		 getDestination()->saveDestination(EntityPropertyNames[DESTINATION], file);
 		break;
 	case HEALTH:
 		file << EntityPropertyNames[HEALTH] << ' ' << getHealth() << ' ' << getMaxHealth() << '\n';

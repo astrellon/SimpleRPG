@@ -19,18 +19,7 @@ void TargetAction::loadProperties(FormattedFileIterator &iter)
 	if(iequals(propertyName, ActionPropertyNames[TARGET]))
 	{
 		++iter;
-		string typeCheck = *iter; ++iter;
-		if(typeCheck[0] == '@')
-		{
-			unsigned int following = lexical_cast<unsigned int>(*iter); ++iter;
-			mTarget.setEntityId(following);
-		}
-		else
-		{
-			float x = lexical_cast<float>(typeCheck);
-			float y = lexical_cast<float>(*iter); ++iter;
-			mTarget.setLocation(x, y);
-		}
+		mTarget.loadDestination(iter);
 	}
 	else
 	{
@@ -40,21 +29,10 @@ void TargetAction::loadProperties(FormattedFileIterator &iter)
 
 void TargetAction::saveProperty(const ActionProperty &propertyId, FormattedFile &file)
 {
-	Destination *dest = NULL;
-	Vector2f v;
 	switch(propertyId)
 	{
 	case TARGET:
-		dest = getTarget();
-		if(dest->getEntity() != NULL)
-		{
-			file << ActionPropertyNames[TARGET] << " @ " << dest->getEntity()->getId() << '\n';
-		}
-		else
-		{
-			v = dest->getLocation();
-			file << ActionPropertyNames[TARGET] << ' ' << v.x << ' ' << v.y << '\n';
-		}
+		getTarget()->saveDestination(ActionPropertyNames[TARGET], file);
 		break;
 	default:
 		Action::saveProperty(propertyId, file);

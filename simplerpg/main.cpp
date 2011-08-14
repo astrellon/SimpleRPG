@@ -95,6 +95,9 @@ WINDOW *mainMenuWnd = NULL;
 int windowWidth = 100;
 int windowHeight = 40;
 
+double freq;
+LARGE_INTEGER updateTime, frequency;
+
 Game *startGame(string filename)
 {
 	Game *game = new Game(windowWidth, windowHeight);
@@ -105,6 +108,9 @@ Game *startGame(string filename)
 		getchar();
 		return NULL;
 	}
+
+	// Start game timer.
+	QueryPerformanceCounter(&updateTime);
 
 	return game;
 }
@@ -132,6 +138,11 @@ int main()
 	srand( (unsigned int)time(NULL) );
 
 	Tile::registerDefaults();
+
+	// Setup performance checking, used to determine time difference
+	// between physics thread runs.
+	QueryPerformanceFrequency( &frequency );
+	freq = (double)frequency.QuadPart / 1000.0;
 	
 	Game *game;
 
@@ -368,9 +379,17 @@ int main()
 				break;
 			}
 
+			LARGE_INTEGER currentTime;
+			QueryPerformanceCounter(&currentTime);
+			// Get the time since this thread last executed and convert into
+			// seconds (from milliseconds).
+			float dt = (float)(((double)currentTime.QuadPart - (double)updateTime.QuadPart) / freq);
+			updateTime = currentTime;
+			dt *= 0.001f;
+
 			if(!paused && !game->getGamePaused())
 			{
-				game->update(0.04f);
+				game->update(dt);
 			}
 
 			wclear(gameWnd);
@@ -381,8 +400,16 @@ int main()
 				pausedText.render(false);
 			}
 
+			QueryPerformanceCounter(&currentTime);
+			dt = (float)(((double)currentTime.QuadPart - (double)updateTime.QuadPart) / freq);
+			updateTime = currentTime;
+
+			float sleepTime = 40.0f - dt;
+			if (sleepTime < 10.0f)
+				sleepTime = 10.0f;
+
 			wrefresh(gameWnd);
-			msleep(40);
+			msleep((int)round(sleepTime));
 		}
 	}
 

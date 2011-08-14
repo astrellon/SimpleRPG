@@ -142,6 +142,18 @@ void UIText::renderRaw(bool nullRender, bool overrideFormat)
 			continue;
 		}
 
+		if(c == '\t')
+		{
+			x = (x & (~3)) + 4;
+			if(x >= getMaxWidth() && getWordWrap())
+			{
+				x = 0;
+				if(line[pos] != '\0')
+					y++;
+				continue;
+			}
+		}
+
 		if(c == '\\' && line[pos] == '<')
 		{
 			escaped = true;
@@ -198,7 +210,8 @@ void UIText::renderRaw(bool nullRender, bool overrideFormat)
 
 		escaped = false;
 
-		if(x >= getMaxWidth() && getWordWrap())
+		int maxWidth = getMaxWidth();
+		if(x >= maxWidth && getWordWrap())
 		{
 			x = 0;
 			if(line[pos] != '\0')

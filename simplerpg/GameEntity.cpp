@@ -292,12 +292,15 @@ void GameEntity::displayActions(UIContainer &hud)
 	if(!mRedisplay && mGame->getGamePaused())
 		return;
 
-	mHudText->clearText();
-	*mHudText << "<15>Entity</>: " << getEntityName() << '\n';
-	*mHudText << "<15>Facing</>: " << getFacing() << '\n';
+	UIText &text = *mHudText;
+
+	text.clearText();
+
+	text << "<15>Entity</>:\t" << getEntityName() << '\n';
+	text << "<15>Facing</>:\t" << getFacing() << '\n';
 	Action *action = getCurrentAction();
-	*mHudText << "<15>Action</>: " << Action::EntityActionNames[action->getAction()] << '\n';
-	*mHudText << "<15>Step</>:   " << action->getStep() << '\n';
+	text << "<15>Action</>:\t" << Action::EntityActionNames[action->getAction()] << '\n';
+	text<< "<15>Step</>:\t" << action->getStep() << '\n';
 
 	mRedisplay = false;
 }
@@ -315,6 +318,8 @@ void GameEntity::setupDisplay(UIContainer &hud)
 	hud.removeAllChildren(false);
 
 	mHudText = new UIText();
+	mHudText->setWordWrap(true);
+	mHudText->setMaxWidth(hud.getMaxWidth());
 
 	mHudText->setY(1);
 	hud.addChild(*mHudText);

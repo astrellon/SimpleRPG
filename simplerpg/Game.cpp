@@ -340,8 +340,6 @@ EntityList Game::getUnderCursor()
 	{
 		GameEntity *entity = *iter;
 		Vector2i pos = entity->getPosition();
-		//int posX = (int)round(pos.x);
-		//int posY = (int)round(pos.y);
 		if(pos.x == mCursor.x && pos.y == mCursor.y)
 		{
 			mUnderCursor.push_back(entity);

@@ -53,24 +53,42 @@ void Animal::displayActions(UIContainer &hud)
 	GameEntity::displayActions(hud);
 	Vector2f dest = getDestination()->getLocation();
 
+	UIText &text = *mHudText;
+
+	
+
 	format fmt("%.1f, %.1f\n");
 	fmt % dest.x % dest.y;
 
-	*mHudText << "<15>Dest</>: " << fmt.str();
-	GameEntity *target = mDestination.getEntity();
-	if(mDestination.getEntityId() != -1)
+	text << "<15>Dest</>:\t" << fmt.str();
+	GameEntity *target = getDestination()->getEntity();
+	text << "<15>Target</>:\t";
+	if(target != NULL)
 	{
-		*mHudText << "<15>Target</>: " << (target == NULL ? "null" : target->getEntityName()) << '\n';
-		*mHudText << "<15>TargetId</>: " << mDestination.getEntityId() << '\n';
+		 text << target->getEntityName() << " (" << target->getId() << ")\n";
+	}
+	else
+	{
+		text << "No target\n";
 	}
 	
-	fmt = format("<12>%.1f</>/<12>%.1f</>\n");
+	fmt = format("<12>%.1f</>/<12>%.1f</> ");
 	fmt % getHealth() % getMaxHealth();
-	*mHudText << "<15>Health</>: " << fmt.str();
+	text << "<15>Health</>:\t" << fmt.str();
 	if(isDead())
 	{
-		*mHudText << "<7>(Dead)</>\n";
+		int ma = text.getMaxWidth();
+		text << "<7>(Dead)</>";
 	}
+
+	text << "\n\n";
+
+	text << "<15>Damage</>:\t" << getDamageBase() << '\n';
+	text << "<15>ARate</>:\t" << getAttackRate() << '\n';
+	text << "<15>Str</>:\t" << getStrength() << '\n';
+	text << "<15>Dex</>:\t" << getDexterity() << '\n';
+	text << "<15>Int</>:\t" << getIntelligence() << '\n';
+	text << "<15>Diet</>:\t" << getDiet() << '\n';
 }
 
 Pixel Animal::getGraphic()

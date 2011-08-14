@@ -6,6 +6,10 @@
 #include "UIText.h"
 #include "Destination.h"
 
+#include <boost/format.hpp>
+
+using boost::format;
+
 using namespace std;
 
 class Game;

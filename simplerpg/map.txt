@@ -36,8 +36,8 @@ Animal
 	TargetAction
 		action Eat
 		complete 0
-		step 1
-		target @ 3
+		step 0
+		target @ 1
 	end
 	action_history
 		TargetAction
@@ -53,7 +53,7 @@ Animal
 		end
 	end
 	destination @ 3
-	health 0 10.16
+	health 10 10
 	strength 1
 	dexterity 1
 	intelligence 1
@@ -62,7 +62,7 @@ Animal
 	turning_speed 2
 	entity_size 1
 	entity_mass 1
-	diet 0.5
+	diet 0.8
 	damage_base 1
 end
 
@@ -74,13 +74,13 @@ Animal
 	amount_eaten 0
 	current_action
 	Action
-		action Attack
+		action Idle
 		complete 0
 		step 2
 	end
 	action_history
 	end
-	destination 3 7
+	destination -1 -1
 	health 8.34 12.78
 	strength 1
 	dexterity 1

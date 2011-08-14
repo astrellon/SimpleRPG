@@ -368,7 +368,7 @@ int main()
 				break;
 			}
 
-			if(!paused && !game->getCursorMode() && !game->getGamePaused())
+			if(!paused && !game->getGamePaused())
 			{
 				game->update(0.04f);
 			}
@@ -376,7 +376,7 @@ int main()
 			wclear(gameWnd);
 			game->render(gameWnd);
 
-			if(paused || game->getCursorMode() || game->getGamePaused())
+			if(paused || game->getGamePaused())
 			{
 				pausedText.render(false);
 			}

@@ -47,7 +47,7 @@ Destination *Animal::getDestination()
 
 void Animal::displayActions(UIContainer &hud)
 {
-	if(!mRedisplay)
+	if(!mRedisplay && mGame->getGamePaused())
 		return;
 
 	GameEntity::displayActions(hud);
@@ -156,6 +156,11 @@ void Animal::loadProperties(FormattedFileIterator &iter)
 		++iter;
 		setDamageBase(lexical_cast<float>(*iter)); ++iter;
 	}
+	else if(iequals(propertyName, EntityPropertyNames[ATTACK_RATE]))
+	{
+		++iter;
+		setAttackRate(lexical_cast<float>(*iter)); ++iter;
+	}
 	else
 	{
 		GameEntity::loadProperties(iter);
@@ -177,6 +182,7 @@ void Animal::saveProperties(FormattedFile &file)
 	saveProperty(ENTITY_MASS, file);
 	saveProperty(DIET, file);
 	saveProperty(DAMAGE_BASE, file);
+	saveProperty(ATTACK_RATE, file);
 }
 
 void Animal::saveProperty(const EntityProperty &propertyId, FormattedFile &file)
@@ -219,6 +225,9 @@ void Animal::saveProperty(const EntityProperty &propertyId, FormattedFile &file)
 	case DIET:
 		file << EntityPropertyNames[DIET] << ' ' << getDiet() << '\n';
 		break;
+	case ATTACK_RATE:
+		file << EntityPropertyNames[ATTACK_RATE] << ' ' << getAttackRate() << '\n';
+		break;
 	default:
 		GameEntity::saveProperty(propertyId, file);
 		break;
@@ -227,9 +236,14 @@ void Animal::saveProperty(const EntityProperty &propertyId, FormattedFile &file)
 
 void Animal::update(float dt)
 {
+	if(isDead())
+	{
+		return;
+	}
+
 	Action *action = getCurrentAction();
 	// If not in danger. Continue doing the same action.
-	
+
 	switch(action->getAction())
 	{
 	default:
@@ -356,12 +370,24 @@ float Animal::getTurningSpeed()
 	return getTurningSpeedBase();
 }
 
-void Animal::attackEntity(GameEntity *target, float dt)
+void Animal::attackAnimal(Animal *target, float dt)
 {
 	if(target == NULL || dt <= 0.0f)
 	{
 		return;
 	}
+
+	float coolDown = getAttackCooldown() - dt;
+	while(coolDown <= 0.0f)
+	{
+		coolDown += 1.0f / getAttackRate();
+		target->receiveDamage(getAttackDamage());
+	}
+}
+
+void Animal::receiveDamage(float damage)
+{
+	changeHealth(-damage);
 }
 
 void Animal::doActionEat(float dt)
@@ -412,6 +438,11 @@ void Animal::doActionEat(float dt)
 	}
 	else if(action->getStep() == 2)
 	{
+		double simpleDist = distanceToEntity(action->getTarget()->getEntity());
+		if(simpleDist <= 1.0f)
+		{
+			action->prevStep();
+		}
 		Animal *animal = dynamic_cast<Animal *>(action->getTarget()->getEntity());
 		Plant *plant = dynamic_cast<Plant *>(action->getTarget()->getEntity());
 		if(animal != NULL)
@@ -419,7 +450,8 @@ void Animal::doActionEat(float dt)
 			if(!animal->isDead())
 			{
 				// Attack animal.
-				action->nextStep();
+				attackAnimal(animal, dt);
+				//action->nextStep();
 			}
 			else
 			{
@@ -433,15 +465,23 @@ void Animal::doActionEat(float dt)
 		else
 		{
 			clog << getEntityName() << " cannot eat " << action->getTarget()->getEntity()->getEntityType() << endl;
+			action->setCompleted(true);
 			setCurrentAction(new Action(IDLE));
 			return;
 		}
 	}
 	else if(action->getStep() >= 3)
 	{
+		double simpleDist = distanceToEntity(action->getTarget()->getEntity());
+		if(simpleDist <= 1.0f)
+		{
+			action->setStep(1);
+			return;
+		}
 		eatEntity(action->getTarget()->getEntity());
 		if(!isHungry())
 		{
+			action->setCompleted(true);
 			setCurrentAction(new Action(IDLE));
 		}
 	}

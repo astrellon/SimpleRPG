@@ -95,7 +95,7 @@ public:
 		mCursorMode = mode;
 		mSelectedItem = NULL;
 	}
-	Vector2i getCursorPosition() { return Vector2i(mCursorX, mCursorY); }
+	Vector2i getCursorPosition() { return mCursor; }
 	void setCursorPosition(int xPos, int yPos);
 	void displayUnderCursor(UIContainer &hud);
 
@@ -142,8 +142,7 @@ protected:
 	UIText mHudText;
 
 	MenuLevel mMenuLevel;
-	int mCursorX;
-	int mCursorY;
+	Vector2i mCursor;
 	bool mCursorMode;
 	int mLookFor;
 

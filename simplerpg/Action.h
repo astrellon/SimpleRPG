@@ -35,8 +35,9 @@ public:
 	virtual void setCompleted(bool completed) { mCompleted = completed; }
 
 	virtual int getStep() { return mStep; }
-	virtual void setStep(int step) { mStep = step; }
+	virtual void setStep(int step) { mStep = (step > 0 ? step : 0); }
 	virtual void nextStep() { mStep++; }
+	virtual void prevStep() { mStep = ((mStep <= 1) ? 0 : mStep - 1); }
 
 	// Loads an entity from tokens split up from a file. Entity must at least increment the iterator
 	// if it does not load anything.

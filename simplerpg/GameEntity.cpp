@@ -7,7 +7,8 @@ map<unsigned int, GameEntity *> GameEntity::sEntities;
 
 extern const char *EntityPropertyNames[] = {"id", "facing", "position", "destination", "name", "graphic",
 	"health", "strength", "dexterity", "intelligence", "running_speed", "walking_speed", "turning_speed",
-	"entity_size", "entity_mass", "diet", "damage_base", "amount_eaten", "current_action", "action_history"};
+	"entity_size", "entity_mass", "diet", "damage_base", "amount_eaten", "current_action", "action_history",
+	"attack_rate" };
 
 GameEntity::GameEntity(Game *game)
 {
@@ -288,7 +289,7 @@ float GameEntity::beEaten(GameEntity *eater)
 
 void GameEntity::displayActions(UIContainer &hud)
 {
-	if(!mRedisplay)
+	if(!mRedisplay && mGame->getGamePaused())
 		return;
 
 	mHudText->clearText();

@@ -14,8 +14,7 @@ Game::Game(int width, int height)
 	
 	mMap = NULL;
 
-	mCursorX = -1;
-	mCursorY = -1;
+	mCursor = Vector2i(0, 0);
 
 	mCursorMode = false;
 	mRedisplay = true;
@@ -98,8 +97,8 @@ void Game::keyActions(const int key)
 
 	if(getCursorMode())
 	{
-		int cx = mCursorX;
-		int cy = mCursorY;
+		int cx = mCursor.x;
+		int cy = mCursor.y;
 
 		if (key == 260)
 			cx--;
@@ -129,12 +128,14 @@ void Game::keyActions(const int key)
 		if (key == 'k')
 		{
 			setCursorMode(true);
+			setGamePaused(true);
 			mMenuLevel = MENU_LOOK;
 		}
 
 		if (key == 'f')
 		{
 			setCursorMode(true);
+			setGamePaused(true);
 			mMenuLevel = MENU_FIND;
 		}
 
@@ -161,7 +162,13 @@ void Game::keyActions(const int key)
 		if (key == 27 || key == 'k')
 		{
 			setCursorMode(false);
+			setGamePaused(false);
 			mMenuLevel = MENU_MAIN;
+		}
+
+		if (key == ' ')
+		{
+			setGamePaused(!getGamePaused());
 		}
 
 		if(key >= '1' && key <= '9')
@@ -178,6 +185,7 @@ void Game::keyActions(const int key)
 		if (key == 27)
 		{
 			setCursorMode(false);
+			setGamePaused(false);
 			mFoundEntity.clear();
 			mMenuLevel = MENU_MAIN;
 		}
@@ -193,7 +201,7 @@ void Game::keyActions(const int key)
 		if(key == 'f')
 		{
 			mFoundEntity.clear();
-			mFoundEntity = findClosestEntity(Vector2i(mCursorX, mCursorY), LOOK_FOR_TABLE[mLookFor]);
+			mFoundEntity = findClosestEntity(mCursor, LOOK_FOR_TABLE[mLookFor]);
 		}
 		break;
 	case MENU_QUIT:
@@ -277,7 +285,7 @@ void Game::displayActions()
 		break;
 	case MENU_FIND:
 		mHudText << "<15>Find closest</>\n";
-		mHudText << "Pos (<12>" << mCursorX << ", " << mCursorY << "</>)\n\n";
+		mHudText << "Pos (" << mCursor.toString(12) << ")\n\n";
 		mHudText << "<11>x</>: Toggle P/A (" << LOOK_FOR_TABLE[mLookFor][0] << ")\n";
 		mHudText << "<11>f</>: Find.\n";
 		
@@ -305,8 +313,8 @@ void Game::displayActions()
 
 void Game::setCursorPosition(int xPos, int yPos)
 {
-	mCursorX = xPos;
-	mCursorY = yPos;
+	mCursor.x = xPos;
+	mCursor.y = yPos;
 
 	mUnderCursorDirty = true;
 }
@@ -321,7 +329,7 @@ EntityList Game::getUnderCursor()
 	mUnderCursorDirty = false;
 
 	Map *m = getMap();
-	if(m == NULL || mCursorX < 0 || mCursorY < 0 || mCursorX > m->getWidth() || mCursorY > m->getHeight())
+	if(m == NULL || mCursor.x < 0 || mCursor.y < 0 || mCursor.x > m->getWidth() || mCursor.y > m->getHeight())
 	{
 		return EntityList();
 	}
@@ -331,10 +339,10 @@ EntityList Game::getUnderCursor()
 	for(EntityList::iterator iter = mEntities.begin(); iter != mEntities.end(); iter++)
 	{
 		GameEntity *entity = *iter;
-		Vector2f pos = entity->getPosition();
-		int posX = (int)round(pos.x);
-		int posY = (int)round(pos.y);
-		if(posX == mCursorX && posY == mCursorY)
+		Vector2i pos = entity->getPosition();
+		//int posX = (int)round(pos.x);
+		//int posY = (int)round(pos.y);
+		if(pos.x == mCursor.x && pos.y == mCursor.y)
 		{
 			mUnderCursor.push_back(entity);
 		}
@@ -372,7 +380,7 @@ void Game::displayUnderCursor(UIContainer &hud)
 {
 	getUnderCursor();
 
-	Tile *tile = getMap()->getTile(mCursorX, mCursorY);
+	Tile *tile = getMap()->getTile(mCursor.x, mCursor.y);
 	if(tile != NULL)
 	{
 		mHudText << "<15>Tile:</> " << tile->getName() << '\n';
@@ -396,14 +404,14 @@ void Game::render(WINDOW *wnd)
 
 	if(mCursorMode)
 	{
-		int xPos = mCursorX - mScreenSize.getX();
-		int yPos = mCursorY - mScreenSize.getY();
+		int xPos = mCursor.x - mScreenSize.getX();
+		int yPos = mCursor.y - mScreenSize.getY();
 
 		if (xPos >= 0 && xPos < mScreenSize.getWidth() &&
 			yPos >= 0 && yPos < mScreenSize.getHeight())
 		{
-			if (mCursorX >= 0 && mCursorX < mMap->getWidth() &&
-				mCursorY >= 0 && mCursorY < mMap->getHeight())
+			if (mCursor.x >= 0 && mCursor.x < mMap->getWidth() &&
+				mCursor.y >= 0 && mCursor.y < mMap->getHeight())
 			{
 				wattron(wnd, COLOR_PAIR(9));
 				wattroff(wnd, A_BOLD);

@@ -269,6 +269,18 @@ void GameEntity::loadProperties(FormattedFileIterator &iter)
 	}
 }
 
+double GameEntity::distanceToEntity(GameEntity *entity)
+{
+	if(entity == NULL)
+	{
+		return 0.0;
+	}
+	Vector2f otherPos = entity->getPosition();
+	Vector2f pos = getPosition();
+
+	return otherPos.sub(pos).length();
+}
+
 float GameEntity::beEaten(GameEntity *eater)
 {
 	return 0.0f;

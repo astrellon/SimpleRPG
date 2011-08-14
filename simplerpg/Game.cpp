@@ -5,8 +5,11 @@
 
 const char *Game::LOOK_FOR_TABLE[] = {"Animal", "Plant"};
 
+Game *Game::CURRENT_GAME = NULL;
+
 Game::Game(int width, int height)
 {
+	CURRENT_GAME = this;
 	mHudWidth = 30;
 	
 	mMap = NULL;
@@ -702,22 +705,28 @@ float lengthOfPath(const vector<Vector2f> *path)
 	return (float)length;
 }
 
-FindEntityResult Game::findClosestEntity(Vector2f position, string entityType)
+FindEntityResult Game::findClosestEntity(Vector2f position, const string &entityType)
+{
+	return findClosestEntity(position, entityType, NULL);
+}
+
+FindEntityResult Game::findClosestEntity(Vector2f position, const string &entityType, const GameEntity *ignore)
 {
 	GameEntity *shortestEntity = NULL;
 	vector<Vector2f> *shortestPath = NULL;
 	float shortest = 1e30f;
 	Map *m = getMap();
+	Vector2i positionInt = (Vector2i)position;
 	for(EntityList::iterator iter = mEntities.begin(); iter != mEntities.end(); iter++)
 	{
 		GameEntity *entity = *iter;
 		if(iequals(entity->getEntityType(), entityType))
 		{
-			vector<Vector2f> *path = m->search(position, entity->getPosition());
+			vector<Vector2f> *path = m->search(positionInt, entity->getPosition());
 			if(path != NULL)
 			{
 				float length = lengthOfPath(path);
-				if(length < shortest)
+				if(length < shortest && (entity != ignore && ignore != NULL))
 				{
 					shortest = length;
 					shortestEntity = entity;

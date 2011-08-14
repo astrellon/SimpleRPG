@@ -34,9 +34,9 @@ Animal
 	amount_eaten 0
 	current_action
 	TargetAction
-		action Flee
-		complete 1
-		step 4
+		action Eat
+		complete 0
+		step 1
 		target @ 3
 	end
 	action_history
@@ -52,7 +52,7 @@ Animal
 			step 6
 		end
 	end
-	destination @ 1
+	destination @ 3
 	health 0 10.16
 	strength 1
 	dexterity 1

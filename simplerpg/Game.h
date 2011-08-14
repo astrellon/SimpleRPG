@@ -106,12 +106,15 @@ public:
 
 	void setDebugAnimal(Animal *animal);
 
-	FindEntityResult findClosestEntity(Vector2f startPosition, string entityType);
+	FindEntityResult findClosestEntity(Vector2f startPosition, const string &entityType);
+	FindEntityResult findClosestEntity(Vector2f startPosition, const string &entityType, const GameEntity *ignore);
 	vector<Vector2f> *findPath(Vector2i startPosition, Vector2i endPosition);
 
 	virtual bool getGameRunning() { return mGameRunning; }
 	virtual bool getGamePaused() { return mGamePaused; }
 	virtual void setGamePaused(bool paused) { mGamePaused = paused; }
+
+	static Game *CURRENT_GAME;
 
 protected:
 	bool mRedisplay;

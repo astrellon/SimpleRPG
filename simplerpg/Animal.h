@@ -82,6 +82,11 @@ public:
 	virtual float getDamageBase() { return mDamageBase; }
 	virtual void  setDamageBase(float damage) { mDamageBase = damage; }
 
+	virtual float getAttackRate() { return mAttackRate; }
+	virtual void  setAttackRate(float rate) { mAttackRate = rate; }
+
+	virtual float getAttackCooldown() { return mAttackCooldown; }
+
 	virtual void killAnimal();
 	virtual bool isDead() { return mHealth <= 0.0f; }
 	
@@ -100,6 +105,8 @@ protected:
 	float mDamageBase;
 	float mHealth;
 	float mMaxHealth;
+	float mAttackRate;
+	float mAttackCooldown;
 
 	float mHunger;
 
@@ -120,6 +127,7 @@ protected:
 	virtual void doStateIdle(float dt) {}
 	virtual void moveAnimal(float dt);
 	
+	virtual void attackEntity(GameEntity *target, float dt);
 	virtual void doActionEat(float dt);
 
 	virtual void saveProperties(FormattedFile &file);

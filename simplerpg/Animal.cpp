@@ -23,12 +23,12 @@ Animal::Animal(Game *game) : GameEntity(game)
 	mSize = 1.0f;
 	mDiet = 0.5f;
 	mDamageBase = 1.0f;
+	mAttackRate = 1.0f;
+	mAttackCooldown = 0.0f;
 
 	mStrength = 1;
 	mDexterity = 1;
 	mIntelligence = 1;
-	
-	mDestination.setGame(game);
 }
 
 Animal::~Animal(void)
@@ -253,7 +253,7 @@ void Animal::update(float dt)
 void Animal::moveAnimal(float dt)
 {
 	Vector2f pos = getPosition();
-	vector<Vector2f> path = mDestination.getPath(pos);
+	vector<Vector2f> path = getDestination()->getPath(pos);
 	if(path.empty())
 	{
 		return;
@@ -354,6 +354,14 @@ float Animal::getTurningSpeed()
 	return getTurningSpeedBase();
 }
 
+void Animal::attackEntity(GameEntity *target, float dt)
+{
+	if(target == NULL || dt <= 0.0f)
+	{
+		return;
+	}
+}
+
 void Animal::doActionEat(float dt)
 {
 	TargetAction *action = dynamic_cast<TargetAction *>(getCurrentAction());
@@ -367,14 +375,15 @@ void Animal::doActionEat(float dt)
 
 	if(action->getStep() == 0)
 	{
+		clog << "Doing eat step 0\n";
 		FindEntityResult result;
 		if(getDiet() < 0.5f)
 		{
-			result = mGame->findClosestEntity(getPosition(), "Plant");
+			result = mGame->findClosestEntity(getPosition(), "Plant", this);
 		}
 		else if(getDiet() >= 0.5f)
 		{
-			result = mGame->findClosestEntity(getPosition(), "Animal");
+			result = mGame->findClosestEntity(getPosition(), "Animal", this);
 		}
 
 		if(result.entity != NULL && result.path != NULL)
@@ -386,8 +395,9 @@ void Animal::doActionEat(float dt)
 	}
 	else if(action->getStep() == 1)
 	{
+		clog << "Doing eat step 1\n";
 		// Direct distance between this animal and the target.
-		double simpleDist = getPosition().sub(action->getTarget()->getEntity()->getPosition()).length();
+		double simpleDist = distanceToEntity(action->getTarget()->getEntity());
 		if(simpleDist <= 1.0f)
 		{
 			action->nextStep();
@@ -395,6 +405,7 @@ void Animal::doActionEat(float dt)
 	}
 	else if(action->getStep() == 2)
 	{
+		clog << "Doing eat step 2\n";
 		Animal *animal = dynamic_cast<Animal *>(action->getTarget()->getEntity());
 		Plant *plant = dynamic_cast<Plant *>(action->getTarget()->getEntity());
 		if(animal != NULL)
@@ -422,10 +433,12 @@ void Animal::doActionEat(float dt)
 	}
 	else if(action->getStep() >= 3)
 	{
+		clog << "Doing eat step 3\n";
 		eatEntity(action->getTarget()->getEntity());
 		if(!isHungry())
 		{
 			setCurrentAction(new Action(IDLE));
+			clog << "Completed eat action\n";
 		}
 	}
 }

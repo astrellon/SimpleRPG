@@ -125,6 +125,8 @@ public:
 	virtual Action *getCurrentAction() { return mCurrentAction; }
 	virtual vector<Action *> *getPastActions() { return &mPastActions; }
 
+	virtual double distanceToEntity(GameEntity *entity);
+
 protected:
 	unsigned int mId;
 	Pixel mGraphic;

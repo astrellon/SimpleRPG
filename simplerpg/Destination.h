@@ -26,9 +26,6 @@ public:
 
 	void clear();
 
-	void setGame(Game *game) { mGame = game; }
-	Game *getGame() { return mGame; }
-
 	void setLocation(const Vector2f &location);
 	void setLocation(const float &x, const float &y);
 	Vector2f getLocation();
@@ -52,7 +49,6 @@ protected:
 	GameEntity *mEntity;
 	unsigned int mEntityId;
 	vector<Vector2f> mPath;
-	Game *mGame;
 
 	Vector2i mOldLocation;
 	Vector2i mOldStart;

@@ -96,7 +96,7 @@ double manhattanDistance(const Vector2f &p1, const Vector2f &p2)
 	return abs(p1.x - p2.x) + abs(p1.y - p2.y);
 }
 
-vector<Vector2f> *Map::search(Vector2i start, Vector2i end)
+vector<Vector2f> *Map::search(const Vector2i &start, const Vector2i &end)
 {
 	vector<AStarNode *> openList;
 

@@ -3,7 +3,7 @@
 
 Destination::Destination()
 {
-	mGame = NULL;
+	//mGame = NULL;
 	clear();
 }
 
@@ -113,7 +113,7 @@ unsigned int Destination::getEntityId()
 
 vector<Vector2f> Destination::getPath(Vector2f &startPosition)
 {
-	if(mPathDirty || 
+	if(mPathDirty || mPath.size() == 0 || 
 		mOldLocation.sub(getLocation()).lengthSqrd() >= 1 ||
 		mOldStart.sub(startPosition).lengthSqrd() >= 1)
 	{
@@ -133,10 +133,10 @@ void Destination::updatePath(Vector2f &startPosition)
 		mPath.clear();
 		return;
 	}
-	if(mGame != NULL && mGame->getMap() != NULL)
+	if(Game::CURRENT_GAME != NULL && Game::CURRENT_GAME->getMap() != NULL)
 	{
 		mPath.clear();
-		vector<Vector2f> *p = mGame->getMap()->search(startPosition, dest);
+		vector<Vector2f> *p = Game::CURRENT_GAME->getMap()->search(startPosition, dest);
 		if(p != NULL)
 		{
 			mPath = *p;

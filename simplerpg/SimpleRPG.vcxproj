@@ -179,6 +179,7 @@ copy "$(ProjectDir)config.ini" "$(OutputPath)"</Command>
     <ClInclude Include="GameMath.h" />
     <ClInclude Include="IKeyActions.h" />
     <ClInclude Include="keyboard.h" />
+    <ClInclude Include="main.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Matrix3x3.h" />
     <ClInclude Include="panel.h" />

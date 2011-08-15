@@ -97,8 +97,8 @@ void init_colours()
 WINDOW *gameWnd = NULL;
 WINDOW *mainMenuWnd = NULL;
 
-int windowWidth = 100;
-int windowHeight = 40;
+int windowWidth = 80;
+int windowHeight = 25;
 
 double freq;
 LARGE_INTEGER updateTime, frequency;
@@ -215,6 +215,23 @@ int main(int argc, char **argv)
 
 	mainMenuWnd = newwin(windowHeight, windowWidth, 0, 0);
 	gameWnd = newwin(windowHeight, windowWidth, 0, 0);
+
+	if(mainMenuWnd == NULL || gameWnd == NULL)
+	{
+		clog << "A window size of (" << windowWidth << ", " << windowHeight << ") is either too large or invalid." << endl;
+		clog << "Defaulting to (80, 25)" << endl;
+		resizeScreen(80, 25);
+
+		mainMenuWnd = newwin(windowHeight, windowWidth, 0, 0);
+		gameWnd = newwin(windowHeight, windowWidth, 0, 0);
+
+		if(mainMenuWnd == NULL || gameWnd == NULL)
+		{
+			clog << "Default window sizes have also failed. Quitting program :(" << endl;
+			logfile.close();
+			return -1;
+		}
+	}
 
 	cbreak();
 	noecho();
@@ -423,6 +440,8 @@ int main(int argc, char **argv)
 			mainMenu.render();
 
 			wrefresh(mainMenuWnd);
+
+			msleep(40);
 		}
 		else if(game == NULL)
 		{

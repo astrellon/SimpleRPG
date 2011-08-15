@@ -128,8 +128,24 @@ void resizeScreen(int width, int height)
 	windowHeight = height;
 }
 
-int main()
+int main(int argc, char **argv)
 {
+	string loadFile = "";
+	/*cout << "Count: " << argc << endl;
+	for(int i = 0; i < argc; i++)
+	{
+		cout << i << ": " << argv[i] << endl;
+	}
+
+	getchar();
+
+	return 0;*/
+
+	if(argc >= 2)
+	{
+		loadFile = argv[1];
+	}
+
 	resizeScreen(windowWidth, windowHeight);
 	
 	ofstream logfile("logfile.log");
@@ -207,6 +223,12 @@ int main()
 	pausedText.setX(1);
 	pausedText.setWindow(gameWnd);
 
+	if(loadFile.size() > 1)
+	{
+		inMainMenu = false;
+		game = startGame(loadFile);
+	}
+
 	while(true)
 	{
 		if(inMainMenu)
@@ -243,7 +265,8 @@ int main()
 					{
 						mainItem2FileList.scrollSelection(1);
 					}
-					else if (c == 10)
+					// Enter or numpad enter.
+					else if (c == 10 || c == 459)
 					{
 						folder_entry *entry = &folderEntries[mainItem2FileList.getSelectionIndex()];
 						if(entry->index == 0)
@@ -363,9 +386,6 @@ int main()
 			while(_kbhit())
 			{
 				int c = wgetch(gameWnd);
-
-				if(c == 'p' || c == ' ')
-					paused = !paused;
 
 				if(c == 's')
 				{

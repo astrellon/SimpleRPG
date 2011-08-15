@@ -49,6 +49,8 @@ void Game::resize(int width, int height)
 	mHud.setMaxHeight(height);
 	mHud.setMaxWidth(mHudWidth);
 
+	mHudText.setMaxWidth(mHudWidth);
+
 	mGameWidth = width;
 	mGameHeight = height;
 }
@@ -79,6 +81,11 @@ void Game::keyActions(const int key)
 	if (key == 53)
 	{
 		mHud.setScrollY(0);
+	}
+
+	if (key == ' ')
+	{
+		setGamePaused(!getGamePaused());
 	}
 
 	if(mSelectedItem != NULL)
@@ -164,11 +171,6 @@ void Game::keyActions(const int key)
 			setCursorMode(false);
 			setGamePaused(false);
 			mMenuLevel = MENU_MAIN;
-		}
-
-		if (key == ' ')
-		{
-			setGamePaused(!getGamePaused());
 		}
 
 		if(key >= '1' && key <= '9')

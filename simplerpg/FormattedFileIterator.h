@@ -1,24 +1,22 @@
 #pragma once
 
 #include <boost/regex.hpp>
+#include <iostream>
+#include <fstream>
 #include <string>
 
 using std::string;
+using std::ifstream;
+using std::clog;
+using std::endl;
 
 class FormattedFileIterator
 {
 public:
-	FormattedFileIterator(boost::sregex_token_iterator *iter, bool ignoreComments)
-	{
-		mIgnoreComments = ignoreComments;
-		mIter = iter;
-
-		if(mIgnoreComments && isComment(**iter))
-		{
-			nextNonComment();
-		}
-	}
+	FormattedFileIterator(string filename, bool ignoreComments);
 	~FormattedFileIterator() {}
+
+	bool isOpen() { return mOpen; }
 
 	FormattedFileIterator &operator ++()
 	{
@@ -28,70 +26,31 @@ public:
 		}
 		else
 		{
-			++(*mIter);
+			++mIter;
 		}
 		return *this;
 	}
 
-	void nextNonComment()
-	{
-		if(atEnd())
-		{
-			return;
-		}
-
-		do
-		{
-			++(*mIter);
-			if(atEnd())
-			{
-				break;
-			}
-			string check = *(*mIter);
-			if(!isComment(check))
-			{
-				break;
-			}
-			
-		} while(true);
-	}
+	void nextNonComment();
 
 	bool atEnd()
 	{
-		return *mIter == mEnd;
+		return mIter == mEnd;
 	}
 
 	string operator*()
 	{
-		return **mIter;
+		return *mIter;
 	}
 
 protected:
-	boost::sregex_token_iterator *mIter;
+	boost::sregex_token_iterator mIter;
 	boost::sregex_token_iterator mEnd;
+	string fileStr;
 	bool mIgnoreComments;
+	bool mOpen;
 
-	bool isComment(const string &line)
-	{
-		if(line.size() >= 2)
-		{
-			char c0 = line[0];
-			char c1 = line[1];
-			// All comments start with a / character
-			if(c0 != '/')
-			{
-				return false;
-			}
-			// All comments have either a / or * as their second character.
-			if(c1 != '/' && c1 != '*')
-			{
-				return false;
-			}
-			// If we haven't returned by now, it isn't a comment.
-			return true;
-		}
-		// If the line is less than 2 characters long then it cannot be
-		// a comment.
-		return false;
-	}
+	static boost::regex READ_FILE_REGEX;
+
+	bool isComment(const string &line);
 };

@@ -80,7 +80,8 @@
     </Link>
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)pdcurses.dll" "$(OutputPath)"
-copy "$(ProjectDir)map.txt" "$(OutputPath)"</Command>
+copy "$(ProjectDir)map.txt" "$(OutputPath)"
+copy "$(ProjectDir)config.ini" "$(OutputPath)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -102,7 +103,8 @@ copy "$(ProjectDir)map.txt" "$(OutputPath)"</Command>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)pdcurses.dll" "$(OutputPath)"
-copy "$(ProjectDir)map.txt" "$(OutputPath)"</Command>
+copy "$(ProjectDir)map.txt" "$(OutputPath)"
+copy "$(ProjectDir)config.ini" "$(OutputPath)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -127,8 +129,13 @@ copy "$(ProjectDir)map.txt" "$(OutputPath)"</Command>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)pdcurses.dll" "$(OutputPath)"
-copy "$(ProjectDir)map.txt" "$(OutputPath)"</Command>
+copy "$(ProjectDir)map.txt" "$(OutputPath)"
+copy "$(ProjectDir)config.ini" "$(OutputPath)"</Command>
     </PostBuildEvent>
+    <CustomBuildStep>
+      <Command>
+      </Command>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Action.cpp" />
@@ -138,6 +145,7 @@ copy "$(ProjectDir)map.txt" "$(OutputPath)"</Command>
     <ClCompile Include="Debug.cpp" />
     <ClCompile Include="Destination.cpp" />
     <ClCompile Include="FormattedFile.cpp" />
+    <ClCompile Include="FormattedFileIterator.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameEntity.cpp" />
     <ClCompile Include="GameEntityFactory.cpp" />

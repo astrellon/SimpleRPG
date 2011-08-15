@@ -7,7 +7,9 @@
 #include <conio.h>
 #endif
 
-#include <boost\filesystem.hpp>
+#include <boost/filesystem.hpp>
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include "Map.h"
 #include "Tile.h"
@@ -24,9 +26,12 @@
 #include "UISelector.h"
 #include "Destination.h"
 #include "FormattedFile.h"
+#include "FormattedFileIterator.h"
 #include "Debug.h"
 
 using namespace boost::filesystem;
+using boost::lexical_cast;
+using boost::algorithm::iequals;
 
 #ifndef M_PI
 #define M_PI 3.1415926535897932384626433832795
@@ -98,6 +103,29 @@ int windowHeight = 40;
 double freq;
 LARGE_INTEGER updateTime, frequency;
 
+void loadConfig(string filename)
+{
+	FormattedFileIterator configIter(filename, true);
+	if(!configIter.isOpen())
+	{
+		return;
+	}
+
+	while(!configIter.atEnd())
+	{
+		string line = *configIter; ++configIter;
+		if(iequals(line, "size"))
+		{
+			windowWidth  = lexical_cast<int>(*configIter); ++configIter;
+			windowHeight = lexical_cast<int>(*configIter); ++configIter;
+		}
+		else
+		{
+			clog << "Unknown config property '" << line << '\'' << endl;
+		}
+	}
+}
+
 Game *startGame(string filename)
 {
 	Game *game = new Game(windowWidth, windowHeight);
@@ -126,31 +154,50 @@ void resizeScreen(int width, int height)
 
 	windowWidth = width;
 	windowHeight = height;
+
+	clog << "Setting window size to " << width << ", " << height << endl;
 }
 
 int main(int argc, char **argv)
 {
+	ofstream logfile("logfile.log");
+	clog.rdbuf(logfile.rdbuf());
+
+	loadConfig("config.ini");
+
 	string loadFile = "";
-	/*cout << "Count: " << argc << endl;
-	for(int i = 0; i < argc; i++)
-	{
-		cout << i << ": " << argv[i] << endl;
-	}
-
-	getchar();
-
-	return 0;*/
 
 	if(argc >= 2)
 	{
-		loadFile = argv[1];
+		int i = 1;
+		while(i < argc)
+		{
+			string cmd = argv[i];
+			if(cmd[0] == '-')
+			{
+				i++;
+				if(iequals(cmd, "-s") || iequals(cmd, "-size"))
+				{
+					if(i + 1 >= argc)
+					{
+						clog << "Not enough arguments for size command." << endl;
+						break;
+					}
+
+					windowWidth = lexical_cast<int>(argv[i]);
+					windowHeight = lexical_cast<int>(argv[i + 1]);
+					i += 2;
+				}
+			}
+			else
+			{
+				loadFile = argv[i];
+			}
+		}
 	}
 
 	resizeScreen(windowWidth, windowHeight);
 	
-	ofstream logfile("logfile.log");
-	clog.rdbuf(logfile.rdbuf());
-
 	srand( (unsigned int)time(NULL) );
 
 	Tile::registerDefaults();
@@ -246,7 +293,7 @@ int main(int argc, char **argv)
 					{
 						menuLevel = 1;
 					}
-					else if(c == '2')
+					else if(c == '2' || c == 'q')
 					{
 						quit = true;
 					}

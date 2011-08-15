@@ -489,31 +489,12 @@ void Game::saveMap(string filename)
 
 void Game::loadMap(string filename)
 {
-	ifstream file(filename);
-	if(!file.is_open())
+	FormattedFileIterator iter(filename, true);
+
+	if(!iter.isOpen())
 	{
-		clog << "Failed to open file " << filename << endl;
 		return;
 	}
-
-	string fileStr((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-	file.close();
-
-	boost::regex readFileRegex(
-		// Multi-line comments.
-		"(/\\*[^/\\*]*\\*/)|"
-		// Single-line comments.
-		"(//[^\n]*\n)|"
-		// Double quoted strings.
-		"(\"[^\"]*\")|"
-		// Single quoted strings.
-		"('[^']*')|"
-		// Everything that's not whitespace.
-		"(\\S+)");
-
-	boost::sregex_token_iterator boostIter(fileStr.begin(), fileStr.end(), readFileRegex, 0), end;
-
-	FormattedFileIterator iter(&boostIter, true);
 
 	static const int STATE_EMPTY = 0;
 	static const int STATE_READ_TILES = 1;

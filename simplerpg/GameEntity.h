@@ -31,7 +31,7 @@ using boost::lexical_cast;
 enum EntityProperty { ID, FACING, POSITION, DESTINATION, NAME, GRAPHIC, HEALTH,
 	STRENGTH, DEXTERITY, INTELLIGENCE, RUNNING_SPEED, WALKING_SPEED, TURNING_SPEED,
 	ENTITY_SIZE, ENTITY_MASS, DIET, DAMAGE_BASE, AMOUNT_EATEN, CURRENT_ACTION, 
-	ACTION_HISTORY, ATTACK_RATE };
+	ACTION_HISTORY, ATTACK_RATE, ATTACK_COOLDOWN };
 
 const char *EntityPropertyNames[];
 
@@ -138,11 +138,10 @@ protected:
 
 	float mHealth;
 	float mMaxHealth;
+	float mAmountEaten;
 	
 	bool mRedisplay;
 	UIText *mHudText;
-
-	float mAmountEaten;
 
 	static EntityMap sEntities;
 

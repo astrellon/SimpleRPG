@@ -91,6 +91,8 @@ int main(int argc, char **argv)
 
 	loadConfig("config.ini");
 
+	// If set from the command line, that file will be used to directly load
+	// a map.
 	string loadFile = "";
 
 	if(argc >= 2)
@@ -135,13 +137,20 @@ int main(int argc, char **argv)
 	
 	Game *game;
 
+	// Initialise the curses library.
 	initscr();
+	// Disables the cursor.
 	curs_set(0);
+	// Initialises the colour pairs that we intend to use.
+	// Currently it is all colours with a black background.
 	init_colours();
 
 	mainMenuWnd = newwin(windowHeight, windowWidth, 0, 0);
 	gameWnd = newwin(windowHeight, windowWidth, 0, 0);
 
+	// Window size check, as if the window sizes are too big for the current screen or are invalid
+	// in some other way newwin returns NULL. This will then attempt to use default screen sizes.
+	// Should that also fail the program exits. This should hopefully never happen but it might.
 	if(mainMenuWnd == NULL || gameWnd == NULL)
 	{
 		clog << "A window size of (" << windowWidth << ", " << windowHeight << ") is either too large or invalid." << endl;
@@ -153,14 +162,19 @@ int main(int argc, char **argv)
 
 		if(mainMenuWnd == NULL || gameWnd == NULL)
 		{
-			clog << "Default window sizes have also failed. Quitting program :(" << endl;
+			clog << "Default window sizes have also failed, quitting program :(" << endl;
+			cout << "Unable to create a curses window, quitting program." << endl;
 			logfile.close();
 			return -1;
 		}
 	}
 
+	// User input is immediately available to program.
 	cbreak();
+	// User input is not echoed.
 	noecho();
+
+	// Enables use of special characters as input such as arrow keys.
 	keypad(gameWnd, true);
 	keypad(mainMenuWnd, true);
 
@@ -168,6 +182,10 @@ int main(int argc, char **argv)
 	bool inMainMenu = true;
 	int menuLevel = 0;
 
+	// Main menu is setup to be a list and currently each different
+	// menu screen is a different item that is disabled when not
+	// in use. This should allow for easily changing between menu levels
+	// and when disabled should take up minimal processing to skip.
 	UIList mainMenu;
 	mainMenu.setWindow(mainMenuWnd);
 
@@ -175,7 +193,7 @@ int main(int argc, char **argv)
 	mainMenu.setY(1);
 
 	UIText title;
-	title << "<15>Alan Lawrey's Thesis project 2011</>";
+	title << "<15>Alan Lawrey's Thesis project 2011</>\n";
 
 	UIText mainItem1;
 	mainItem1 << "<12>1</>: Load world.\n<12>2</>: Quit.";
@@ -191,15 +209,12 @@ int main(int argc, char **argv)
 	currentPathText << "Error";
 	mainItem2.addChild(currentPathText);
 
-	mainItem2.addChild(new UISpacer());
-
 	UISelector mainItem2FileList;
 	mainItem2FileList.setSelectionIndex(0);
 	mainItem2FileList.setMaxHeight(windowHeight - 7);
 	mainItem2.addChild(mainItem2FileList);
 	
 	mainMenu.addChild(title);
-	mainMenu.addChild(new UISpacer());
 	mainMenu.addChild(mainItem1);
 	mainMenu.addChild(mainItem2);
 
@@ -207,6 +222,7 @@ int main(int argc, char **argv)
 	currentPath = system_complete(path("."));
 
 	bool loadFilelist = true;
+	// Stores an array of the entries in the current folder being viewed.
 	vector<folder_entry> folderEntries;
 
 	UIText pausedText("<12>*PAUSED*</>");
@@ -323,7 +339,7 @@ int main(int argc, char **argv)
 					directory_iterator end_iter;
 
 					currentPathText.clearText();
-					currentPathText << "<15>Current path:</> " << currentPath.external_directory_string();
+					currentPathText << "<15>Current path:</> " << currentPath.external_directory_string() << '\n';
 
 					folderEntries.clear();
 					folderEntries.push_back(folder_entry(0, true, "..", ".."));

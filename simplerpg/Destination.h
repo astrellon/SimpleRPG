@@ -38,7 +38,7 @@ public:
 
 	vector<Vector2f> getPath(Vector2f &startPosition);
 
-	void saveDestination(string propertyName, FormattedFile &file);
+	void saveDestination(const string &propertyName, FormattedFile &file);
 	void loadDestination(FormattedFileIterator &iter);
 
 	void clearPath();

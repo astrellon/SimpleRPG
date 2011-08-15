@@ -3,7 +3,6 @@
 
 Destination::Destination()
 {
-	//mGame = NULL;
 	clear();
 }
 
@@ -35,7 +34,7 @@ void Destination::setLocation(const float &x, const float &y)
 	setLocation(Vector2f(x, y));
 }
 
-void Destination::saveDestination(string propertyName, FormattedFile &file)
+void Destination::saveDestination(const string &propertyName, FormattedFile &file)
 {
 	if(getEntity() != NULL)
 	{

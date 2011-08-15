@@ -179,6 +179,11 @@ void Animal::loadProperties(FormattedFileIterator &iter)
 		++iter;
 		setAttackRate(lexical_cast<float>(*iter)); ++iter;
 	}
+	else if(iequals(propertyName, EntityPropertyNames[ATTACK_COOLDOWN]))
+	{
+		++iter;
+		mAttackCooldown = lexical_cast<float>(*iter); ++iter;
+	}
 	else
 	{
 		GameEntity::loadProperties(iter);
@@ -201,6 +206,7 @@ void Animal::saveProperties(FormattedFile &file)
 	saveProperty(DIET, file);
 	saveProperty(DAMAGE_BASE, file);
 	saveProperty(ATTACK_RATE, file);
+	saveProperty(ATTACK_COOLDOWN, file);
 }
 
 void Animal::saveProperty(const EntityProperty &propertyId, FormattedFile &file)
@@ -245,6 +251,9 @@ void Animal::saveProperty(const EntityProperty &propertyId, FormattedFile &file)
 		break;
 	case ATTACK_RATE:
 		file << EntityPropertyNames[ATTACK_RATE] << ' ' << getAttackRate() << '\n';
+		break;
+	case ATTACK_COOLDOWN:
+		file << EntityPropertyNames[ATTACK_COOLDOWN] << ' ' << getAttackCooldown() << '\n';
 		break;
 	default:
 		GameEntity::saveProperty(propertyId, file);

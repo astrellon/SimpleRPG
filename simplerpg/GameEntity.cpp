@@ -8,7 +8,7 @@ map<unsigned int, GameEntity *> GameEntity::sEntities;
 extern const char *EntityPropertyNames[] = {"id", "facing", "position", "destination", "name", "graphic",
 	"health", "strength", "dexterity", "intelligence", "running_speed", "walking_speed", "turning_speed",
 	"entity_size", "entity_mass", "diet", "damage_base", "amount_eaten", "current_action", "action_history",
-	"attack_rate" };
+	"attack_rate", "attack_cooldown" };
 
 GameEntity::GameEntity(Game *game)
 {

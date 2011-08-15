@@ -39,7 +39,11 @@ Game::Game(int width, int height)
 
 Game::~Game(void)
 {
-	
+	if (CURRENT_GAME == this)
+	{
+		CURRENT_GAME = NULL;
+	}
+	delete mMap;
 }
 
 void Game::resize(int width, int height)

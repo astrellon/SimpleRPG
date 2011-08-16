@@ -237,13 +237,13 @@ void Game::keyActions(const int key)
 			setGamePaused(false);
 		}
 
-		// Numpad -
-		if (key == 464)
+		// Numpad - or -
+		if (key == 464 || key == 45)
 		{
 			setHudWidth(getHudWidth() - 1);
 		}
-		// Numpad +
-		if (key == 465)
+		// Numpad + or =
+		if (key == 465 || key == 61)
 		{
 			setHudWidth(getHudWidth() + 1);
 		}

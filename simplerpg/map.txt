@@ -34,7 +34,7 @@ Animal
 	amount_eaten 0
 	current_action
 	TargetAction
-		action Eat
+		action Attack
 		complete 0
 		step 0
 		target @ 1
@@ -64,6 +64,7 @@ Animal
 	entity_mass 1
 	diet 0.8
 	damage_base 1
+	attack_rate 1
 end
 
 Animal

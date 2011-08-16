@@ -16,8 +16,8 @@ Animal::Animal(Game *game) : GameEntity(game)
 	mMaxHealth = 1.0f;
 	mHunger = 0.0f;
 
-	mEnergyNeededPerDay = 0.0f;
-	mEnergy = 0.0f;
+	mEnergyNeededPerDay = 1.0f;
+	mEnergy = 1.0f;
 
 	mMass = 1.0f;
 	mSize = 1.0f;
@@ -89,6 +89,7 @@ void Animal::displayActions(UIContainer &hud)
 	text << "<15>Dex</>:\t" << getDexterity() << '\n';
 	text << "<15>Int</>:\t" << getIntelligence() << '\n';
 	text << "<15>Diet</>:\t" << getDiet() << '\n';
+	text << "\n<15>Cooldown</>: " << getAttackCooldown() << '\n';
 }
 
 Pixel Animal::getGraphic()
@@ -184,6 +185,16 @@ void Animal::loadProperties(FormattedFileIterator &iter)
 		++iter;
 		mAttackCooldown = lexical_cast<float>(*iter); ++iter;
 	}
+	else if(iequals(propertyName, EntityPropertyNames[ENERGY]))
+	{
+		++iter;
+		setEnergy(lexical_cast<float>(*iter)); ++iter;
+	}
+	else if(iequals(propertyName, EntityPropertyNames[REST_ENERGY_PER_DAY]))
+	{
+		++iter;
+		setEnergyNeededPerDay(lexical_cast<float>(*iter)); ++iter;
+	}
 	else
 	{
 		GameEntity::loadProperties(iter);
@@ -207,6 +218,8 @@ void Animal::saveProperties(FormattedFile &file)
 	saveProperty(DAMAGE_BASE, file);
 	saveProperty(ATTACK_RATE, file);
 	saveProperty(ATTACK_COOLDOWN, file);
+	saveProperty(ENERGY, file);
+	saveProperty(REST_ENERGY_PER_DAY, file);
 }
 
 void Animal::saveProperty(const EntityProperty &propertyId, FormattedFile &file)
@@ -255,6 +268,12 @@ void Animal::saveProperty(const EntityProperty &propertyId, FormattedFile &file)
 	case ATTACK_COOLDOWN:
 		file << EntityPropertyNames[ATTACK_COOLDOWN] << ' ' << getAttackCooldown() << '\n';
 		break;
+	case ENERGY:
+		file << EntityPropertyNames[ENERGY] << ' ' << getEnergy() << '\n';
+		break;
+	case REST_ENERGY_PER_DAY:
+		file << EntityPropertyNames[REST_ENERGY_PER_DAY] << ' ' << getEnergyNeededPerDay() << '\n';
+		break;
 	default:
 		GameEntity::saveProperty(propertyId, file);
 		break;
@@ -268,6 +287,21 @@ void Animal::update(float dt)
 		return;
 	}
 
+	if (mAttackCooldown > 0.0f)
+	{
+		// When the animals' attack is cooling down, we want to do so at
+		// normal speed.
+		mAttackCooldown -= dt;
+	}
+	else
+	{
+		// When the animal is attack very quickly we don't want the cooldown to
+		// have as much affect. As we want to support multiple attacks per
+		// frame but we don't want a really high dt to cause the animal to have a
+		// big advantage should the dt return to normal again. This is a minor tweek.
+		mAttackCooldown += dt * 0.25f;
+	}
+
 	Action *action = getCurrentAction();
 	// If not in danger. Continue doing the same action.
 
@@ -276,6 +310,7 @@ void Animal::update(float dt)
 	default:
 	case IDLE:
 		// Do nothing!
+		//smHunger 
 		if(isHungry())
 		{
 			setCurrentAction(new TargetAction(EAT));
@@ -285,9 +320,10 @@ void Animal::update(float dt)
 		doActionEat(dt);
 		break;
 	case FLEE:
+		doActionFlee(dt);
 	case ATTACK:
 		// Do some more nothing.
-		action->getCompleted();
+		doActionAttack(dt);
 	}
 	
 	moveAnimal(dt);
@@ -404,10 +440,9 @@ void Animal::attackAnimal(Animal *target, float dt)
 		return;
 	}
 
-	float coolDown = getAttackCooldown() - dt;
-	while(coolDown <= 0.0f)
+	while(mAttackCooldown <= 0.0f)
 	{
-		coolDown += 1.0f / getAttackRate();
+		mAttackCooldown += 1.0f / getAttackRate();
 		target->receiveDamage(getAttackDamage());
 	}
 }
@@ -417,21 +452,88 @@ void Animal::receiveDamage(float damage)
 	changeHealth(-damage);
 }
 
-void Animal::doActionEat(float dt)
+TargetAction *Animal::castTargetAction(Action *action, const string &actionName, bool checkForSelfTarget)
 {
-	TargetAction *action = dynamic_cast<TargetAction *>(getCurrentAction());
+	TargetAction *target = dynamic_cast<TargetAction *>(getCurrentAction());
 
+	if(target == NULL)
+	{
+		clog << "Error! Current action is not a target action for '" << actionName << "' action!" << endl;
+		setCurrentAction(new TargetAction(IDLE));
+		return NULL;
+	}
+
+	if(checkForSelfTarget && target->getTarget()->getEntity() == this)
+	{
+		clog << "Error! Current action (" << actionName << ") is targetting self (" << getEntityName() << ')' << endl;
+		setCurrentAction(new TargetAction(IDLE));
+		return NULL;
+	}
+	return target;
+}
+
+
+
+void Animal::doActionAttack(float dt)
+{
+	TargetAction *action = castTargetAction(getCurrentAction(), "Attack");
 	if(action == NULL)
 	{
-		clog << "Error! Current action is not a target action for Eat action!" << endl;
-		setCurrentAction(new TargetAction(IDLE));
 		return;
 	}
 
-	if(action->getTarget()->getEntity() == this)
+	if(action->getStep() == 0)
 	{
-		clog << "Error! Current action is targetting self (" << getEntityName() << ')' << endl;
-		setCurrentAction(new TargetAction(IDLE));
+		// Direct distance between this animal and the target.
+		double simpleDist = distanceToEntity(action->getTarget()->getEntity());
+		if(simpleDist <= 1.0f)
+		{
+			action->nextStep();
+		}
+	}
+	else if(action->getStep() == 1)
+	{
+		double simpleDist = distanceToEntity(action->getTarget()->getEntity());
+		if(simpleDist > 1.0f)
+		{
+			action->prevStep();
+		}
+		Animal *animal = dynamic_cast<Animal *>(action->getTarget()->getEntity());
+		Plant *plant = dynamic_cast<Plant *>(action->getTarget()->getEntity());
+		if(animal != NULL)
+		{
+			if(!animal->isDead())
+			{
+				// Attack animal.
+				attackAnimal(animal, dt);
+			}
+			else
+			{
+				action->setCompleted(true);
+				setCurrentAction(new TargetAction(IDLE));
+			}
+		}
+		else if(plant != NULL)
+		{
+			clog << "Cannot attack plant (" << plant->getEntityName() << ")" << endl;
+			action->setCompleted(true);
+			setCurrentAction(new TargetAction(IDLE));
+		}
+		else
+		{
+			clog << getEntityName() << " cannot attack " << action->getTarget()->getEntity()->getEntityType() << endl;
+			action->setCompleted(true);
+			setCurrentAction(new TargetAction(IDLE));
+			return;
+		}
+	}
+}
+
+void Animal::doActionEat(float dt)
+{
+	TargetAction *action = castTargetAction(getCurrentAction(), "Eat");
+	if(action == NULL)
+	{
 		return;
 	}
 
@@ -466,7 +568,7 @@ void Animal::doActionEat(float dt)
 	else if(action->getStep() == 2)
 	{
 		double simpleDist = distanceToEntity(action->getTarget()->getEntity());
-		if(simpleDist <= 1.0f)
+		if(simpleDist >	 1.0f)
 		{
 			action->prevStep();
 		}

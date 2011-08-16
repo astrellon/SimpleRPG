@@ -135,10 +135,14 @@ protected:
 	
 	virtual void attackAnimal(Animal *target, float dt);
 	virtual void doActionEat(float dt);
+	virtual void doActionFlee(float dt) {}
+	virtual void doActionAttack(float dt);
 
 	virtual void saveProperties(FormattedFile &file);
 	virtual void saveProperty(const EntityProperty &propertyId, FormattedFile &file);
 	virtual void loadProperties(FormattedFileIterator &iter);
+
+	virtual TargetAction *castTargetAction(Action *action, const string &actionName, bool checkForSelfTarget = true);
 
 	float getTurnAmount(float facing, float dest);
 };

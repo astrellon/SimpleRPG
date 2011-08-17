@@ -8,7 +8,7 @@ map<unsigned int, GameEntity *> GameEntity::sEntities;
 extern const char *EntityPropertyNames[] = {"id", "facing", "position", "destination", "name", "graphic",
 	"health", "strength", "dexterity", "intelligence", "running_speed", "walking_speed", "turning_speed",
 	"entity_size", "entity_mass", "diet", "damage_base", "amount_eaten", "current_action", "action_history",
-	"attack_rate", "attack_cooldown", "energy", "rest_energy_per_day" };
+	"attack_rate", "attack_cooldown", "energy", "rest_energy_per_day", "species" };
 
 GameEntity::GameEntity(Game *game)
 {
@@ -17,6 +17,8 @@ GameEntity::GameEntity(Game *game)
 	mName = "GameEntity";
 	mAmountEaten = 0.0f;
 	mId = nextId();
+
+	mSpecies = "Unknown";
 
 	mCurrentAction = new Action(IDLE);
 }
@@ -152,6 +154,7 @@ void GameEntity::saveToFile(FormattedFile &file)
 void GameEntity::saveProperties(FormattedFile &file)
 {
 	saveProperty(ID, file);
+	saveProperty(SPECIES, file);
 	saveProperty(POSITION, file);
 	saveProperty(FACING, file);
 	saveProperty(NAME, file);
@@ -168,6 +171,9 @@ void GameEntity::saveProperty(const EntityProperty &propertyId, FormattedFile &f
 	{
 	case ID:
 		file << EntityPropertyNames[ID] << ' ' << getId() << '\n';
+		break;
+	case SPECIES:
+		file << EntityPropertyNames[SPECIES] << " \"" << getSpecies() << "\"\n";
 		break;
 	case POSITION:
 		v = getPosition();
@@ -209,6 +215,15 @@ void GameEntity::loadProperties(FormattedFileIterator &iter)
 	if(iequals(propertyName, EntityPropertyNames[ID]))
 	{
 		setId(lexical_cast<unsigned int>(*iter)); ++iter;
+	}
+	else if(iequals(propertyName, EntityPropertyNames[SPECIES]))
+	{
+		string species = *iter; ++iter;
+		if(species[0] == '"')
+		{
+			species = species.substr(1, species.size() - 2);
+		}
+		setSpecies(species);
 	}
 	else if(iequals(propertyName, EntityPropertyNames[POSITION]))
 	{
@@ -297,6 +312,7 @@ void GameEntity::displayActions(UIContainer &hud)
 	text.clearText();
 
 	text << "<15>Entity</>:\t" << getEntityName() << '\n';
+	text << "<15>Species</>: " << getSpecies() << '\n';
 	text << "<15>Facing</>:\t" << getFacing() << '\n';
 	Action *action = getCurrentAction();
 	text << "<15>Action</>:\t" << Action::EntityActionNames[action->getAction()] << '\n';

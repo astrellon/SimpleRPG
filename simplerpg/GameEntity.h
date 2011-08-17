@@ -31,7 +31,8 @@ using boost::lexical_cast;
 enum EntityProperty { ID, FACING, POSITION, DESTINATION, NAME, GRAPHIC, HEALTH,
 	STRENGTH, DEXTERITY, INTELLIGENCE, RUNNING_SPEED, WALKING_SPEED, TURNING_SPEED,
 	ENTITY_SIZE, ENTITY_MASS, DIET, DAMAGE_BASE, AMOUNT_EATEN, CURRENT_ACTION, 
-	ACTION_HISTORY, ATTACK_RATE, ATTACK_COOLDOWN, ENERGY, REST_ENERGY_PER_DAY };
+	ACTION_HISTORY, ATTACK_RATE, ATTACK_COOLDOWN, ENERGY, REST_ENERGY_PER_DAY, 
+	SPECIES};
 
 const char *EntityPropertyNames[];
 
@@ -115,6 +116,9 @@ public:
 	virtual float getAmountEaten() { return mAmountEaten; }
 	virtual float beEaten(GameEntity *eater);
 
+	virtual string getSpecies() { return mSpecies; }
+	virtual void setSpecies(string species) { mSpecies = species; }
+
 	static int nextId() { return sId++; }
 	
 	void setId(unsigned int id);
@@ -142,6 +146,8 @@ protected:
 	
 	bool mRedisplay;
 	UIText *mHudText;
+
+	string mSpecies;
 
 	static EntityMap sEntities;
 

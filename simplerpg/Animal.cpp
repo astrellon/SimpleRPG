@@ -55,8 +55,6 @@ void Animal::displayActions(UIContainer &hud)
 
 	UIText &text = *mHudText;
 
-	
-
 	format fmt("%.1f, %.1f\n");
 	fmt % dest.x % dest.y;
 

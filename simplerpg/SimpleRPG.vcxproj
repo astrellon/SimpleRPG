@@ -67,6 +67,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LibraryPath>$(BOOST_ROOT)\lib;$(LibraryPath)</LibraryPath>
+    <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugBroken|Win32'">
     <ClCompile>
@@ -81,6 +82,7 @@
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)pdcurses.dll" "$(OutputPath)"
 copy "$(ProjectDir)map.txt" "$(OutputPath)"
+copy "$(ProjectDir)map2.txt" "$(OutputPath)"
 copy "$(ProjectDir)config.ini" "$(OutputPath)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -105,6 +107,7 @@ copy "$(ProjectDir)config.ini" "$(OutputPath)"</Command>
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)pdcurses.dll" "$(OutputPath)"
 copy "$(ProjectDir)map.txt" "$(OutputPath)"
+copy "$(ProjectDir)map2.txt" "$(OutputPath)"
 copy "$(ProjectDir)config.ini" "$(OutputPath)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -131,6 +134,7 @@ copy "$(ProjectDir)config.ini" "$(OutputPath)"</Command>
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)pdcurses.dll" "$(OutputPath)"
 copy "$(ProjectDir)map.txt" "$(OutputPath)"
+copy "$(ProjectDir)map2.txt" "$(OutputPath)"
 copy "$(ProjectDir)config.ini" "$(OutputPath)"</Command>
     </PostBuildEvent>
     <CustomBuildStep>

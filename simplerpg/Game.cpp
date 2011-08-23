@@ -129,12 +129,20 @@ void Game::keyActions(const int key)
 	case MENU_MAIN:
 		if (key == 260)
 			moveCamera(-1, 0);
-		if (key == 261)
+		else if (key == 261)
 			moveCamera(1, 0);
-		if (key == 259)
+		else if (key == 259)
 			moveCamera(0, -1);
-		if (key == 258)
+		else if (key == 258)
 			moveCamera(0, 1);
+		else if (key == 391)
+			moveCamera(-20, 0);
+		else if (key == 400)
+			moveCamera(20, 0);
+		else if (key == 547)
+			moveCamera(0, -20);
+		else if (key == 548)
+			moveCamera(0, 20);
 
 		if (key == 'k')
 		{
@@ -319,6 +327,15 @@ void Game::displayActions()
 
 void Game::setCursorPosition(int xPos, int yPos)
 {
+	if(xPos < -1) xPos = -1;
+	if(yPos < -1) yPos = -1;
+	
+	Map *m = getMap();
+	if(m != NULL)
+	{
+		if(xPos > m->getWidth())  xPos = m->getWidth();
+		if(yPos > m->getHeight()) yPos = m->getHeight();
+	}
 	mCursor.x = xPos;
 	mCursor.y = yPos;
 

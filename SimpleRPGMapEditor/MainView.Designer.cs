@@ -28,6 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainView));
             this.picMain = new System.Windows.Forms.PictureBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.pnlColours = new System.Windows.Forms.Panel();
@@ -36,6 +38,7 @@
             this.pnlMain = new System.Windows.Forms.Panel();
             this.stsMain = new System.Windows.Forms.StatusStrip();
             this.tssMain = new System.Windows.Forms.ToolStripStatusLabel();
+            this.tmrClear = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.picMain)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.pnlMain.SuspendLayout();
@@ -127,6 +130,11 @@
             this.tssMain.Name = "tssMain";
             this.tssMain.Size = new System.Drawing.Size(0, 17);
             // 
+            // tmrClear
+            // 
+            this.tmrClear.Interval = 3000;
+            this.tmrClear.Tick += new System.EventHandler(this.tmrClear_Tick);
+            // 
             // MainView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -135,6 +143,7 @@
             this.Controls.Add(this.stsMain);
             this.Controls.Add(this.pnlMain);
             this.Controls.Add(this.groupBox1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainView";
             this.Text = "SimpleRPG Main View";
             ((System.ComponentModel.ISupportInitialize)(this.picMain)).EndInit();
@@ -157,6 +166,7 @@
         private System.Windows.Forms.Panel pnlColours;
         private System.Windows.Forms.StatusStrip stsMain;
         private System.Windows.Forms.ToolStripStatusLabel tssMain;
+        private System.Windows.Forms.Timer tmrClear;
     }
 }
 

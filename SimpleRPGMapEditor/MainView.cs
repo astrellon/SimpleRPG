@@ -20,6 +20,7 @@ namespace SimpleRPGMapEditor
         private Bitmap mMapImg = null;
         private int mColourCount = 0;
 
+
         public MainView()
         {
             InitializeComponent();
@@ -36,6 +37,7 @@ namespace SimpleRPGMapEditor
 
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
+                    tmrClear.Stop();
                     mMapImg = new Bitmap(openFileDialog.FileName);
                     picMain.Image = mMapImg;
                     //picMain.Size = mMapImg.Size;
@@ -60,6 +62,7 @@ namespace SimpleRPGMapEditor
                     }
 
                     tssMain.Text = "Loaded '" + openFileDialog.FileName + "' (" + mColourCount + ")";
+                    tmrClear.Start();
                 }
             }
         }
@@ -73,6 +76,7 @@ namespace SimpleRPGMapEditor
 
             using (SaveFileDialog saveFileDialog = new SaveFileDialog())
             {
+                tmrClear.Stop();
                 saveFileDialog.Filter = "Map file (*.txt)|*.txt|All files (*.*)|*.*";
                 saveFileDialog.FilterIndex = 1;
                 saveFileDialog.RestoreDirectory = true;
@@ -117,6 +121,7 @@ namespace SimpleRPGMapEditor
                     writer.Close();
 
                     tssMain.Text = "Saved '" + saveFileDialog.FileName + "'";
+                    tmrClear.Start();
                 }
             }
         }
@@ -158,6 +163,12 @@ namespace SimpleRPGMapEditor
             {
                 mTileMap[c] = t.Text[0];
             }
+        }
+
+        private void tmrClear_Tick(object sender, EventArgs e)
+        {
+            tmrClear.Enabled = false;
+            tssMain.Text = "";
         }
     }
 }

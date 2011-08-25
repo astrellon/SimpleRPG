@@ -191,6 +191,7 @@ copy "$(ProjectDir)config.ini" "$(OutputPath)"</Command>
     <ClInclude Include="Pixel.h" />
     <ClInclude Include="Plant.h" />
     <ClInclude Include="Rect.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="TargetAction.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="UIComponent.h" />
@@ -203,7 +204,11 @@ copy "$(ProjectDir)config.ini" "$(OutputPath)"</Command>
     <ClInclude Include="Vector2.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.ico" />
     <None Include="map.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="SimpleRPG.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

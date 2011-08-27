@@ -15,7 +15,7 @@ namespace SimpleRPGMapEditor
 {
     public partial class MainView : Form
     {
-        private char[] mTiles = {'.', '^', ',', ';', '#', 'S', '~'};
+        private char[] mTiles = {'.', '^', ',', ';', '#', 'S', '~', '*'};
         private Dictionary<Color, char> mTileMap = new Dictionary<Color, char>();
         private Bitmap mMapImg = null;
         private int mColourCount = 0;

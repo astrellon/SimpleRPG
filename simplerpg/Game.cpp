@@ -635,7 +635,7 @@ void Game::loadMap(string filename)
 			}
 			else
 			{
-				tileMap[c] = Tile::getTile( atoi(line.c_str()));
+				tileMap[c] = Tile::getTile(atoi(line.c_str()));
 				c = '\0';
 			}
 
@@ -651,7 +651,15 @@ void Game::loadMap(string filename)
 					string l = mapData[y];
 					for(unsigned int x = 0; x < l.size(); x++)
 					{
-						map->setTile(x, y, tileMap[l[x]]);
+						char t = l[x];
+						if(tileMap.find(t) == tileMap.end())
+						{
+							map->setTile(x, y, &Tile::UNKNOWN_TILE);
+						}
+						else
+						{
+							map->setTile(x, y, tileMap[t]);
+						}
 					}
 				}
 

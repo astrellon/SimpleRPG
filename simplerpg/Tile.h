@@ -10,6 +10,7 @@ class Tile
 {
 public:
 	Tile();
+	Tile(Pixel pix, int code, string name, bool passable = true);
 	~Tile(void);
 
 	bool getPassable() { return mPassable; }
@@ -27,6 +28,8 @@ public:
 
 	Pixel pixel;
 
+	static Tile UNKNOWN_TILE;
+
 protected:
 	
 	bool mPassable;
@@ -34,4 +37,6 @@ protected:
 	string mName;
 
 	static map<int, Tile *> sTiles;
+
+	
 };

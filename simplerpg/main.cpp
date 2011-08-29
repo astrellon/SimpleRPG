@@ -180,27 +180,22 @@ int main(int argc, char **argv)
 
 	bool paused = false;
 	bool inMainMenu = true;
-	int menuLevel = 0;
+	//int menuLevel = 0;
 
 	// Main menu is setup to be a list and currently each different
 	// menu screen is a different item that is disabled when not
 	// in use. This should allow for easily changing between menu levels
 	// and when disabled should take up minimal processing to skip.
-	UIList mainMenu;
+	UIMenu mainMenu;
 	mainMenu.setWindow(mainMenuWnd);
-
 	mainMenu.setX(1);
 	mainMenu.setY(1);
 
-	UIText title;
-	title << "<15>Alan Lawrey's Thesis project 2011</>\n";
+	mainMenu.addChild(new UIText("<15>Alan Lawrey's Thesis project 2011</>\n"));
 
-	UIText mainItem1;
-	mainItem1 << "<12>1</>: Load world.\n<12>2</>: Quit.";
-	
+	mainMenu.setMenuItem(0, new UIText("<12>1</>: Load world.\n<12>2</>: Quit."));
+
 	UIList mainItem2;
-	mainItem2.setVisible(false);
-
 	UIText mainItem2Title;
 	mainItem2Title << "<15>Select a world to load.</>";
 	mainItem2.addChild(mainItem2Title);
@@ -213,11 +208,12 @@ int main(int argc, char **argv)
 	mainItem2FileList.setSelectionIndex(0);
 	mainItem2FileList.setMaxHeight(windowHeight - 7);
 	mainItem2.addChild(mainItem2FileList);
-	
-	mainMenu.addChild(title);
-	mainMenu.addChild(mainItem1);
-	mainMenu.addChild(mainItem2);
 
+	mainMenu.setMenuItem(1, mainItem2);
+
+	mainMenu.setMenuItem(2, new UIText("<12>1</>: Really quit?\n<12>Any</>: Return to main."));
+	mainMenu.setMenuItem(3, new UIText("Nothing here yet"));
+	
 	path currentPath(initial_path<path>());
 	currentPath = system_complete(path("."));
 
@@ -244,30 +240,38 @@ int main(int argc, char **argv)
 			{
 				int c = wgetch(mainMenuWnd);
 
-				switch(menuLevel)
+				switch(mainMenu.getMenuLevel())
 				{
 				default:
 				case 0:
 					if(c == '1')
 					{
-						menuLevel = 1;
+						mainMenu.setMenuLevel(1);
 					}
-					else if(c == '2' || c == 'q')
+					else if(c == '2')
+					{
+						mainMenu.setMenuLevel(2);
+					}
+					else if(c == 'q')
 					{
 						quit = true;
+					}
+					else if(c == '3')
+					{
+						mainMenu.setMenuLevel(3);
 					}
 					break;
 				case 1:
 					if (c == 27)
 					{
-						menuLevel = 0;
+						mainMenu.goBack();
 						break;
 					}
-					if (c == 259)
+					if (c == 259 || c == 'w' || c == '1')
 					{
 						mainItem2FileList.scrollSelection(-1);
 					}
-					else if (c == 258)
+					else if (c == 258 || c == 's' || c == '2')
 					{
 						mainItem2FileList.scrollSelection(1);
 					}
@@ -308,6 +312,19 @@ int main(int argc, char **argv)
 					}
 
 					break;
+				case 2:
+					if(c == '1')
+					{
+						quit = true;
+					}
+					else
+					{
+						mainMenu.goBack();
+					}
+					break;
+				case 3:
+					mainMenu.goBack();
+					break;
 				}
 			}
 
@@ -321,17 +338,11 @@ int main(int argc, char **argv)
 			if(quit)
 				break;
 
-			switch(menuLevel)
+			switch(mainMenu.getMenuLevel())
 			{
 			default:
-			case 0:
-				mainItem1.setVisible(true);
-				mainItem2.setVisible(false);
 				break;
 			case 1:
-				mainItem1.setVisible(false);
-				mainItem2.setVisible(true);
-
 				if(loadFilelist)
 				{
 					loadFilelist = false;
@@ -377,6 +388,7 @@ int main(int argc, char **argv)
 					}
 				}
 				break;
+
 			}
 
 			mainMenu.render();

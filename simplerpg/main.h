@@ -26,6 +26,7 @@
 #include "UIList.h"
 #include "UISpacer.h"
 #include "UISelector.h"
+#include "UIMenu.h"
 #include "Destination.h"
 #include "FormattedFile.h"
 #include "FormattedFileIterator.h"

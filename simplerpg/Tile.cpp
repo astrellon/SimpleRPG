@@ -53,7 +53,7 @@ void Tile::registerDefaults()
 	Tile::registerTile(tile);
 
 	// Fence
-	tile = new Tile(Pixel('#', COLOR_YELLOW, false), 4, "Fence");
+	tile = new Tile(Pixel('#', COLOR_YELLOW, false), 4, "Fence", false);
 	Tile::registerTile(tile);
 
 	// Sand
@@ -61,10 +61,10 @@ void Tile::registerDefaults()
 	Tile::registerTile(tile);
 
 	// Water
-	tile = new Tile(Pixel('~', COLOR_BLUE, true), 6, "Water");
+	tile = new Tile(Pixel('~', COLOR_BLUE, true), 6, "Water", false);
 	Tile::registerTile(tile);
 
 	// Deep water
-	tile = new Tile(Pixel('~', COLOR_BLUE, false), 7, "Deep water");
+	tile = new Tile(Pixel('~', COLOR_BLUE, false), 7, "Deep water", false);
 	Tile::registerTile(tile);
 }

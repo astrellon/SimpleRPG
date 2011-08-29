@@ -164,6 +164,7 @@ copy "$(ProjectDir)config.ini" "$(OutputPath)"</Command>
     <ClCompile Include="UIComponent.cpp" />
     <ClCompile Include="UIContainer.cpp" />
     <ClCompile Include="UIList.cpp" />
+    <ClCompile Include="UIMenu.cpp" />
     <ClCompile Include="UIScroller.cpp" />
     <ClCompile Include="UISelector.cpp" />
     <ClCompile Include="UIText.cpp" />
@@ -197,6 +198,7 @@ copy "$(ProjectDir)config.ini" "$(OutputPath)"</Command>
     <ClInclude Include="UIComponent.h" />
     <ClInclude Include="UIContainer.h" />
     <ClInclude Include="UIList.h" />
+    <ClInclude Include="UIMenu.h" />
     <ClInclude Include="UIScoller.h" />
     <ClInclude Include="UISelector.h" />
     <ClInclude Include="UISpacer.h" />

@@ -69,6 +69,19 @@ Game *startGame(string filename)
 	return game;
 }
 
+void distTest()
+{
+	ofstream file("distTest.txt");
+
+	int n = 10000;
+	for(int i = 0; i < n; i++)
+	{
+		file << math::nextDist(-5, 2.5, 0) << endl;
+	}
+
+	file.close();
+}
+
 void resizeScreen(int width, int height)
 {
 	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -193,7 +206,7 @@ int main(int argc, char **argv)
 
 	mainMenu.addChild(new UIText("<15>Alan Lawrey's Thesis project 2011</>\n"));
 
-	mainMenu.setMenuItem(0, new UIText("<12>1</>: Load world.\n<12>2</>: Quit."));
+	mainMenu.setMenuItem(0, new UIText("<12>1</>: Load world.\n<12>2</>: Output rejection samplying test.\n<12>q</>: Quit."));
 
 	UIList mainItem2;
 	UIText mainItem2Title;
@@ -212,7 +225,7 @@ int main(int argc, char **argv)
 	mainMenu.setMenuItem(1, mainItem2);
 
 	mainMenu.setMenuItem(2, new UIText("<12>1</>: Really quit?\n<12>Any</>: Return to main."));
-	mainMenu.setMenuItem(3, new UIText("Nothing here yet"));
+	mainMenu.setMenuItem(3, new UIText("<12>1</>: Write out distrubution test file.\n<12>Any</>: Go back."));
 	
 	path currentPath(initial_path<path>());
 	currentPath = system_complete(path("."));
@@ -248,17 +261,17 @@ int main(int argc, char **argv)
 					{
 						mainMenu.setMenuLevel(1);
 					}
-					else if(c == '2')
+					else if(c == 'q')
 					{
 						mainMenu.setMenuLevel(2);
 					}
-					else if(c == 'q')
-					{
-						quit = true;
-					}
-					else if(c == '3')
+					else if(c == '2')
 					{
 						mainMenu.setMenuLevel(3);
+					}
+					else if(c == 27)
+					{
+						quit = true;
 					}
 					break;
 				case 1:
@@ -313,7 +326,7 @@ int main(int argc, char **argv)
 
 					break;
 				case 2:
-					if(c == '1')
+					if(c == '1' || c == 'q')
 					{
 						quit = true;
 					}
@@ -323,7 +336,14 @@ int main(int argc, char **argv)
 					}
 					break;
 				case 3:
-					mainMenu.goBack();
+					if(c == '1')
+					{
+						distTest();
+					}
+					else
+					{
+						mainMenu.goBack();
+					}
 					break;
 				}
 			}

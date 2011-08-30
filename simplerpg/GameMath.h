@@ -33,11 +33,12 @@ namespace math
 		return 0.5f;
 	}
 
-	inline float nextDist(float min, float max, float mid)
+	inline float nextDist(const float &min, const float &max, const float &mid)
 	{
+		float total = max - min;
 		while(true)
 		{
-			float x = 10.0f * (nextFloat() - 0.5f);
+			float x = total * nextFloat() + min;
 			float u = nextFloat();
         
 			if(u < distF(x, min, max, mid) / (CONST_A * distG(x)))

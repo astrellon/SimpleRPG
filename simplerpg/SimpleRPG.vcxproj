@@ -161,19 +161,18 @@ copy "$(ProjectDir)config.ini" "$(OutputPath)"</Command>
     <ClCompile Include="Rect.cpp" />
     <ClCompile Include="TargetAction.cpp" />
     <ClCompile Include="Tile.cpp" />
-    <ClCompile Include="UIComponent.cpp" />
-    <ClCompile Include="UIContainer.cpp" />
-    <ClCompile Include="UIList.cpp" />
-    <ClCompile Include="UIMenu.cpp" />
-    <ClCompile Include="UIScroller.cpp" />
-    <ClCompile Include="UISelector.cpp" />
-    <ClCompile Include="UIText.cpp" />
+    <ClCompile Include="ui\UIComponent.cpp" />
+    <ClCompile Include="ui\UIContainer.cpp" />
+    <ClCompile Include="ui\UIList.cpp" />
+    <ClCompile Include="ui\UIMenu.cpp" />
+    <ClCompile Include="ui\UIScroller.cpp" />
+    <ClCompile Include="ui\UISelector.cpp" />
+    <ClCompile Include="ui\UIText.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ActionFactory.h" />
     <ClInclude Include="Animal.h" />
     <ClInclude Include="AStarNode.h" />
-    <ClInclude Include="curses.h" />
     <ClInclude Include="Debug.h" />
     <ClInclude Include="Destination.h" />
     <ClInclude Include="Action.h" />
@@ -184,25 +183,27 @@ copy "$(ProjectDir)config.ini" "$(OutputPath)"</Command>
     <ClInclude Include="GameEntityFactory.h" />
     <ClInclude Include="GameMath.h" />
     <ClInclude Include="IKeyActions.h" />
-    <ClInclude Include="keyboard.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Matrix3x3.h" />
-    <ClInclude Include="panel.h" />
     <ClInclude Include="Pixel.h" />
     <ClInclude Include="Plant.h" />
     <ClInclude Include="Rect.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="TargetAction.h" />
     <ClInclude Include="Tile.h" />
-    <ClInclude Include="UIComponent.h" />
-    <ClInclude Include="UIContainer.h" />
-    <ClInclude Include="UIList.h" />
-    <ClInclude Include="UIMenu.h" />
-    <ClInclude Include="UIScoller.h" />
-    <ClInclude Include="UISelector.h" />
-    <ClInclude Include="UISpacer.h" />
-    <ClInclude Include="UIText.h" />
+    <ClInclude Include="ui\curses.h" />
+    <ClInclude Include="ui\keyboard.h" />
+    <ClInclude Include="ui\panel.h" />
+    <ClInclude Include="ui\ui.hpp" />
+    <ClInclude Include="ui\UIComponent.h" />
+    <ClInclude Include="ui\UIContainer.h" />
+    <ClInclude Include="ui\UIList.h" />
+    <ClInclude Include="ui\UIMenu.h" />
+    <ClInclude Include="ui\UIScoller.h" />
+    <ClInclude Include="ui\UISelector.h" />
+    <ClInclude Include="ui\UISpacer.h" />
+    <ClInclude Include="ui\UIText.h" />
     <ClInclude Include="Vector2.h" />
   </ItemGroup>
   <ItemGroup>

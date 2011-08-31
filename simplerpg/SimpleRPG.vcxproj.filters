@@ -13,11 +13,11 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\ui">
-      <UniqueIdentifier>{267d3005-738c-4712-967d-064aac188fe9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\ui">
-      <UniqueIdentifier>{03cdc23a-f2d6-412e-82f4-0f19470cb81e}</UniqueIdentifier>
+      <UniqueIdentifier>{01ab730a-42ca-4809-8fb5-970635b1e57f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ui">
+      <UniqueIdentifier>{e8f0ba59-b529-4788-b60c-bd785a3bbcba}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -51,24 +51,6 @@
     <ClCompile Include="GameEntityFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UIComponent.cpp">
-      <Filter>Source Files\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="UIText.cpp">
-      <Filter>Source Files\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="UIContainer.cpp">
-      <Filter>Source Files\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="UIScroller.cpp">
-      <Filter>Source Files\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="UIList.cpp">
-      <Filter>Source Files\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="UISelector.cpp">
-      <Filter>Source Files\ui</Filter>
-    </ClCompile>
     <ClCompile Include="Plant.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -93,7 +75,25 @@
     <ClCompile Include="FormattedFileIterator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UIMenu.cpp">
+    <ClCompile Include="ui\UIComponent.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\UIContainer.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\UIList.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\UIMenu.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\UIScroller.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\UISelector.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\UIText.cpp">
       <Filter>Source Files\ui</Filter>
     </ClCompile>
   </ItemGroup>
@@ -137,38 +137,8 @@
     <ClInclude Include="GameMath.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UIComponent.h">
-      <Filter>Header Files\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="UIText.h">
-      <Filter>Header Files\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="UIContainer.h">
-      <Filter>Header Files\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="UIScoller.h">
-      <Filter>Header Files\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="UIList.h">
-      <Filter>Header Files\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="UISpacer.h">
-      <Filter>Header Files\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="UISelector.h">
-      <Filter>Header Files\ui</Filter>
-    </ClInclude>
     <ClInclude Include="Plant.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="curses.h">
-      <Filter>Header Files\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="panel.h">
-      <Filter>Header Files\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="keyboard.h">
-      <Filter>Header Files\ui</Filter>
     </ClInclude>
     <ClInclude Include="Destination.h">
       <Filter>Header Files</Filter>
@@ -197,7 +167,40 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UIMenu.h">
+    <ClInclude Include="ui\UIText.h">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\ui.hpp">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\UIComponent.h">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\UIContainer.h">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\UIList.h">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\UIMenu.h">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\UIScoller.h">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\UISelector.h">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\UISpacer.h">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\curses.h">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\keyboard.h">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\panel.h">
       <Filter>Header Files\ui</Filter>
     </ClInclude>
   </ItemGroup>

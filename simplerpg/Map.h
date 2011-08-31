@@ -1,7 +1,7 @@
 #pragma once
 
 #include <iostream>
-#include "curses.h"
+#include "ui/ui.hpp"
 #include <vector>
 #include <algorithm>
 

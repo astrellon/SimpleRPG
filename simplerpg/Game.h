@@ -5,7 +5,6 @@
 #include <string>
 #include <vector>
 #include <map>
-#include "curses.h"
 
 #include <boost/regex.hpp>
 #include <boost/algorithm/string/predicate.hpp>
@@ -18,8 +17,7 @@
 #include "FormattedFile.h"
 #include "FormattedFileIterator.h"
 
-#include "UIList.h"
-#include "UIText.h"
+#include "ui/ui.hpp"
 
 using std::vector;
 using std::string;

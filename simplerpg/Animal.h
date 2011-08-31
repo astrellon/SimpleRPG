@@ -3,7 +3,7 @@
 #include <ostream>
 #include "GameEntity.h"
 #include "Plant.h"
-#include "UIText.h"
+#include "ui/ui.hpp"
 #include "Destination.h"
 
 #include <boost/format.hpp>

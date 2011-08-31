@@ -1,7 +1,6 @@
 #pragma once
 
 #include <iostream>
-#include "curses.h"
 #include <math.h>
 #include <map>
 
@@ -12,8 +11,7 @@
 #include "Pixel.h"
 #include "GameMath.h"
 #include "IKeyActions.h"
-#include "UIText.h"
-#include "UIComponent.h"
+#include "ui/ui.hpp"
 #include "Rect.h"
 #include "Action.h"
 #include "ActionFactory.h"

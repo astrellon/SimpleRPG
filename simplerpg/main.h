@@ -19,14 +19,7 @@
 #include "Animal.h"
 #include "Vector2.h"
 #include "Matrix3x3.h"
-#include "keyboard.h"
-#include "UIText.h"
-#include "UIContainer.h"
-#include "UIScoller.h"
-#include "UIList.h"
-#include "UISpacer.h"
-#include "UISelector.h"
-#include "UIMenu.h"
+#include "ui/ui.hpp"
 #include "Destination.h"
 #include "FormattedFile.h"
 #include "FormattedFileIterator.h"
@@ -39,11 +32,6 @@ using boost::algorithm::iequals;
 #ifndef M_PI
 #define M_PI 3.1415926535897932384626433832795
 #endif
-
-extern "C"
-{
-	#include "curses.h"
-}
 
 #ifdef _WIN32
 #include <Windows.h>

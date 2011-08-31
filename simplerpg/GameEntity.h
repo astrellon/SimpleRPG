@@ -30,7 +30,7 @@ enum EntityProperty { ID, FACING, POSITION, DESTINATION, NAME, GRAPHIC, HEALTH,
 	STRENGTH, DEXTERITY, INTELLIGENCE, RUNNING_SPEED, WALKING_SPEED, TURNING_SPEED,
 	ENTITY_SIZE, ENTITY_MASS, DIET, DAMAGE_BASE, AMOUNT_EATEN, CURRENT_ACTION, 
 	ACTION_HISTORY, ATTACK_RATE, ATTACK_COOLDOWN, ENERGY, REST_ENERGY_PER_DAY, 
-	SPECIES};
+	SPECIES, SPECIES_ALIGNMENT};
 
 const char *EntityPropertyNames[];
 
@@ -94,7 +94,7 @@ public:
 	
 	// If this entity currently has focus, this function is called with the last key that was pressed.
 	// This can be called multiple times a frame if multiple keys have been pressed.
-	virtual void keyActions(const int key) {}
+	virtual void keyActions(const int key);
 	// Called when this entity gets focus.
 	virtual void setupDisplay(UIContainer &hud);
 	// Called when this entity has focus and needs to display something to the HUD.
@@ -150,6 +150,9 @@ protected:
 	static EntityMap sEntities;
 
 	virtual void setCurrentAction(Action *action);
+
+	int mMenuLevel;
+	int mMaxMenuLevel;
 	
 	// The function which loads each property from the file tokens.
 	// Should increment the iterator at least once.

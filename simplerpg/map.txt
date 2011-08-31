@@ -67,6 +67,10 @@ Animal
 	diet 0.8
 	damage_base 1
 	attack_rate 1
+	species_alignment
+		"Rabbit" 0.3
+		"Shrubbery" 0.1
+	end
 end
 
 Animal

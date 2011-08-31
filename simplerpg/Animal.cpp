@@ -29,6 +29,8 @@ Animal::Animal(Game *game) : GameEntity(game)
 	mStrength = 1;
 	mDexterity = 1;
 	mIntelligence = 1;
+
+	mMaxMenuLevel = 2;
 }
 
 Animal::~Animal(void)
@@ -51,43 +53,55 @@ void Animal::displayActions(UIContainer &hud)
 		return;
 
 	GameEntity::displayActions(hud);
-	Vector2f dest = getDestination()->getLocation();
 
 	UIText &text = *mHudText;
 
-	format fmt("%.1f, %.1f\n");
-	fmt % dest.x % dest.y;
+	if(mMenuLevel == 0)
+	{
+		Vector2f dest = getDestination()->getLocation();
 
-	text << "<15>Dest</>:\t" << fmt.str();
-	GameEntity *target = getDestination()->getEntity();
-	text << "<15>Target</>:\t";
-	if(target != NULL)
-	{
-		 text << target->getEntityName() << " (" << target->getId() << ")\n";
-	}
-	else
-	{
-		text << "No target\n";
-	}
+		format fmt("%.1f, %.1f\n");
+		fmt % dest.x % dest.y;
+
+		text << "<15>Dest</>:\t" << fmt.str();
+		GameEntity *target = getDestination()->getEntity();
+		text << "<15>Target</>:\t";
+		if(target != NULL)
+		{
+			 text << target->getEntityName() << " (" << target->getId() << ")\n";
+		}
+		else
+		{
+			text << "No target\n";
+		}
 	
-	fmt = format("<12>%.1f</>/<12>%.1f</> ");
-	fmt % getHealth() % getMaxHealth();
-	text << "<15>Health</>:\t" << fmt.str();
-	if(isDead())
-	{
-		int ma = text.getMaxWidth();
-		text << "<7>(Dead)</>";
+		fmt = format("<12>%.1f</>/<12>%.1f</> ");
+		fmt % getHealth() % getMaxHealth();
+		text << "<15>Health</>:\t" << fmt.str();
+		if(isDead())
+		{
+			int ma = text.getMaxWidth();
+			text << "<7>(Dead)</>";
+		}
+
+		text << "\n\n";
+
+		text << "<15>Damage</>:\t" << getDamageBase() << '\n';
+		text << "<15>ARate</>:\t" << getAttackRate() << '\n';
+		text << "<15>Str</>:\t" << getStrength() << '\n';
+		text << "<15>Dex</>:\t" << getDexterity() << '\n';
+		text << "<15>Int</>:\t" << getIntelligence() << '\n';
+		text << "<15>Diet</>:\t" << getDiet() << '\n';
+		text << "\n<15>Cooldown</>: " << getAttackCooldown() << '\n';
 	}
-
-	text << "\n\n";
-
-	text << "<15>Damage</>:\t" << getDamageBase() << '\n';
-	text << "<15>ARate</>:\t" << getAttackRate() << '\n';
-	text << "<15>Str</>:\t" << getStrength() << '\n';
-	text << "<15>Dex</>:\t" << getDexterity() << '\n';
-	text << "<15>Int</>:\t" << getIntelligence() << '\n';
-	text << "<15>Diet</>:\t" << getDiet() << '\n';
-	text << "\n<15>Cooldown</>: " << getAttackCooldown() << '\n';
+	else if(mMenuLevel == 1)
+	{
+		text << "<15>Alignments</>:\n\n<15>";
+		for(SpeciesAlignment::iterator iter = mSpeciesAlignment.begin(); iter != mSpeciesAlignment.end(); iter++)
+		{
+			text << iter->first << " <12>" << iter->second << "</>\n";
+		}
+	}
 }
 
 Pixel Animal::getGraphic()
@@ -193,6 +207,31 @@ void Animal::loadProperties(FormattedFileIterator &iter)
 		++iter;
 		setEnergyNeededPerDay(lexical_cast<float>(*iter)); ++iter;
 	}
+	else if(iequals(propertyName, EntityPropertyNames[SPECIES_ALIGNMENT]))
+	{
+		++iter;
+		string token = *iter;
+		string speciesName;
+		while (!iequals(token, "end"))
+		{
+			if(speciesName.empty())
+			{
+				speciesName = token;
+				if(speciesName[0] == '"')
+				{
+					speciesName = speciesName.substr(1, speciesName.size() - 2);
+				}
+			}
+			else
+			{
+				setSpeciesAlignment(speciesName, lexical_cast<float>(token));
+				speciesName.clear();
+			}
+			++iter;
+			token = *iter;
+		}
+		++iter;
+	}
 	else
 	{
 		GameEntity::loadProperties(iter);
@@ -218,6 +257,7 @@ void Animal::saveProperties(FormattedFile &file)
 	saveProperty(ATTACK_COOLDOWN, file);
 	saveProperty(ENERGY, file);
 	saveProperty(REST_ENERGY_PER_DAY, file);
+	saveProperty(SPECIES_ALIGNMENT, file);
 }
 
 void Animal::saveProperty(const EntityProperty &propertyId, FormattedFile &file)
@@ -272,6 +312,17 @@ void Animal::saveProperty(const EntityProperty &propertyId, FormattedFile &file)
 	case REST_ENERGY_PER_DAY:
 		file << EntityPropertyNames[REST_ENERGY_PER_DAY] << ' ' << getEnergyNeededPerDay() << '\n';
 		break;
+	case SPECIES_ALIGNMENT:
+		file << EntityPropertyNames[SPECIES_ALIGNMENT] << '\n';
+		file.changeTabLevel(1);
+		for(SpeciesAlignment::iterator iter = mSpeciesAlignment.begin(); iter != mSpeciesAlignment.end(); iter++)
+		{
+			file << '"' << iter->first << "\" " << iter->second << '\n';
+		}
+		file.changeTabLevel(-1);
+		file << "end\n";
+
+		break;
 	default:
 		GameEntity::saveProperty(propertyId, file);
 		break;
@@ -308,7 +359,6 @@ void Animal::update(float dt)
 	default:
 	case IDLE:
 		// Do nothing!
-		//smHunger 
 		if(isHungry())
 		{
 			setCurrentAction(new TargetAction(EAT));
@@ -469,8 +519,6 @@ TargetAction *Animal::castTargetAction(Action *action, const string &actionName,
 	}
 	return target;
 }
-
-
 
 void Animal::doActionAttack(float dt)
 {
@@ -676,4 +724,34 @@ void Animal::killAnimal()
 		setHealth(0);
 		return;
 	}
+}
+
+float Animal::getSpeciesAlignment(GameEntity *entity)
+{
+	return getSpeciesAlignment(entity->getSpecies());
+}
+
+float Animal::getSpeciesAlignment(const string &species)
+{
+	if(iequals(species, getSpecies()))
+	{
+		return 1.0f;
+	}
+	SpeciesAlignment::iterator iter = mSpeciesAlignment.find(species);
+	if (iter == mSpeciesAlignment.end())
+	{
+		setSpeciesAlignment(species, 0.5f);
+		return 0.5f;
+	}
+	return iter->second;
+}
+
+void Animal::setSpeciesAlignment(GameEntity *entity, const float &alignment)
+{
+	setSpeciesAlignment(entity->getSpecies(), alignment);
+}
+
+void Animal::setSpeciesAlignment(const string &species, const float &alignment)
+{
+	mSpeciesAlignment[species] = alignment;
 }

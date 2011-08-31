@@ -72,17 +72,17 @@ void Game::keyActions(const int key)
 {
 	mLastKey = key;
 	// Numpad 8
-	if (key == 56)
+	if (key == 456)
 	{
 		mHud.scrollY(1);
 	}
 	// Numpad 2
-	if (key == 50)
+	if (key == 450)
 	{
 		mHud.scrollY(-1);
 	}
 	// Numpad 5
-	if (key == 53)
+	if (key == 453)
 	{
 		mHud.setScrollY(0);
 	}

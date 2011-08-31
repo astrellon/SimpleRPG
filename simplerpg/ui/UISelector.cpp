@@ -34,7 +34,7 @@ void UISelector::setSelectionIndex(const int &index)
 		{
 			mSelectedIndex = mChildren.size() - 1;
 		}
-		else if(index >= mChildren.size())
+		else if(index >= (int)mChildren.size())
 		{
 			mSelectedIndex = 0;
 		}
@@ -49,7 +49,7 @@ void UISelector::setSelectionIndex(const int &index)
 		{
 			mSelectedIndex = -1;
 		}
-		else if(index >= mChildren.size())
+		else if(index >= (int)mChildren.size())
 		{
 			mSelectedIndex = mChildren.size() - 1;
 		}

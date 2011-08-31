@@ -9,8 +9,9 @@
 #include <boost/format.hpp>
 
 using boost::format;
-
 using namespace std;
+
+typedef map<string, float> SpeciesAlignment;
 
 class Game;
 
@@ -97,7 +98,13 @@ public:
 
 	virtual void killAnimal();
 	virtual bool isDead() { return mHealth <= 0.0f; }
-	
+
+	virtual float getSpeciesAlignment(GameEntity *entity);
+	virtual float getSpeciesAlignment(const string &species);
+
+	virtual void setSpeciesAlignment(GameEntity *entity, const float &alignment);
+	virtual void setSpeciesAlignment(const string &species, const float &alignment);
+
 protected:
 
 	Destination mDestination;
@@ -125,6 +132,8 @@ protected:
 	float mEnergy;
 	float mEnergyNeededPerDay;
 
+	SpeciesAlignment mSpeciesAlignment;
+	
 	virtual float calculateKcalPerDay();
 	virtual bool isHungry();
 	

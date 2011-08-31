@@ -8,7 +8,7 @@ map<unsigned int, GameEntity *> GameEntity::sEntities;
 extern const char *EntityPropertyNames[] = {"id", "facing", "position", "destination", "name", "graphic",
 	"health", "strength", "dexterity", "intelligence", "running_speed", "walking_speed", "turning_speed",
 	"entity_size", "entity_mass", "diet", "damage_base", "amount_eaten", "current_action", "action_history",
-	"attack_rate", "attack_cooldown", "energy", "rest_energy_per_day", "species" };
+	"attack_rate", "attack_cooldown", "energy", "rest_energy_per_day", "species", "species_alignment" };
 
 GameEntity::GameEntity(Game *game)
 {
@@ -21,6 +21,9 @@ GameEntity::GameEntity(Game *game)
 	mSpecies = "Unknown";
 
 	mCurrentAction = new Action(IDLE);
+
+	mMenuLevel = 0;
+	mMaxMenuLevel = 1;
 }
 
 GameEntity::~GameEntity(void)
@@ -302,6 +305,24 @@ float GameEntity::beEaten(GameEntity *eater)
 	return 0.0f;
 }
 
+void GameEntity::keyActions(const int key)
+{
+	if (key >= '0' && key <= '9')
+	{
+		int num = key - '1';
+		if (key == '0')
+		{
+			num = 9;
+		}
+
+		if (num < mMaxMenuLevel)
+		{
+			mMenuLevel = num;
+			mRedisplay = true;
+		}
+	}
+}
+
 void GameEntity::displayActions(UIContainer &hud)
 {
 	if(!mRedisplay && mGame->getGamePaused())
@@ -313,17 +334,40 @@ void GameEntity::displayActions(UIContainer &hud)
 
 	text << "<15>Entity</>:\t" << getEntityName() << '\n';
 	text << "<15>Species</>: " << getSpecies() << '\n';
-	text << "<15>Facing</>:\t" << getFacing() << '\n';
-	Action *action = getCurrentAction();
-	text << "<15>Action</>:\t" << Action::EntityActionNames[action->getAction()] << '\n';
-	text<< "<15>Step</>:\t" << action->getStep() << '\n';
 
+	if(mMaxMenuLevel > 1)
+	{
+		text << "<15>[ <12>";
+
+		for(int i = 0; i < mMaxMenuLevel; i++)
+		{
+			if(i == mMenuLevel)
+			{
+				text << "<11>" << (i + 1) << "</> ";
+			}
+			else
+			{
+				text << (i + 1) << ' ';
+			}
+		}
+		text << "</>]</>\n";
+	}
+
+	text << '\n';
+
+	if(mMenuLevel == 0)
+	{
+		text << "<15>Facing</>:\t" << getFacing() << '\n';
+		Action *action = getCurrentAction();
+		text << "<15>Action</>:\t" << Action::EntityActionNames[action->getAction()] << '\n';
+		text<< "<15>Step</>:\t" << action->getStep() << '\n';
+	}
 	mRedisplay = false;
 }
 
 void GameEntity::clearDisplay(UIContainer &hud)
 {
-	hud.removeChild(*mHudText);
+	hud.removeChild(mHudText);
 	mRedisplay = true;
 
 	delete mHudText;
@@ -338,8 +382,7 @@ void GameEntity::setupDisplay(UIContainer &hud)
 	mHudText->setMaxWidth(hud.getMaxWidth());
 
 	mHudText->setY(1);
-	hud.addChild(*mHudText);
-
+	hud.addChild(mHudText);
 }
 
 void GameEntity::setId( unsigned int id )

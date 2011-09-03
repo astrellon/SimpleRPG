@@ -105,6 +105,9 @@ public:
 	virtual void setSpeciesAlignment(GameEntity *entity, const float &alignment);
 	virtual void setSpeciesAlignment(const string &species, const float &alignment);
 
+	virtual float getEntityThreat(Animal *entity);
+	virtual float getEntityThreat(GameEntity *entity);
+
 protected:
 
 	Destination mDestination;

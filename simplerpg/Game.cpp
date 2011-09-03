@@ -410,7 +410,7 @@ void Game::displayUnderCursor(UIContainer &hud)
 	int num = 1;
 	for(EntityList::iterator iter = mUnderCursor.begin(); iter != mUnderCursor.end(); iter++)
 	{
-		mHudText << "<12>" << num++ << "</>: " << (*iter)->getEntityName() << '\n';
+		mHudText << "<12>" << num++ << "</>: " << (*iter)->getEntityName() << " (" << (*iter)->getSpecies() << ") \n";
 	}
 }
 

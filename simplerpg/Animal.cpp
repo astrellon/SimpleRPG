@@ -68,7 +68,9 @@ void Animal::displayActions(UIContainer &hud)
 		text << "<15>Target</>:\t";
 		if(target != NULL)
 		{
-			 text << target->getEntityName() << " (" << target->getId() << ")\n";
+			float f = getEntityThreat(target);
+			text << target->getEntityName() << " (" << target->getId() << ")\n";
+			text << "<15>Threat</>:\t" << f << '\n';
 		}
 		else
 		{
@@ -626,7 +628,6 @@ void Animal::doActionEat(float dt)
 			{
 				// Attack animal.
 				attackAnimal(animal, dt);
-				//action->nextStep();
 			}
 			else
 			{
@@ -754,4 +755,32 @@ void Animal::setSpeciesAlignment(GameEntity *entity, const float &alignment)
 void Animal::setSpeciesAlignment(const string &species, const float &alignment)
 {
 	mSpeciesAlignment[species] = alignment;
+}
+
+float Animal::getEntityThreat(Animal *entity)
+{
+	if (iequals(entity->getSpecies(), getSpecies()))
+	{
+		return 0.3f;
+	}
+
+	float sizePer = entity->getSize() / getSize();
+	float strPer = entity->getStrength() / getStrength();
+	float dietDiff = entity->getDiet() - getDiet();
+	float total = sizePer * strPer + 1;
+	
+	int floatSign = (dietDiff < 0) ? -1 : 1;
+	total *= exp(floatSign * 4.0f * dietDiff * dietDiff);
+
+	return log10(total);
+}
+
+float Animal::getEntityThreat(GameEntity *entity) 
+{ 
+	Animal *ani = dynamic_cast<Animal *>(entity);
+	if(ani != NULL)
+	{
+		return getEntityThreat(ani);
+	}
+	return 0.0f; 
 }

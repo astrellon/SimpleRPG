@@ -82,6 +82,54 @@ void distTest()
 	file.close();
 }
 
+void threatTest(UIText &threatTester)
+{
+	threatTester.clearText();
+
+	Animal wolf(NULL);
+	Animal rabbit(NULL);
+	Animal horse(NULL);
+	Animal mouse(NULL);
+
+	wolf.setSpecies("Wolf");
+	wolf.setStrength(16);
+	wolf.setSize(1.2);
+	wolf.setDiet(0.8);
+
+	rabbit.setSpecies("Rabbit");
+	rabbit.setStrength(4);
+	rabbit.setSize(0.3);
+	rabbit.setDiet(0.1);
+
+	horse.setSpecies("Horse");
+	horse.setStrength(16);
+	horse.setSize(3);
+	horse.setDiet(0.05);
+
+	mouse.setSpecies("Mouse");
+	mouse.setStrength(2);
+	mouse.setSize(0.1);
+	mouse.setDiet(0.2);
+
+	vector<Animal *> animals;
+	animals.push_back(&wolf);
+	animals.push_back(&rabbit);
+	animals.push_back(&horse);
+	animals.push_back(&mouse);
+	
+	for(int i = 0; i < animals.size(); i++)
+	{
+		Animal *self = animals[i];
+		threatTester << "\n<15>Threat levels for " << self->getSpecies() << "</>\n";
+		for(int j = 0; j < animals.size(); j++)
+		{
+			Animal *other = animals[j];
+			float threat = self->getEntityThreat(other);
+			threatTester << "Threat from " << other->getSpecies() << "\t<12>" << threat << "</>\n";
+		}
+	}
+}
+
 void resizeScreen(int width, int height)
 {
 	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -206,7 +254,7 @@ int main(int argc, char **argv)
 
 	mainMenu.addChild(new UIText("<15>Alan Lawrey's Thesis project 2011</>\n"));
 
-	mainMenu.setMenuItem(0, new UIText("<12>1</>: Load world.\n<12>2</>: Output rejection samplying test.\n<12>q</>: Quit."));
+	mainMenu.setMenuItem(0, new UIText("<12>1</>: Load world.\n<12>2</>: Output rejection samplying test.\n<12>3</>: Threat tester.\n<12>q</>: Quit."));
 
 	UIList mainItem2;
 	UIText mainItem2Title;
@@ -227,6 +275,12 @@ int main(int argc, char **argv)
 	mainMenu.setMenuItem(2, new UIText("<12>1</>: Really quit?\n<12>Any</>: Return to main."));
 	mainMenu.setMenuItem(3, new UIText("<12>1</>: Write out distrubution test file.\n<12>Any</>: Go back."));
 	
+	UIList mainItem5;
+	mainItem5.addChild(new UIText("<12>1</>: Test threat levels.\n<12>Any</>: Go back."));
+	UIText threatTester;
+	mainItem5.addChild(threatTester);
+	mainMenu.setMenuItem(4, mainItem5);
+
 	path currentPath(initial_path<path>());
 	currentPath = system_complete(path("."));
 
@@ -269,7 +323,12 @@ int main(int argc, char **argv)
 					{
 						mainMenu.setMenuLevel(3);
 					}
-					else if(c == 27)
+					else if(c == '3')
+					{
+						mainMenu.setMenuLevel(4);
+					}
+					else if
+					(c == 27)
 					{
 						quit = true;
 					}
@@ -345,6 +404,15 @@ int main(int argc, char **argv)
 						mainMenu.goBack();
 					}
 					break;
+				case 4:
+					if(c == '1')
+					{
+						threatTest(threatTester);
+					}
+					else
+					{
+						mainMenu.goBack();
+					}
 				}
 			}
 

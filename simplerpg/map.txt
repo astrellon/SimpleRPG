@@ -56,17 +56,17 @@ Animal
 	end
 	destination @ 3
 	health 10 10
-	strength 1
-	dexterity 1
-	intelligence 1
-	running_speed 10
-	walking_speed 5.1
+	strength 16
+	dexterity 15
+	intelligence 14
+	running_speed 15
+	walking_speed 3
 	turning_speed 2
-	entity_size 1
-	entity_mass 1
+	entity_size 1.2
+	entity_mass 48
 	diet 0.8
-	damage_base 1
-	attack_rate 1
+	damage_base 4
+	attack_rate 1.6
 	species_alignment
 		"Rabbit" 0.3
 		"Shrubbery" 0.1
@@ -90,16 +90,17 @@ Animal
 	end
 	destination -1 -1
 	health 8.34 12.78
-	strength 1
-	dexterity 1
-	intelligence 1
-	running_speed 10
+	strength 4
+	dexterity 18
+	intelligence 5
+	running_speed 15
 	walking_speed 1.1
-	turning_speed 2
-	entity_size 1
-	entity_mass 1
-	diet 0.5
+	turning_speed 2.6
+	entity_size 0.3
+	entity_mass 0.8
+	diet 0.1
 	damage_base 1
+	attack_rate 1.2
 end
 
 Plant

@@ -1,6 +1,9 @@
 // Auto generated map file.
 -- Options
 hud_width 30
+current_time 300
+current_day 0
+day_length 600
 
 -- Tiles
 # 4

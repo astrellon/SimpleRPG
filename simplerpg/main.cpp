@@ -87,41 +87,48 @@ void threatTest(UIText &threatTester)
 	threatTester.clearText();
 
 	Animal wolf(NULL);
+	Animal bear(NULL);
 	Animal rabbit(NULL);
 	Animal horse(NULL);
 	Animal mouse(NULL);
 
 	wolf.setSpecies("Wolf");
-	wolf.setStrength(16);
-	wolf.setSize(1.2);
-	wolf.setDiet(0.8);
+	wolf.setStrength(16.0f);
+	wolf.setSize(1.2f);
+	wolf.setDiet(0.8f);
+
+	bear.setSpecies("Bear");
+	bear.setStrength(22.0f);
+	bear.setSize(3.0f);
+	bear.setDiet(0.85f);
 
 	rabbit.setSpecies("Rabbit");
-	rabbit.setStrength(4);
-	rabbit.setSize(0.3);
-	rabbit.setDiet(0.1);
+	rabbit.setStrength(4.0f);
+	rabbit.setSize(0.3f);
+	rabbit.setDiet(0.1f);
 
 	horse.setSpecies("Horse");
-	horse.setStrength(16);
-	horse.setSize(3);
-	horse.setDiet(0.05);
+	horse.setStrength(16.0f);
+	horse.setSize(3.0f);
+	horse.setDiet(0.05f);
 
 	mouse.setSpecies("Mouse");
-	mouse.setStrength(2);
-	mouse.setSize(0.1);
-	mouse.setDiet(0.2);
+	mouse.setStrength(2.0f);
+	mouse.setSize(0.1f);
+	mouse.setDiet(0.2f);
 
 	vector<Animal *> animals;
 	animals.push_back(&wolf);
+	animals.push_back(&bear);
 	animals.push_back(&rabbit);
 	animals.push_back(&horse);
 	animals.push_back(&mouse);
 	
-	for(int i = 0; i < animals.size(); i++)
+	for(int i = 0; i < (int)animals.size(); i++)
 	{
 		Animal *self = animals[i];
 		threatTester << "\n<15>Threat levels for " << self->getSpecies() << "</>\n";
-		for(int j = 0; j < animals.size(); j++)
+		for(int j = 0; j < (int)animals.size(); j++)
 		{
 			Animal *other = animals[j];
 			float threat = self->getEntityThreat(other);

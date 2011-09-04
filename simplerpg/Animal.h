@@ -74,8 +74,9 @@ public:
 	virtual float getEnergyNeededPerDay() { return mEnergyNeededPerDay; }
 	virtual void  setEnergyNeededPerDay(float energy) { mEnergyNeededPerDay = energy; }
 	
-	virtual void  setEnergy(float energy) { mEnergy = energy; }
 	virtual float getEnergy() { return mEnergy; }
+	virtual void  setEnergy(float energy) { mEnergy = energy; }
+	virtual void  changeEnergy(float energy) { setEnergy(getEnergy() + energy); }
 
 	virtual float getHealth() { return mHealth; }
 	virtual void  setHealth(float health);
@@ -136,6 +137,8 @@ protected:
 	float mEnergyNeededPerDay;
 
 	SpeciesAlignment mSpeciesAlignment;
+
+	vector<float> mEnergyUsage;
 	
 	virtual float calculateKcalPerDay();
 	virtual bool isHungry();

@@ -5,6 +5,9 @@
 
 const char *Game::LOOK_FOR_TABLE[] = {"Animal", "Plant"};
 
+extern const char *GamePropertyNames[] = { "hud_width", "current_time", "current_day",
+	"day_length" };
+
 Game *Game::CURRENT_GAME = NULL;
 
 Game::Game(int width, int height)
@@ -22,7 +25,9 @@ Game::Game(int width, int height)
 
 	mSelectedItem = NULL;
 
-	mHud.scrollY(1);
+	//mHud.scrollY(1);
+	mWholeHud.addChild(mWholeHudText);
+	mWholeHud.addChild(mHud);
 	mHud.addChild(mHudText);
 
 	resize(width, height);
@@ -33,6 +38,10 @@ Game::Game(int width, int height)
 
 	mGameRunning = true;
 	mGamePaused = false;
+
+	mCurrentTime = 0.0f;
+	mCurrentDay = 0;
+	mDayLength = 600.0f;
 
 	mLastKey = -1;
 }
@@ -49,11 +58,16 @@ Game::~Game(void)
 void Game::resize(int width, int height)
 {
 	mScreenSize = Rect(0, 0, width - mHudWidth - 1, height);
-	mHud.setX(width - mHudWidth);
 	mHud.setMaxHeight(height);
 	mHud.setMaxWidth(mHudWidth);
 
 	mHudText.setMaxWidth(mHudWidth);
+
+	mWholeHud.setX(width - mHudWidth);
+	mWholeHud.setMaxHeight(height);
+	mWholeHud.setMaxWidth(mHudWidth);
+
+	mWholeHudText.setMaxWidth(mHudWidth);
 
 	mGameWidth = width;
 	mGameHeight = height;
@@ -280,6 +294,7 @@ void Game::displayActions()
 		}
 		mHudText << '\n';
 
+
 		mHudText << "\n<11>q</>: Quit.\n";
 
 #if _DEBUG_RPG
@@ -391,6 +406,7 @@ void Game::removeEntity(GameEntity *entity)
 
 void Game::update(float dt)
 {
+	advanceTime(dt);
 	for(vector<GameEntity *>::iterator iter = mEntities.begin(); iter != mEntities.end(); iter++)
 	{
 		(*iter)->update(dt);
@@ -441,9 +457,13 @@ void Game::render(WINDOW *wnd)
 		}
 	}
 
-	mHud.setWindow(wnd);
+	mWholeHudText.clearText();
+	mWholeHudText << "<15>Current Day: </>" << getCurrentDay() << '\n';
+	mWholeHudText << "<15>Current Time: </>" << getCurrentTimeString() << '\n';
+
+	mWholeHud.setWindow(wnd);
 	displayActions();
-	mHud.render();
+	mWholeHud.render();
 }
 
 void Game::moveCamera(int dx, int dy)
@@ -779,6 +799,9 @@ void Game::switchKeyItem(IKeyActions *item, UIContainer &hud)
 void Game::saveOptions(FormattedFile &file)
 {
 	saveOption(HUD_WIDTH, file);
+	saveOption(CURRENT_TIME, file);
+	saveOption(CURRENT_DAY, file);
+	saveOption(DAY_LENGTH, file);
 }
 
 void Game::saveOption(const GameOption &option, FormattedFile &file)
@@ -786,7 +809,16 @@ void Game::saveOption(const GameOption &option, FormattedFile &file)
 	switch(option)
 	{
 	case HUD_WIDTH:
-		file << "hud_width " << mHudWidth << '\n';
+		file << GamePropertyNames[HUD_WIDTH] << ' ' << getHudWidth() << '\n';
+		break;
+	case CURRENT_TIME:
+		file << GamePropertyNames[CURRENT_TIME] << ' ' << getCurrentTime() << '\n';
+		break;
+	case CURRENT_DAY:
+		file << GamePropertyNames[CURRENT_DAY] << ' ' << getCurrentDay() << '\n';
+		break;
+	case DAY_LENGTH:
+		file << GamePropertyNames[DAY_LENGTH] << ' ' << getDayLength() << '\n';
 		break;
 	default:
 		break;
@@ -795,13 +827,62 @@ void Game::saveOption(const GameOption &option, FormattedFile &file)
 
 void Game::loadOptions(string option, FormattedFileIterator &iter)
 {
-	if(iequals(option, "hud_width"))
+	if(iequals(option, GamePropertyNames[HUD_WIDTH]))
 	{
 		setHudWidth(lexical_cast<int>(*iter));
+		++iter;
+	}
+	else if(iequals(option, GamePropertyNames[CURRENT_TIME]))
+	{
+		setCurrentTime(lexical_cast<float>(*iter));
+		++iter;
+	}
+	else if(iequals(option, GamePropertyNames[CURRENT_DAY]))
+	{
+		setCurrentDay(lexical_cast<int>(*iter));
+		++iter;
+	}
+	else if(iequals(option, GamePropertyNames[DAY_LENGTH]))
+	{
+		setDayLength(lexical_cast<float>(*iter));
 		++iter;
 	}
 	else
 	{
 		clog << "Unknown option '" << option << "'" << endl;
 	}
+}
+
+void Game::setCurrentTime(float time)
+{
+	int days = 0;
+	while(time > getDayLength())
+	{
+		time -= getDayLength();
+		days++;
+	}
+	while(time < 0.0f)
+	{
+		time += getDayLength();
+		days--;
+	}
+	mCurrentTime = time;
+	advanceDay(days);
+}
+
+void Game::advanceTime(float dt)
+{
+	setCurrentTime(getCurrentTime() + dt); 
+}
+
+string Game::getCurrentTimeString()
+{
+	float div = getCurrentTime() * 24 / getDayLength();
+	int hours = (int)div;
+	int minutes = (int)((div - (float)hours) * 60);
+
+	format fmt("%02u:%02u");
+	fmt % hours % minutes;
+
+	return fmt.str();
 }

@@ -31,7 +31,9 @@ class GameEntity;
 class Animal;
 
 enum MenuLevel { MENU_MAIN, MENU_LOOK, MENU_FIND, MENU_QUIT, MENU_OPTIONS };
-enum GameOption { HUD_WIDTH };
+enum GameOption { HUD_WIDTH, CURRENT_TIME, CURRENT_DAY, DAY_LENGTH };
+
+const char *GamePropertyNames[];
 
 typedef struct _FindEntityResult
 {
@@ -112,6 +114,19 @@ public:
 	virtual bool getGamePaused() { return mGamePaused; }
 	virtual void setGamePaused(bool paused) { mGamePaused = paused; }
 
+	virtual int  getCurrentDay() { return mCurrentDay; }
+	virtual void setCurrentDay(int day) { mCurrentDay = day;}
+	virtual void advanceDay(int days) { mCurrentDay += days; }
+
+	virtual float getCurrentTime() { return mCurrentTime; }
+	virtual void  setCurrentTime(float time); 
+	virtual void  advanceTime(float dt);
+
+	virtual float getDayLength() { return mDayLength; }
+	virtual void  setDayLength(float length) { mDayLength = length; }
+
+	virtual string getCurrentTimeString();
+
 	static Game *CURRENT_GAME;
 
 protected:
@@ -136,6 +151,9 @@ protected:
 	FindEntityResult mFoundEntity;
 	IKeyActions *mSelectedItem;
 
+	UIList mWholeHud;
+	UIText mWholeHudText;
+
 	UIList mHud;
 	UIText mHudText;
 
@@ -143,6 +161,10 @@ protected:
 	Vector2i mCursor;
 	bool mCursorMode;
 	int mLookFor;
+
+	float mCurrentTime;
+	int mCurrentDay;
+	float mDayLength;
 
 	// Used to display the "(Saved)" text in the menu when the game has been saved.
 	// Counts down to zero when the graphic will disappear.

@@ -94,7 +94,9 @@ void Animal::displayActions(UIContainer &hud)
 		text << "<15>Dex</>:\t" << getDexterity() << '\n';
 		text << "<15>Int</>:\t" << getIntelligence() << '\n';
 		text << "<15>Diet</>:\t" << getDiet() << '\n';
+		text << "<15>Energy</>:\t" << getEnergy() << " (" << getEnergyNeededPerDay() << ")\n";
 		text << "\n<15>Cooldown</>: " << getAttackCooldown() << '\n';
+		
 	}
 	else if(mMenuLevel == 1)
 	{
@@ -353,6 +355,8 @@ void Animal::update(float dt)
 		mAttackCooldown += dt * 0.25f;
 	}
 
+	mEnergyUsage.clear();
+
 	Action *action = getCurrentAction();
 	// If not in danger. Continue doing the same action.
 
@@ -375,6 +379,14 @@ void Animal::update(float dt)
 		// Do some more nothing.
 		doActionAttack(dt);
 	}
+
+	float usageMultiplier = 1.0f;
+	for(vector<float>::iterator iter = mEnergyUsage.begin(); iter != mEnergyUsage.end(); iter++)
+	{
+		usageMultiplier *= *iter;
+	}
+
+	changeEnergy(-getEnergyNeededPerDay() * usageMultiplier * dt / mGame->getDayLength());
 	
 	moveAnimal(dt);
 }
@@ -397,6 +409,15 @@ void Animal::moveAnimal(float dt)
 	}
 	float facing = (float)getFacing();
 	float timeTaken = 0.0f;
+
+	if (getWalking())
+	{
+		mEnergyUsage.push_back(1.1f);
+	}
+	else
+	{
+		mEnergyUsage.push_back(4.0f);
+	}
 	
 	while(timeTaken < dt)
 	{
@@ -489,6 +510,8 @@ void Animal::attackAnimal(Animal *target, float dt)
 	{
 		return;
 	}
+
+	mEnergyUsage.push_back(2.0f);
 
 	while(mAttackCooldown <= 0.0f)
 	{

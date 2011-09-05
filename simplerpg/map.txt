@@ -65,7 +65,7 @@ Animal
 	running_speed 15
 	walking_speed 3
 	turning_speed 2
-	entity_size 1.2
+	entity_size 2.0
 	entity_mass 48
 	diet 0.8
 	damage_base 4

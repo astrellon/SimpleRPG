@@ -109,6 +109,8 @@ public:
 	virtual float getEntityThreat(Animal *entity);
 	virtual float getEntityThreat(GameEntity *entity);
 
+	virtual float getAttackRange();
+
 protected:
 
 	Destination mDestination;

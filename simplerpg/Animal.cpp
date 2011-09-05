@@ -454,7 +454,6 @@ void Animal::moveAnimal(float dt)
 		}
 
 		float distTime = (float)toNextPos.length() / getCurrentSpeed();
-
 		if (distTime > dt - timeTaken)
 		{
 			distTime = dt - timeTaken;
@@ -557,7 +556,7 @@ void Animal::doActionAttack(float dt)
 	{
 		// Direct distance between this animal and the target.
 		double simpleDist = distanceToEntity(action->getTarget()->getEntity());
-		if(simpleDist <= 1.0f)
+		if(simpleDist <= getAttackRange())
 		{
 			action->nextStep();
 		}
@@ -565,7 +564,7 @@ void Animal::doActionAttack(float dt)
 	else if(action->getStep() == 1)
 	{
 		double simpleDist = distanceToEntity(action->getTarget()->getEntity());
-		if(simpleDist > 1.0f)
+		if(simpleDist > getAttackRange())
 		{
 			action->prevStep();
 		}
@@ -631,7 +630,7 @@ void Animal::doActionEat(float dt)
 	{
 		// Direct distance between this animal and the target.
 		double simpleDist = distanceToEntity(action->getTarget()->getEntity());
-		if(simpleDist <= 1.0f)
+		if(simpleDist <= getAttackRange())
 		{
 			action->nextStep();
 		}
@@ -639,7 +638,7 @@ void Animal::doActionEat(float dt)
 	else if(action->getStep() == 2)
 	{
 		double simpleDist = distanceToEntity(action->getTarget()->getEntity());
-		if(simpleDist >	 1.0f)
+		if(simpleDist >	getAttackRange())
 		{
 			action->prevStep();
 		}
@@ -806,4 +805,9 @@ float Animal::getEntityThreat(GameEntity *entity)
 		return getEntityThreat(ani);
 	}
 	return 0.0f; 
+}
+
+float Animal::getAttackRange()
+{
+	return getSize() * 0.6f;
 }

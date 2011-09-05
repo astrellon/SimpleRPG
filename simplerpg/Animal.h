@@ -141,6 +141,7 @@ protected:
 	SpeciesAlignment mSpeciesAlignment;
 
 	vector<float> mEnergyUsage;
+	float mOldEnergyMultiplier;
 	
 	virtual float calculateKcalPerDay();
 	virtual bool isHungry();

@@ -18,6 +18,7 @@ Animal::Animal(Game *game) : GameEntity(game)
 
 	mEnergyNeededPerDay = 1.0f;
 	mEnergy = 1.0f;
+	mOldEnergyMultiplier = 1.0f;
 
 	mMass = 1.0f;
 	mSize = 1.0f;
@@ -94,7 +95,10 @@ void Animal::displayActions(UIContainer &hud)
 		text << "<15>Dex</>:\t" << getDexterity() << '\n';
 		text << "<15>Int</>:\t" << getIntelligence() << '\n';
 		text << "<15>Diet</>:\t" << getDiet() << '\n';
-		text << "<15>Energy</>:\t" << getEnergy() << " (" << getEnergyNeededPerDay() << ")\n";
+		format fmt2("%.5f (%.0f) [%.1f]\n");
+		fmt2 % getEnergy() % getEnergyNeededPerDay() % mOldEnergyMultiplier;
+
+		text << "<15>Energy</>:\t" << fmt2.str();
 		text << "\n<15>Cooldown</>: " << getAttackCooldown() << '\n';
 		
 	}
@@ -380,15 +384,16 @@ void Animal::update(float dt)
 		doActionAttack(dt);
 	}
 
+	moveAnimal(dt);
+
 	float usageMultiplier = 1.0f;
 	for(vector<float>::iterator iter = mEnergyUsage.begin(); iter != mEnergyUsage.end(); iter++)
 	{
 		usageMultiplier *= *iter;
 	}
 
+	mOldEnergyMultiplier = usageMultiplier;
 	changeEnergy(-getEnergyNeededPerDay() * usageMultiplier * dt / mGame->getDayLength());
-	
-	moveAnimal(dt);
 }
 
 void Animal::moveAnimal(float dt)
@@ -555,6 +560,7 @@ void Animal::doActionAttack(float dt)
 	if(action->getStep() == 0)
 	{
 		// Direct distance between this animal and the target.
+		setWalking(false);
 		double simpleDist = distanceToEntity(action->getTarget()->getEntity());
 		if(simpleDist <= getAttackRange())
 		{
@@ -568,6 +574,7 @@ void Animal::doActionAttack(float dt)
 		{
 			action->prevStep();
 		}
+		setWalking(true);
 		Animal *animal = dynamic_cast<Animal *>(action->getTarget()->getEntity());
 		Plant *plant = dynamic_cast<Plant *>(action->getTarget()->getEntity());
 		if(animal != NULL)
@@ -630,6 +637,7 @@ void Animal::doActionEat(float dt)
 	{
 		// Direct distance between this animal and the target.
 		double simpleDist = distanceToEntity(action->getTarget()->getEntity());
+		setWalking(false);
 		if(simpleDist <= getAttackRange())
 		{
 			action->nextStep();
@@ -642,6 +650,7 @@ void Animal::doActionEat(float dt)
 		{
 			action->prevStep();
 		}
+		setWalking(true);
 		Animal *animal = dynamic_cast<Animal *>(action->getTarget()->getEntity());
 		Plant *plant = dynamic_cast<Plant *>(action->getTarget()->getEntity());
 		if(animal != NULL)

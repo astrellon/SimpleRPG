@@ -34,5 +34,8 @@ namespace math
 	}
 
 	float nextDist(const float &min, const float &max, const float &mid);
-	Vector2f getClosetPoint(Vector2f A, Vector2f B, Vector2f P, bool segmentClamp = true);
+	Vector2f getClosetToRay(Vector2f A, Vector2f B, Vector2f P, bool segmentClamp = true);
+	Vector2f getClosetToRay(Vector2f origin, Vector2f direction, float length, Vector2f p);
+	float getDistanceToRay(Vector2f A, Vector2f B, Vector2f p, bool segmentClamp = true);
+	float getDistanceToRay(Vector2f origin, Vector2f direction, float length, Vector2f p);
 }

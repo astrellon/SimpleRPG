@@ -15,7 +15,7 @@ float math::nextDist(const float &min, const float &max, const float &mid)
 	}
 }
 
-Vector2f math::getClosetPoint(Vector2f A, Vector2f B, Vector2f P, bool segmentClamp)
+Vector2f math::getClosetToRay(Vector2f A, Vector2f B, Vector2f P, bool segmentClamp)
 {
 	Vector2f AP = P.sub(A);
 	Vector2f AB = B.sub(A);
@@ -32,4 +32,20 @@ Vector2f math::getClosetPoint(Vector2f A, Vector2f B, Vector2f P, bool segmentCl
 	Vector2f Closest = A.add(AB);
 
 	return Closest;
+}
+
+Vector2f math::getClosetToRay(Vector2f origin, Vector2f direction, float length, Vector2f p)
+{
+	return getClosetToRay(origin, origin.add(direction.scale(length)), p);
+}
+
+float math::getDistanceToRay(Vector2f A, Vector2f B, Vector2f p, bool segmentClamp)
+{
+	Vector2f closest = getClosetToRay(A, B, p, segmentClamp);
+	return p.sub(closest).length();
+}
+float math::getDistanceToRay(Vector2f origin, Vector2f direction, float length, Vector2f p)
+{
+	Vector2f closest = getClosetToRay(origin, origin.add(direction.scale(length)), p);
+	return p.sub(closest).length();
 }

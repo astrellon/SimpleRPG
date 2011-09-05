@@ -414,3 +414,18 @@ GameEntity * GameEntity::getEntityById( unsigned int id )
 	}
 	return iter->second;
 }
+
+void GameEntity::getNearbyEntities(const float &radius, vector<GameEntity *> &result)
+{
+	getNearbyEntities(radius, result, NULL);
+}
+
+void GameEntity::getNearbyEntities(const float &radius, vector<GameEntity *> &result, const string &restrictToSpecies)
+{
+	getNearbyEntities(radius, result, &restrictToSpecies);
+}
+
+void GameEntity::getNearbyEntities(const float &radius, vector<GameEntity *> &result, const string *restrictToSpecies)
+{
+	// Quick and easy way fof iterating through all entities.
+}

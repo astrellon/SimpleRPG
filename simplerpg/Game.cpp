@@ -10,6 +10,46 @@ extern const char *GamePropertyNames[] = { "hud_width", "current_time", "current
 
 Game *Game::CURRENT_GAME = NULL;
 
+_FindEntityResult::_FindEntityResult()
+{
+	entity = NULL;
+	path = NULL;
+}
+_FindEntityResult::_FindEntityResult(GameEntity *e, vector<Vector2f> *p)
+{
+	entity = e;
+	path = p;
+}
+void _FindEntityResult::clear()
+{
+	entity = NULL;
+	if(path != NULL)
+	{
+		delete path;
+		path = NULL;
+	}
+}
+
+_RayResult::_RayResult()
+{
+	entity = NULL;
+	point.x = -1;
+	point.y = -1;
+}
+_RayResult::_RayResult(GameEntity *e)
+{
+	entity = e;
+	if (e != NULL)
+	{
+		point = e->getPosition();
+	}
+}
+_RayResult::_RayResult(const Vector2f &p)
+{
+	entity = NULL;
+	point = p;
+}
+
 Game::Game(int width, int height)
 {
 	CURRENT_GAME = this;
@@ -885,4 +925,11 @@ string Game::getCurrentTimeString()
 	fmt % hours % minutes;
 
 	return fmt.str();
+}
+
+RayResult Game::fireRay(const Vector2f &point, const Vector2f &direction)
+{
+	RayResult result;
+	
+	return result;
 }

@@ -40,26 +40,20 @@ typedef struct _FindEntityResult
 	GameEntity *entity;
 	vector<Vector2f> *path;
 
-	_FindEntityResult()
-	{
-		entity = NULL;
-		path = NULL;
-	}
-	_FindEntityResult(GameEntity *e, vector<Vector2f> *p)
-	{
-		entity = e;
-		path = p;
-	}
-	void clear()
-	{
-		entity = NULL;
-		if(path != NULL)
-		{
-			delete path;
-			path = NULL;
-		}
-	}
+	_FindEntityResult();
+	_FindEntityResult(GameEntity *e, vector<Vector2f> *p);
+	void clear();
 } FindEntityResult;
+
+typedef struct _RayResult
+{
+	GameEntity *entity;
+	Vector2f point;
+
+	_RayResult();
+	_RayResult(GameEntity *e);
+	_RayResult(const Vector2f &p);
+} RayResult;
 
 typedef vector<GameEntity *> EntityList;
 
@@ -128,6 +122,8 @@ public:
 	virtual string getCurrentTimeString();
 
 	static Game *CURRENT_GAME;
+
+	virtual RayResult fireRay(const Vector2f &point, const Vector2f &direction);
 
 protected:
 	bool mRedisplay;

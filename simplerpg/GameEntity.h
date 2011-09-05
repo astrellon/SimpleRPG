@@ -129,6 +129,9 @@ public:
 
 	virtual double distanceToEntity(GameEntity *entity);
 
+	virtual void getNearbyEntities(const float &radius, vector<GameEntity *> &result);
+	virtual void getNearbyEntities(const float &radius, vector<GameEntity *> &result, const string &restrictToSpecies);
+
 protected:
 	unsigned int mId;
 	Pixel mGraphic;
@@ -164,6 +167,8 @@ protected:
 	
 	// Call when the entity is added into a Game.
 	virtual void onAddedToGame() {}
+
+	virtual void getNearbyEntities(const float &radius, vector<GameEntity *> &result, const string *restrictToSpecies);
 
 private:
 	static unsigned int sId;

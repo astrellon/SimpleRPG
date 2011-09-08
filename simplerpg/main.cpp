@@ -248,7 +248,6 @@ int main(int argc, char **argv)
 
 	bool paused = false;
 	bool inMainMenu = true;
-	//int menuLevel = 0;
 
 	// Main menu is setup to be a list and currently each different
 	// menu screen is a different item that is disabled when not

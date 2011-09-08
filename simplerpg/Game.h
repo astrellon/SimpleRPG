@@ -30,7 +30,7 @@ using boost::lexical_cast;
 class GameEntity;
 class Animal;
 
-enum MenuLevel { MENU_MAIN, MENU_LOOK, MENU_FIND, MENU_QUIT, MENU_OPTIONS };
+enum MenuLevel { MENU_MAIN, MENU_LOOK, MENU_FIND, MENU_QUIT, MENU_OPTIONS, MENU_RAY };
 enum GameOption { HUD_WIDTH, CURRENT_TIME, CURRENT_DAY, DAY_LENGTH };
 
 const char *GamePropertyNames[];
@@ -49,10 +49,11 @@ typedef struct _RayResult
 {
 	GameEntity *entity;
 	Vector2f point;
+	Tile *tile;
 
 	_RayResult();
-	_RayResult(GameEntity *e);
-	_RayResult(const Vector2f &p);
+	_RayResult(const Vector2f &p, GameEntity *e);
+	_RayResult(const Vector2f &p, Tile *t);
 } RayResult;
 
 typedef vector<GameEntity *> EntityList;
@@ -123,7 +124,11 @@ public:
 
 	static Game *CURRENT_GAME;
 
-	virtual RayResult fireRay(const Vector2f &point, const Vector2f &direction);
+	virtual RayResult fireRay(const Vector2f &point, const Vector2f &direction, const float &length);
+	virtual RayResult fireRay(const Vector2f &point, const float &direction, const float &length);
+	virtual void drawLine(WINDOW *wnd, const char &c, const Vector2f &point, const Vector2f &direction, const float &length);
+	virtual void drawLine(WINDOW *wnd, const char &c, const Vector2f &point, const float &direction, const float &length);
+	virtual void drawLine(WINDOW *wnd, float x1, float y1, float x2, float y2, const char &c);
 
 protected:
 	bool mRedisplay;
@@ -155,6 +160,7 @@ protected:
 
 	MenuLevel mMenuLevel;
 	Vector2i mCursor;
+	int mCursorAngle;
 	bool mCursorMode;
 	int mLookFor;
 
@@ -170,7 +176,11 @@ protected:
 	void saveOption(const GameOption &option, FormattedFile &file);
 	void loadOptions(string option, FormattedFileIterator &iter);
 
+	void renderChar(WINDOW *wnd, int x, int y, char c);
+
 	void switchKeyItem(IKeyActions *item, UIContainer &hud);
+
+	void bresenhamLine(float x1, float y1, float x2, float y2, WINDOW *wnd, const char &c, RayResult *result);
 
 	static const char *LOOK_FOR_TABLE[];
 };

@@ -35,19 +35,23 @@ _RayResult::_RayResult()
 	entity = NULL;
 	point.x = -1;
 	point.y = -1;
+	tile = NULL;
 }
-_RayResult::_RayResult(GameEntity *e)
+_RayResult::_RayResult(const Vector2f &p, GameEntity *e)
 {
+	point = p;
 	entity = e;
 	if (e != NULL)
 	{
 		point = e->getPosition();
 	}
+	tile = NULL;
 }
-_RayResult::_RayResult(const Vector2f &p)
+_RayResult::_RayResult(const Vector2f &p, Tile *t)
 {
 	entity = NULL;
 	point = p;
+	tile = t;
 }
 
 Game::Game(int width, int height)
@@ -58,6 +62,7 @@ Game::Game(int width, int height)
 	mMap = NULL;
 
 	mCursor = Vector2i(0, 0);
+	mCursorAngle = 0;
 
 	mCursorMode = false;
 	mRedisplay = true;
@@ -181,12 +186,16 @@ void Game::keyActions(const int key)
 	{
 	default:
 	case MENU_MAIN:
+		// Left
 		if (key == 260)
 			moveCamera(-1, 0);
+		// Right
 		else if (key == 261)
 			moveCamera(1, 0);
+		// Up
 		else if (key == 259)
 			moveCamera(0, -1);
+		// Down
 		else if (key == 258)
 			moveCamera(0, 1);
 		else if (key == 391)
@@ -228,6 +237,13 @@ void Game::keyActions(const int key)
 			mMenuLevel = MENU_OPTIONS;
 			setGamePaused(true);
 		}
+
+		if (key == 'r')
+		{
+			mMenuLevel = MENU_RAY;
+			setCursorMode(true);
+			setGamePaused(true);
+		}
 		break;
 
 	case MENU_LOOK:
@@ -249,6 +265,7 @@ void Game::keyActions(const int key)
 			}
 		}
 		break;
+
 	case MENU_FIND:
 		if (key == 27)
 		{
@@ -272,6 +289,7 @@ void Game::keyActions(const int key)
 			mFoundEntity = findClosestEntity(mCursor, LOOK_FOR_TABLE[mLookFor]);
 		}
 		break;
+
 	case MENU_QUIT:
 		if (key == 'y' || key == 'q')
 		{
@@ -292,6 +310,7 @@ void Game::keyActions(const int key)
 			setGamePaused(false);
 		}
 		break;
+
 	case MENU_OPTIONS:
 		if (key == 27)
 		{
@@ -311,6 +330,38 @@ void Game::keyActions(const int key)
 		}
 
 		break;
+
+	case MENU_RAY:
+		if (key == 27)
+		{
+			mMenuLevel = MENU_MAIN;
+			setCursorMode(false);
+			setGamePaused(false);
+		}
+
+		// Numpad - or -
+		if (key == 464 || key == 45)
+		{
+			//mCursorAngle -= 5.0f * M_PIF / 180.0f;
+			mCursorAngle -= 5;
+		}
+		// Numpad + or =
+		else if (key == 465 || key == 61)
+		{
+			//mCursorAngle += 5.0f * M_PIF / 180.0f;
+			mCursorAngle += 5;
+		}
+
+		while(mCursorAngle < -180) 
+		{
+			mCursorAngle += 360;
+		}
+
+		while(mCursorAngle > 180) 
+		{
+			mCursorAngle -= 360;
+		}
+		break;
 	}
 }
 
@@ -327,6 +378,7 @@ void Game::displayActions()
 		mHudText << "<11>f</>: Find closest.\n";
 		mHudText << "<11>o</>: Options.\n";
 		mHudText << "<11>s</>: Save.";
+		
 		if(mSaveCounter > 0)
 		{
 			mSaveCounter--;
@@ -334,7 +386,8 @@ void Game::displayActions()
 		}
 		mHudText << '\n';
 
-
+		mHudText << "<11>r</>: Ray tester.";
+		
 		mHudText << "\n<11>q</>: Quit.\n";
 
 #if _DEBUG_RPG
@@ -372,11 +425,18 @@ void Game::displayActions()
 		mHudText << "<11>n</>: Go back.\n";
 		
 		break;
+
 	case MENU_OPTIONS:
 		mHudText << "<15>Options:</>\n\n";
 		mHudText << "Menu size: <12>" << getHudWidth() << "</> <11>+</>/<11>-</>\n";
 		break;
 
+	case MENU_RAY:
+		mHudText << "<15>Ray Test Menu:</>\n\n";
+		mHudText << "<15>Pos</>:\t(" << mCursor.toString(12) << ")\n";
+		mHudText << "<15>Angle</>:\t<12>" << mCursorAngle << "</>\n";
+
+		break;
 	}
 }
 
@@ -481,20 +541,22 @@ void Game::render(WINDOW *wnd)
 
 	if(mCursorMode)
 	{
-		int xPos = mCursor.x - mScreenSize.getX();
-		int yPos = mCursor.y - mScreenSize.getY();
+		wattron(wnd, COLOR_PAIR(9));
+		wattroff(wnd, A_BOLD);
+		renderChar(wnd, mCursor.x, mCursor.y, 'X');
+	}
 
-		if (xPos >= 0 && xPos < mScreenSize.getWidth() &&
-			yPos >= 0 && yPos < mScreenSize.getHeight())
-		{
-			if (mCursor.x >= 0 && mCursor.x < mMap->getWidth() &&
-				mCursor.y >= 0 && mCursor.y < mMap->getHeight())
-			{
-				wattron(wnd, COLOR_PAIR(9));
-				wattroff(wnd, A_BOLD);
-				mvwaddch(wnd, yPos, xPos, 'X');
-			}
-		}
+	if(mMenuLevel == MENU_RAY)
+	{
+		float angle = (float)mCursorAngle * M_PIF / 180.0f;
+		RayResult result = fireRay(mCursor, angle, 30.0f);
+		wattron(wnd, A_BOLD);
+
+		wattron(wnd, COLOR_PAIR(4));
+		drawLine(wnd, '*', mCursor, angle, 30.0f);
+
+		wattron(wnd, COLOR_PAIR(8));
+		renderChar(wnd, result.point.x, result.point.y, '*');
 	}
 
 	mWholeHudText.clearText();
@@ -504,6 +566,22 @@ void Game::render(WINDOW *wnd)
 	mWholeHud.setWindow(wnd);
 	displayActions();
 	mWholeHud.render();
+}
+
+void Game::renderChar(WINDOW *wnd, int x, int y, char c)
+{
+	int xPos = x - mScreenSize.getX();
+	int yPos = y - mScreenSize.getY();
+
+	if (xPos >= 0 && xPos < mScreenSize.getWidth() &&
+		yPos >= 0 && yPos < mScreenSize.getHeight())
+	{
+		if (x >= 0 && x < mMap->getWidth() &&
+			y >= 0 && y < mMap->getHeight())
+		{
+			mvwaddch(wnd, yPos, xPos, c);
+		}
+	}
 }
 
 void Game::moveCamera(int dx, int dy)
@@ -927,9 +1005,154 @@ string Game::getCurrentTimeString()
 	return fmt.str();
 }
 
-RayResult Game::fireRay(const Vector2f &point, const Vector2f &direction)
+RayResult Game::fireRay(const Vector2f &point, const Vector2f &direction, const float &length)
 {
 	RayResult result;
-	
+
+	float x1 = point.x;
+	float y1 = point.y;
+
+	float x2 = direction.x * length + x1;
+	float y2 = direction.y * length + y1;
+
+	bresenhamLine(x1, y1, x2, y2, NULL, '\0', &result);
+
 	return result;
+}
+
+RayResult Game::fireRay(const Vector2f &point, const float &direction, const float &length)
+{
+	RayResult result;
+
+	float x1 = point.x;
+	float y1 = point.y;
+
+	float x2 = cosf(direction) * length + x1;
+	float y2 = sinf(direction) * length + y1;
+
+	bresenhamLine(x1, y1, x2, y2, NULL, '\0', &result);
+
+	return result;
+}
+
+void Game::drawLine(WINDOW *wnd, const char &c, const Vector2f &point, const Vector2f &direction, const float &length)
+{
+	float x1 = point.x;
+	float y1 = point.y;
+
+	float x2 = direction.x * length + x1;
+	float y2 = direction.y * length + y1;
+
+	bresenhamLine(x1, y1, x2, y2, wnd, c, NULL);
+}
+
+void Game::drawLine(WINDOW *wnd, const char &c, const Vector2f &point, const float &direction, const float &length)
+{
+	float x1 = point.x;
+	float y1 = point.y;
+
+	float x2 = cosf(direction) * length + x1;
+	float y2 = sinf(direction) * length + y1;
+
+	bresenhamLine(x1, y1, x2, y2, wnd, c, NULL);
+}
+
+void Game::drawLine(WINDOW *wnd, float x1, float y1, float x2, float y2, const char &c)
+{
+	bresenhamLine(x1, y1, x2, y2, wnd, c, NULL);
+}
+
+void Game::bresenhamLine(float x1, float y1, float x2, float y2, WINDOW *wnd, const char &c, RayResult *result)
+{
+	//RayResult result;
+	Map *map = getMap();
+
+	Tile *t = NULL;
+	if(result != NULL)
+	{
+		t = map->getTile(x1, y1);
+		if (t == NULL)
+		{
+			return;
+		}
+		if (!t->getPassable())
+		{
+			result->point.x = x1;
+			result->point.y = y1;
+			result->tile = t;
+			return;
+		}
+	}
+
+	// Bresenham's line algorithm
+	bool swapped = false;
+	const bool steep = (fabs(y2 - y1) > fabs(x2 - x1));
+	if(steep)
+	{
+		std::swap(x1, y1);
+		std::swap(x2, y2);
+		//swapped = true;
+	}
+ 
+	if(x1 > x2)
+	{
+		std::swap(x1, x2);
+		std::swap(y1, y2);
+		swapped = true;
+	}
+ 
+	const float dx = x2 - x1;
+	const float dy = fabs(y2 - y1);
+ 
+	float error = dx / 2.0f;
+	const int ystep = (y1 < y2) ? 1 : -1;
+	int y = (int)y1;
+ 
+	const int maxX = (int)x2;
+	
+	for(int x = (int)x1; x < maxX; x++)
+	{
+		if (result != NULL)
+		{
+			t = NULL;
+			if (steep)
+			{
+				t = map->getTile(y, x);
+			}
+			else
+			{
+				t = map->getTile(x, y);
+			}
+			if(t != NULL && !t->getPassable())
+			{
+				result->point.x = steep ? y : x;
+				result->point.y = steep ? x : y;
+				result->tile = t;
+				if(!swapped)
+				{
+					break;
+				}
+			}
+		}
+		else if(wnd != NULL)
+		{
+			if (steep)
+			{
+				renderChar(wnd, y, x, c);
+			}
+			else
+			{
+				renderChar(wnd, x, y, c);
+			}
+		}
+ 
+		error -= dy;
+		if(error < 0)
+		{
+			y += ystep;
+			error += dx;
+		}
+	}
+
+	return;
 }

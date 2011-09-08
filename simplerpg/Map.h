@@ -23,7 +23,7 @@ public:
 	inline int getWidth() { return mWidth; }
 	inline int getHeight() { return mHeight; }
 
-	inline void setTile(int x, int y, Tile *tile)
+	inline void setTile(const int &x, const int &y, Tile *tile)
 	{ 
 		if(x < 0 || x >= mWidth || y < 0 || y >= mHeight)
 			return;
@@ -31,7 +31,15 @@ public:
 		mMapData[x][y].tile = tile; 
 	}
 
-	inline Tile *getTile(int x, int y) 
+	inline void setTile(const Vector2i &pos, Tile *tile)
+	{ 
+		if(pos.x < 0 || pos.x >= mWidth || pos.y < 0 || pos.y >= mHeight)
+			return;
+
+		mMapData[pos.x][pos.y].tile = tile; 
+	}
+
+	inline Tile *getTile(const int &x, const int &y) 
 	{ 
 		if(x < 0 || x >= mWidth || y < 0 || y >= mHeight)
 			return NULL;
@@ -39,9 +47,17 @@ public:
 		return mMapData[x][y].tile; 
 	}
 
+	inline Tile *getTile(const Vector2i &pos) 
+	{ 
+		if(pos.x < 0 || pos.x >= mWidth || pos.y < 0 || pos.y >= mHeight)
+			return NULL;
+
+		return mMapData[pos.x][pos.y].tile; 
+	}
+
 	vector<Vector2f> *search(const Vector2i &start, const Vector2i &end);
 
-	void renderMap(Rect rect, WINDOW *wnd);
+	void renderMap(Rect &rect, WINDOW *wnd);
 
 	void setMappedTiles(map<char, Tile *> tiles) { mMappedTiles = tiles; }
 	map<char, Tile *> *getMappedTiles() { return &mMappedTiles; }
@@ -53,7 +69,7 @@ protected:
 	int mHeight;
 
 	vector<AStarNode *> *getNeighbors(Vector2f position);
-	bool checkNeighbor(vector<AStarNode *> *nodes, int x, int y);
+	bool checkNeighbor(vector<AStarNode *> *nodes, const int &x, const int &y);
 
 	map<char, Tile *> mMappedTiles;
 

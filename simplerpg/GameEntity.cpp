@@ -428,4 +428,5 @@ void GameEntity::getNearbyEntities(const float &radius, vector<GameEntity *> &re
 void GameEntity::getNearbyEntities(const float &radius, vector<GameEntity *> &result, const string *restrictToSpecies)
 {
 	// Quick and easy way fof iterating through all entities.
+
 }

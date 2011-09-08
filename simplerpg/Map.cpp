@@ -49,7 +49,7 @@ bool listContains(vector<AStarNode *> *list, AStarNode *node)
 	return found;
 }
 
-inline bool Map::checkNeighbor(vector<AStarNode *> *nodes, int x, int y)
+inline bool Map::checkNeighbor(vector<AStarNode *> *nodes, const int &x, const int &y)
 {
 	if(x >= 0 && x < mWidth && y >= 0 && y < mHeight)
 	{
@@ -175,7 +175,7 @@ vector<Vector2f> *Map::getPath(AStarNode *node)
 	return path;
 }
 
-void Map::renderMap(Rect rect, WINDOW *wnd)
+void Map::renderMap(Rect &rect, WINDOW *wnd)
 {
 	int xstart = 0;
 	if (rect.getX() > 0)

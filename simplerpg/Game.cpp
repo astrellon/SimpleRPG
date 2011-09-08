@@ -1106,11 +1106,11 @@ void Game::bresenhamLine(float x1, float y1, float x2, float y2, WINDOW *wnd, co
  
 	float error = dx / 2.0f;
 	const int ystep = (y1 < y2) ? 1 : -1;
-	int y = (int)y1;
+	int y = (int)round(y1);
  
-	const int maxX = (int)x2;
+	const int maxX = (int)round(x2);
 	
-	for(int x = (int)x1; x < maxX; x++)
+	for(int x = (int)round(x1); x < maxX; x++)
 	{
 		if (result != NULL)
 		{

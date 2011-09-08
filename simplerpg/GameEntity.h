@@ -117,6 +117,12 @@ public:
 	virtual string getSpecies() { return mSpecies; }
 	virtual void setSpecies(string species) { mSpecies = species; }
 
+	virtual float getSize() { return mSize; }
+	virtual void  setSize(float size) { mSize = size; }
+
+	virtual float getMass() { return mMass; }
+	virtual void  setMass(float mass) { mMass = mass; }
+
 	static int nextId() { return sId++; }
 	
 	void setId(unsigned int id);
@@ -144,6 +150,9 @@ protected:
 	float mHealth;
 	float mMaxHealth;
 	float mAmountEaten;
+
+	float mSize;
+	float mMass;
 	
 	bool mRedisplay;
 	UIText *mHudText;

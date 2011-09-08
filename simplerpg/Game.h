@@ -161,6 +161,7 @@ protected:
 	MenuLevel mMenuLevel;
 	Vector2i mCursor;
 	int mCursorAngle;
+	int mCursorLength;
 	bool mCursorMode;
 	int mLookFor;
 

@@ -51,12 +51,6 @@ public:
 	virtual float getDiet() { return mDiet; }
 	virtual void  setDiet(float diet) { mDiet = diet; }
 
-	virtual float getSize() { return mSize; }
-	virtual void  setSize(float size) { mSize = size; }
-
-	virtual float getMass() { return mMass; }
-	virtual void  setMass(float mass) { mMass = mass; }
-
 	virtual float getStrength() { return mStrength; }
 	virtual void  setStrength(float strength) { mStrength = strength; }
 
@@ -120,9 +114,7 @@ protected:
 	float mWalkingSpeed;
 	float mAggression;
 	float mDiet;
-	float mSize;
-	float mMass;
-
+	
 	float mDamageBase;
 	float mAttackRate;
 	float mAttackCooldown;

@@ -20,8 +20,6 @@ Animal::Animal(Game *game) : GameEntity(game)
 	mEnergy = 1.0f;
 	mOldEnergyMultiplier = 1.0f;
 
-	mMass = 1.0f;
-	mSize = 1.0f;
 	mDiet = 0.5f;
 	mDamageBase = 1.0f;
 	mAttackRate = 1.0f;
@@ -175,16 +173,6 @@ void Animal::loadProperties(FormattedFileIterator &iter)
 		++iter;
 		setTurningSpeedBase(lexical_cast<float>(*iter)); ++iter;
 	}
-	else if(iequals(propertyName, EntityPropertyNames[ENTITY_SIZE]))
-	{
-		++iter;
-		setSize(lexical_cast<float>(*iter)); ++iter;
-	}
-	else if(iequals(propertyName, EntityPropertyNames[ENTITY_MASS]))
-	{
-		++iter;
-		setMass(lexical_cast<float>(*iter)); ++iter;
-	}
 	else if(iequals(propertyName, EntityPropertyNames[DIET]))
 	{
 		++iter;
@@ -257,8 +245,6 @@ void Animal::saveProperties(FormattedFile &file)
 	saveProperty(RUNNING_SPEED, file);
 	saveProperty(WALKING_SPEED, file);
 	saveProperty(TURNING_SPEED, file);
-	saveProperty(ENTITY_SIZE, file);
-	saveProperty(ENTITY_MASS, file);
 	saveProperty(DIET, file);
 	saveProperty(DAMAGE_BASE, file);
 	saveProperty(ATTACK_RATE, file);
@@ -295,12 +281,6 @@ void Animal::saveProperty(const EntityProperty &propertyId, FormattedFile &file)
 		break;
 	case TURNING_SPEED:
 		file << EntityPropertyNames[TURNING_SPEED] << ' ' << getTurningSpeedBase() << '\n';
-		break;
-	case ENTITY_SIZE:
-		file << EntityPropertyNames[ENTITY_SIZE] << ' ' << getSize() << '\n';
-		break;
-	case ENTITY_MASS:
-		file << EntityPropertyNames[ENTITY_MASS] << ' ' << getMass() << '\n';
 		break;
 	case DAMAGE_BASE:
 		file << EntityPropertyNames[DAMAGE_BASE] << ' ' << getDamageBase() << '\n';

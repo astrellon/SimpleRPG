@@ -18,6 +18,9 @@ GameEntity::GameEntity(Game *game)
 	mAmountEaten = 0.0f;
 	mId = nextId();
 
+	mMass = 1.0f;
+	mSize = 1.0f;
+
 	mSpecies = "Unknown";
 
 	mCurrentAction = new Action(IDLE);
@@ -161,6 +164,8 @@ void GameEntity::saveProperties(FormattedFile &file)
 	saveProperty(POSITION, file);
 	saveProperty(FACING, file);
 	saveProperty(NAME, file);
+	saveProperty(ENTITY_SIZE, file);
+	saveProperty(ENTITY_MASS, file);
 	saveProperty(AMOUNT_EATEN, file);
 	saveProperty(CURRENT_ACTION, file);
 	saveProperty(ACTION_HISTORY, file);
@@ -187,6 +192,12 @@ void GameEntity::saveProperty(const EntityProperty &propertyId, FormattedFile &f
 		break;
 	case NAME:
 		file << EntityPropertyNames[NAME] << " \"" << getEntityName() << "\"\n";
+		break;
+	case ENTITY_SIZE:
+		file << EntityPropertyNames[ENTITY_SIZE] << ' ' << getSize() << '\n';
+		break;
+	case ENTITY_MASS:
+		file << EntityPropertyNames[ENTITY_MASS] << ' ' << getMass() << '\n';
 		break;
 	case AMOUNT_EATEN:
 		file << EntityPropertyNames[AMOUNT_EATEN] << ' ' << getAmountEaten() << '\n';
@@ -247,6 +258,14 @@ void GameEntity::loadProperties(FormattedFileIterator &iter)
 			name = name.substr(1, name.size() - 2);
 		}
 		setEntityName(name);
+	}
+	else if(iequals(propertyName, EntityPropertyNames[ENTITY_SIZE]))
+	{
+		setSize(lexical_cast<float>(*iter)); ++iter;
+	}
+	else if(iequals(propertyName, EntityPropertyNames[ENTITY_MASS]))
+	{
+		setMass(lexical_cast<float>(*iter)); ++iter;
 	}
 	else if(iequals(propertyName, EntityPropertyNames[AMOUNT_EATEN]))
 	{

@@ -63,6 +63,7 @@ Game::Game(int width, int height)
 
 	mCursor = Vector2i(0, 0);
 	mCursorAngle = 0;
+	mCursorLength = 20;
 
 	mCursorMode = false;
 	mRedisplay = true;
@@ -170,12 +171,16 @@ void Game::keyActions(const int key)
 		int cx = mCursor.x;
 		int cy = mCursor.y;
 
+		// Left
 		if (key == 260)
 			cx--;
+		// Right
 		if (key == 261)
 			cx++;
+		// Up
 		if (key == 259)
 			cy--;
+		// Down
 		if (key == 258)
 			cy++;
 
@@ -198,12 +203,16 @@ void Game::keyActions(const int key)
 		// Down
 		else if (key == 258)
 			moveCamera(0, 1);
+		//  Shift Left
 		else if (key == 391)
 			moveCamera(-20, 0);
+		//  Shift Right
 		else if (key == 400)
 			moveCamera(20, 0);
+		//  Shift Up
 		else if (key == 547)
 			moveCamera(0, -20);
+		//  Shift Down
 		else if (key == 548)
 			moveCamera(0, 20);
 
@@ -318,8 +327,8 @@ void Game::keyActions(const int key)
 			setGamePaused(false);
 		}
 
-		// Numpad - or -
-		if (key == 464 || key == 45)
+		// Left
+		if (key == 260)
 		{
 			setHudWidth(getHudWidth() - 1);
 		}
@@ -339,17 +348,22 @@ void Game::keyActions(const int key)
 			setGamePaused(false);
 		}
 
-		// Numpad - or -
-		if (key == 464 || key == 45)
-		{
-			//mCursorAngle -= 5.0f * M_PIF / 180.0f;
+		// Left
+		if (key == 'a')
 			mCursorAngle -= 5;
-		}
-		// Numpad + or =
-		else if (key == 465 || key == 61)
-		{
-			//mCursorAngle += 5.0f * M_PIF / 180.0f;
+		// Right
+		else if (key == 'd')
 			mCursorAngle += 5;
+		// Up
+		else if (key == 'w')
+			mCursorLength += 2;
+		// Down
+		else if (key == 's')
+			mCursorLength -= 2;
+
+		if (mCursorLength < 0)
+		{
+			mCursorLength = 0;
 		}
 
 		while(mCursorAngle < -180) 
@@ -435,6 +449,7 @@ void Game::displayActions()
 		mHudText << "<15>Ray Test Menu:</>\n\n";
 		mHudText << "<15>Pos</>:\t(" << mCursor.toString(12) << ")\n";
 		mHudText << "<15>Angle</>:\t<12>" << mCursorAngle << "</>\n";
+		mHudText << "<15>Len</>:\t<12>" << mCursorLength << "</>\n";
 
 		break;
 	}
@@ -549,11 +564,11 @@ void Game::render(WINDOW *wnd)
 	if(mMenuLevel == MENU_RAY)
 	{
 		float angle = (float)mCursorAngle * M_PIF / 180.0f;
-		RayResult result = fireRay(mCursor, angle, 30.0f);
+		RayResult result = fireRay(mCursor, angle, (float)mCursorLength);
+		
 		wattron(wnd, A_BOLD);
-
 		wattron(wnd, COLOR_PAIR(4));
-		drawLine(wnd, '*', mCursor, angle, 30.0f);
+		drawLine(wnd, '*', mCursor, angle, (float)mCursorLength);
 
 		wattron(wnd, COLOR_PAIR(8));
 		renderChar(wnd, result.point.x, result.point.y, '*');
@@ -1015,24 +1030,30 @@ RayResult Game::fireRay(const Vector2f &point, const Vector2f &direction, const 
 	float x2 = direction.x * length + x1;
 	float y2 = direction.y * length + y1;
 
-	bresenhamLine(x1, y1, x2, y2, NULL, '\0', &result);
+	EntityList lookingAt;
 
+	for(EntityList::iterator iter = mEntities.begin(); iter != mEntities.end(); iter++)
+	{
+		GameEntity *entity = *iter;
+		if(math::getDistanceToRay(point, direction, length, entity->getPosition()) < entity->getSize())
+		{
+			lookingAt.push_back(entity);
+		}
+	}
+
+	bresenhamLine(x1, y1, x2, y2, NULL, '\0', &result);
 	return result;
 }
 
 RayResult Game::fireRay(const Vector2f &point, const float &direction, const float &length)
 {
-	RayResult result;
-
 	float x1 = point.x;
 	float y1 = point.y;
 
-	float x2 = cosf(direction) * length + x1;
-	float y2 = sinf(direction) * length + y1;
+	float x2 = cosf(direction);
+	float y2 = sinf(direction);
 
-	bresenhamLine(x1, y1, x2, y2, NULL, '\0', &result);
-
-	return result;
+	return fireRay(Vector2f(x1, y1), Vector2f(x2, y2), length);
 }
 
 void Game::drawLine(WINDOW *wnd, const char &c, const Vector2f &point, const Vector2f &direction, const float &length)
@@ -1064,7 +1085,6 @@ void Game::drawLine(WINDOW *wnd, float x1, float y1, float x2, float y2, const c
 
 void Game::bresenhamLine(float x1, float y1, float x2, float y2, WINDOW *wnd, const char &c, RayResult *result)
 {
-	//RayResult result;
 	Map *map = getMap();
 
 	Tile *t = NULL;
@@ -1091,7 +1111,6 @@ void Game::bresenhamLine(float x1, float y1, float x2, float y2, WINDOW *wnd, co
 	{
 		std::swap(x1, y1);
 		std::swap(x2, y2);
-		//swapped = true;
 	}
  
 	if(x1 > x2)

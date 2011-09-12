@@ -26,7 +26,7 @@ GameEntity::GameEntity(Game *game)
 	mCurrentAction = new Action(IDLE);
 
 	mMenuLevel = 0;
-	mMaxMenuLevel = 1;
+	mMaxMenuLevel = 2;
 }
 
 GameEntity::~GameEntity(void)
@@ -381,6 +381,21 @@ void GameEntity::displayActions(UIContainer &hud)
 		text << "<15>Action</>:\t" << Action::EntityActionNames[action->getAction()] << '\n';
 		text<< "<15>Step</>:\t" << action->getStep() << '\n';
 	}
+	else if(mMenuLevel == 1)
+	{
+		float radius = 20.0f;
+		text << "<15>Nearby Entities</>:\n";
+		text << "<15>Radius</>:\t" << radius << '\n';
+
+		vector<GameEntity *> result;
+		getNearbyEntities(radius, result, "no");
+
+		text << "<15>Found</>:\t" << result.size() << '\n';
+		for(vector<GameEntity *>::iterator iter = result.begin(); iter != result.end(); iter++)
+		{
+			text << (*iter)->getEntityName() << " (" << (*iter)->getSpecies() << ")\n";
+		}
+	}
 	mRedisplay = false;
 }
 
@@ -447,5 +462,18 @@ void GameEntity::getNearbyEntities(const float &radius, vector<GameEntity *> &re
 void GameEntity::getNearbyEntities(const float &radius, vector<GameEntity *> &result, const string *restrictToSpecies)
 {
 	// Quick and easy way fof iterating through all entities.
+	mGame->findNearby(getPosition(), radius, result);
+	for(vector<GameEntity *>::iterator iter = result.begin(); iter != result.end(); iter++)
+	{
+		if(*iter == this)
+		{
+			result.erase(iter);
+			break;
+		}
+	}
+}
 
+bool GameEntity::canSeeEntity(GameEntity *entity)
+{
+	return true;
 }

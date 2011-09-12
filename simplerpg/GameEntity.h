@@ -135,6 +135,8 @@ public:
 
 	virtual double distanceToEntity(GameEntity *entity);
 
+	virtual bool canSeeEntity(GameEntity *entity);
+
 	virtual void getNearbyEntities(const float &radius, vector<GameEntity *> &result);
 	virtual void getNearbyEntities(const float &radius, vector<GameEntity *> &result, const string &restrictToSpecies);
 

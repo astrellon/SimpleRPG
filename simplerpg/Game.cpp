@@ -253,6 +253,14 @@ void Game::keyActions(const int key)
 			setCursorMode(true);
 			setGamePaused(true);
 		}
+
+		if (key == 'n')
+		{
+			mMenuLevel = MENU_NEAR;
+			setCursorMode(true);
+			setGamePaused(true);
+		}
+
 		break;
 
 	case MENU_LOOK:
@@ -376,6 +384,27 @@ void Game::keyActions(const int key)
 			mCursorAngle -= 360;
 		}
 		break;
+
+	case MENU_NEAR:
+		if (key == 27)
+		{
+			mMenuLevel = MENU_MAIN;
+			setCursorMode(false);
+			setGamePaused(false);
+		}
+
+		// Up
+		else if (key == 'w')
+			mCursorLength += 2;
+		// Down
+		else if (key == 's')
+			mCursorLength -= 2;
+
+		if (mCursorLength < 0)
+		{
+			mCursorLength = 0;
+		}
+		break;
 	}
 }
 
@@ -400,7 +429,8 @@ void Game::displayActions()
 		}
 		mHudText << '\n';
 
-		mHudText << "<11>r</>: Ray tester.";
+		mHudText << "<11>r</>: Ray tester.\n";
+		mHudText << "<11>n</>: Nearby tester.\n";
 		
 		mHudText << "\n<11>q</>: Quit.\n";
 
@@ -452,6 +482,21 @@ void Game::displayActions()
 		mHudText << "<15>Len</>:\t<12>" << mCursorLength << "</>\n";
 
 		break;
+
+	case MENU_NEAR:
+		mHudText << "<15>Nearby Test Menu:</>\n\n";
+		mHudText << "<15>Position</>:\t(" << mCursor.toString(12) << ")\n";
+		mHudText << "<15>Radius</>:\t\t<12>" << mCursorLength << "</>\n";
+
+		vector<GameEntity *> results;
+		findNearby(mCursor, mCursorLength, results);
+
+		mHudText << "<15>Results</>:\t" << results.size() << "\n\n";
+		for(int i = 0; i < results.size(); i++)
+		{
+			GameEntity *entity = results[i];
+			mHudText << "<12>" << i << "</>: " << entity->getEntityName() << " (" << entity->getSpecies() << ")\n";
+		}
 	}
 }
 
@@ -1027,9 +1072,6 @@ RayResult Game::fireRay(const Vector2f &point, const Vector2f &direction, const 
 	float x1 = point.x;
 	float y1 = point.y;
 
-	float x2 = direction.x * length + x1;
-	float y2 = direction.y * length + y1;
-
 	EntityList lookingAt;
 
 	for(EntityList::iterator iter = mEntities.begin(); iter != mEntities.end(); iter++)
@@ -1041,7 +1083,28 @@ RayResult Game::fireRay(const Vector2f &point, const Vector2f &direction, const 
 		}
 	}
 
-	bresenhamLine(x1, y1, x2, y2, NULL, '\0', &result);
+	EntityList canSee;
+
+	for(EntityList::iterator iter = lookingAt.begin(); iter != lookingAt.end(); iter++)
+	{
+		GameEntity *entity = *iter;
+		RayResult test;
+
+		Vector2f pos = entity->getPosition();
+
+		float x2 = pos.x;
+		float y2 = pos.y;
+		
+		bresenhamLine(x1, y1, x2, y2, NULL, '\0', &test);
+		
+		Vector2f dPos = pos.sub(point);
+		Vector2f dPoint = test.point.sub(point);
+		if(dPos.length() < dPoint.length())
+		{
+			canSee.push_back(entity);
+		}
+	}
+
 	return result;
 }
 
@@ -1054,6 +1117,35 @@ RayResult Game::fireRay(const Vector2f &point, const float &direction, const flo
 	float y2 = sinf(direction);
 
 	return fireRay(Vector2f(x1, y1), Vector2f(x2, y2), length);
+}
+
+
+void Game::findNearby(Vector2f origin, const float &radius, vector<GameEntity *> &results)
+{
+	//vector<GameEntity *> *results = new vector<GameEntity *>();
+	vector<GameEntity *> withinRadius;
+
+	for(EntityList::iterator iter = mEntities.begin(); iter != mEntities.end(); iter++)
+	{
+		GameEntity *entity = *iter;
+		Vector2f diff = origin.sub(entity->getPosition());
+		if(diff.length() < radius)
+		{
+			withinRadius.push_back(entity);
+		}
+	}
+
+	for(EntityList::iterator iter = withinRadius.begin(); iter != withinRadius.end(); iter++)
+	{
+		GameEntity *entity = *iter;
+		RayResult cast;
+		Vector2f pos = entity->getPosition();
+		bresenhamLine(origin.x, origin.y, pos.x, pos.y, NULL, '\0', &cast);
+		if(cast.point.x < 0 || cast.point.y < 0)
+		{
+			results.push_back(entity);
+		}
+	}
 }
 
 void Game::drawLine(WINDOW *wnd, const char &c, const Vector2f &point, const Vector2f &direction, const float &length)
@@ -1105,6 +1197,10 @@ void Game::bresenhamLine(float x1, float y1, float x2, float y2, WINDOW *wnd, co
 	}
 
 	// Bresenham's line algorithm
+
+	// When true, this indicates that the algorithm is going from x2,y2 -> x1,y1 instead
+	// of x1,y1 -> x2,y2. This means it should take the last result found as the result
+	// we want.
 	bool swapped = false;
 	const bool steep = (fabs(y2 - y1) > fabs(x2 - x1));
 	if(steep)
@@ -1175,3 +1271,14 @@ void Game::bresenhamLine(float x1, float y1, float x2, float y2, WINDOW *wnd, co
 
 	return;
 }
+/*
+bool Game::canSeePoint(const Vector2f &position, const Vector2f &target)
+{
+	RayResult cast;
+	bresenhamLine(position.x, position.y, target.x, target.y, NULL, '\0', &cast);
+	if(cast.point.x < 0 || cast.point.y < 0)
+	{
+		return true;
+	}
+	return false;
+}*/

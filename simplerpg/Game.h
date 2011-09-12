@@ -30,7 +30,7 @@ using boost::lexical_cast;
 class GameEntity;
 class Animal;
 
-enum MenuLevel { MENU_MAIN, MENU_LOOK, MENU_FIND, MENU_QUIT, MENU_OPTIONS, MENU_RAY };
+enum MenuLevel { MENU_MAIN, MENU_LOOK, MENU_FIND, MENU_QUIT, MENU_OPTIONS, MENU_RAY, MENU_NEAR };
 enum GameOption { HUD_WIDTH, CURRENT_TIME, CURRENT_DAY, DAY_LENGTH };
 
 const char *GamePropertyNames[];
@@ -126,9 +126,12 @@ public:
 
 	virtual RayResult fireRay(const Vector2f &point, const Vector2f &direction, const float &length);
 	virtual RayResult fireRay(const Vector2f &point, const float &direction, const float &length);
+	virtual void findNearby(Vector2f origin, const float &radius, vector<GameEntity *> &results);
 	virtual void drawLine(WINDOW *wnd, const char &c, const Vector2f &point, const Vector2f &direction, const float &length);
 	virtual void drawLine(WINDOW *wnd, const char &c, const Vector2f &point, const float &direction, const float &length);
 	virtual void drawLine(WINDOW *wnd, float x1, float y1, float x2, float y2, const char &c);
+
+	//virtual bool canSeePoint(const Vector2f &position, const Vector2f &target);
 
 protected:
 	bool mRedisplay;

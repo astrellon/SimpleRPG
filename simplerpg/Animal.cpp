@@ -29,7 +29,7 @@ Animal::Animal(Game *game) : GameEntity(game)
 	mDexterity = 1;
 	mIntelligence = 1;
 
-	mMaxMenuLevel = 2;
+	mMaxMenuLevel = 3;
 }
 
 Animal::~Animal(void)
@@ -100,7 +100,7 @@ void Animal::displayActions(UIContainer &hud)
 		text << "\n<15>Cooldown</>: " << getAttackCooldown() << '\n';
 		
 	}
-	else if(mMenuLevel == 1)
+	else if(mMenuLevel == 3)
 	{
 		text << "<15>Alignments</>:\n\n<15>";
 		for(SpeciesAlignment::iterator iter = mSpeciesAlignment.begin(); iter != mSpeciesAlignment.end(); iter++)

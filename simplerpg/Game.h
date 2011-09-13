@@ -31,7 +31,7 @@ class GameEntity;
 class Animal;
 
 enum MenuLevel { MENU_MAIN, MENU_LOOK, MENU_FIND, MENU_QUIT, MENU_OPTIONS, MENU_RAY, MENU_NEAR };
-enum GameOption { HUD_WIDTH, CURRENT_TIME, CURRENT_DAY, DAY_LENGTH };
+enum GameOption { HUD_WIDTH, CURRENT_TIME, CURRENT_DAY, DAY_LENGTH, CAMERA_LOCATION };
 
 const char *GamePropertyNames[];
 

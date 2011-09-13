@@ -10,11 +10,14 @@ class Tile
 {
 public:
 	Tile();
-	Tile(Pixel pix, int code, string name, bool passable = true);
+	Tile(Pixel pix, int code, string name, bool passable = true, bool transparent = true);
 	~Tile(void);
 
 	bool getPassable() { return mPassable; }
 	void setPassable(const bool &passable) { mPassable = passable; }
+
+	bool getTransparent() { return mTransparent; }
+	void setTransparent(bool transparent) { mTransparent = transparent; }
 
 	void setCode(const int &code) { mCode = code; }
 	int getCode() { return mCode; }
@@ -32,6 +35,7 @@ public:
 
 protected:
 	
+	bool mTransparent;
 	bool mPassable;
 	int mCode;
 	string mName;

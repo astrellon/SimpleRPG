@@ -17,8 +17,8 @@ namespace SimpleRPGMapEditor
 {
     public partial class MainView : Form
     {
-        private char[] mTiles = {'.', '^', ',', ';', '#', 'S', '~', '*'};
-        private Color[] mColors = { Color.Green, Color.DarkGreen, Color.LightGreen, Color.ForestGreen, Color.BurlyWood, Color.SandyBrown, Color.LightBlue, Color.Blue };
+        private char[] mTiles = {'.', '^', ',', ';', '#', 'S', '~', '*', 'R', 'r', 'T'};
+        private Color[] mColors = { Color.Green, Color.PaleGreen, Color.LightGreen, Color.ForestGreen, Color.BurlyWood, Color.SandyBrown, Color.LightBlue, Color.Blue, Color.Gray, Color.LightGray, Color.DarkGreen };
         private List<string> mMapList;
         private Dictionary<Color, char> mTileMap = new Dictionary<Color, char>();
         private Dictionary<char, Color> mColourMap = new Dictionary<char, Color>();

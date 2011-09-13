@@ -7,14 +7,16 @@ Tile Tile::UNKNOWN_TILE(Pixel('?', COLOR_MAGENTA, true), -1, "Bad tile code");
 Tile::Tile()
 {
 	setPassable(true);
+	setTransparent(true);
 	pixel.setColour(15);
 	pixel.graphic = ' ';
 	setName("Unnamed");
 }
 
-Tile::Tile(Pixel pix, int code, string name, bool passable)
+Tile::Tile(Pixel pix, int code, string name, bool passable, bool transparent)
 {
 	setPassable(passable);
+	setTransparent(transparent);
 	pixel = pix;
 	setCode(code);
 	setName(name);
@@ -41,7 +43,7 @@ void Tile::registerDefaults()
 	Tile::registerTile(tile);
 
 	// Tree or bush
-	tile = new Tile(Pixel('^', COLOR_GREEN, false), 1, "Trees", false);
+	tile = new Tile(Pixel('^', COLOR_GREEN, true), 1, "Trees", false);
 	Tile::registerTile(tile);
 
 	// Grass
@@ -66,5 +68,17 @@ void Tile::registerDefaults()
 
 	// Deep water
 	tile = new Tile(Pixel('~', COLOR_BLUE, false), 7, "Deep water", false);
+	Tile::registerTile(tile);
+
+	// Stone
+	tile = new Tile(Pixel('#', COLOR_WHITE, false), 8, "Stone", false, false);
+	Tile::registerTile(tile);
+
+	// Lime Stone
+	tile = new Tile(Pixel('#', COLOR_WHITE, true), 9, "Lime Stone", false, false);
+	Tile::registerTile(tile);
+
+	// Thick trees
+	tile = new Tile(Pixel('^', COLOR_GREEN, false), 10, "Thick Trees", false, false);
 	Tile::registerTile(tile);
 }

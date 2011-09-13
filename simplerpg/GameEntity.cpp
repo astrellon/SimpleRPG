@@ -28,6 +28,8 @@ GameEntity::GameEntity(Game *game)
 
 	mMenuLevel = 0;
 	mMaxMenuLevel = 2;
+
+	mLineOfSightRadius = 10.0f;
 }
 
 GameEntity::~GameEntity(void)

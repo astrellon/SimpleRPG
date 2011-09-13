@@ -6,7 +6,7 @@
 const char *Game::LOOK_FOR_TABLE[] = {"Animal", "Plant"};
 
 extern const char *GamePropertyNames[] = { "hud_width", "current_time", "current_day",
-	"day_length" };
+	"day_length", "camera_location" };
 
 Game *Game::CURRENT_GAME = NULL;
 
@@ -980,6 +980,7 @@ void Game::saveOptions(FormattedFile &file)
 	saveOption(CURRENT_TIME, file);
 	saveOption(CURRENT_DAY, file);
 	saveOption(DAY_LENGTH, file);
+	saveOption(CAMERA_LOCATION, file);
 }
 
 void Game::saveOption(const GameOption &option, FormattedFile &file)
@@ -997,6 +998,9 @@ void Game::saveOption(const GameOption &option, FormattedFile &file)
 		break;
 	case DAY_LENGTH:
 		file << GamePropertyNames[DAY_LENGTH] << ' ' << getDayLength() << '\n';
+		break;
+	case CAMERA_LOCATION:
+		file << GamePropertyNames[CAMERA_LOCATION] << ' ' << mScreenSize.getX() << ' ' << mScreenSize.getY() << '\n';
 		break;
 	default:
 		break;
@@ -1024,6 +1028,12 @@ void Game::loadOptions(string option, FormattedFileIterator &iter)
 	{
 		setDayLength(lexical_cast<float>(*iter));
 		++iter;
+	}
+	else if(iequals(option, GamePropertyNames[CAMERA_LOCATION]))
+	{
+		int x = lexical_cast<int>(*iter); ++iter;
+		int y = lexical_cast<int>(*iter); ++iter;
+		moveCamera(x, y);
 	}
 	else
 	{
@@ -1122,7 +1132,6 @@ RayResult Game::fireRay(const Vector2f &point, const float &direction, const flo
 
 void Game::findNearby(Vector2f origin, const float &radius, vector<GameEntity *> &results)
 {
-	//vector<GameEntity *> *results = new vector<GameEntity *>();
 	vector<GameEntity *> withinRadius;
 
 	for(EntityList::iterator iter = mEntities.begin(); iter != mEntities.end(); iter++)
@@ -1187,7 +1196,7 @@ void Game::bresenhamLine(float x1, float y1, float x2, float y2, WINDOW *wnd, co
 		{
 			return;
 		}
-		if (!t->getPassable())
+		if (!t->getTransparent())
 		{
 			result->point.x = x1;
 			result->point.y = y1;
@@ -1238,7 +1247,7 @@ void Game::bresenhamLine(float x1, float y1, float x2, float y2, WINDOW *wnd, co
 			{
 				t = map->getTile(x, y);
 			}
-			if(t != NULL && !t->getPassable())
+			if(t != NULL && !t->getTransparent())
 			{
 				result->point.x = steep ? y : x;
 				result->point.y = steep ? x : y;

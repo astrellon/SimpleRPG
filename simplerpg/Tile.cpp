@@ -47,7 +47,7 @@ void Tile::registerDefaults()
 	Tile::registerTile(tile);
 
 	// Grass
-	tile = new Tile(Pixel(',', COLOR_GREEN, true), 2, "Grass");
+	tile = new Tile(Pixel(',', COLOR_GREEN, false), 2, "Grass");
 	Tile::registerTile(tile);
 
 	// Tall grass
@@ -80,5 +80,9 @@ void Tile::registerDefaults()
 
 	// Thick trees
 	tile = new Tile(Pixel('^', COLOR_GREEN, false), 10, "Thick Trees", false, false);
+	Tile::registerTile(tile);
+
+	// Dirt
+	tile = new Tile(Pixel(',', COLOR_RED, false), 11, "Dirt");
 	Tile::registerTile(tile);
 }

@@ -89,7 +89,7 @@ public:
 
 	virtual float getAttackCooldown() { return mAttackCooldown; }
 
-	virtual void receiveDamage(float damage);
+	virtual void receiveDamage(float damage, GameEntity *from = NULL);
 
 	virtual void killAnimal();
 	virtual bool isDead() { return mHealth <= 0.0f; }
@@ -99,6 +99,9 @@ public:
 
 	virtual void setSpeciesAlignment(GameEntity *entity, const float &alignment);
 	virtual void setSpeciesAlignment(const string &species, const float &alignment);
+
+	virtual void changeSpeciesAlignment(GameEntity *entity, const float &alignment);
+	virtual void changeSpeciesAlignment(const string &species, const float &alignment);
 
 	virtual float getEntityThreat(Animal *entity);
 	virtual float getEntityThreat(GameEntity *entity);
@@ -134,6 +137,10 @@ protected:
 
 	vector<float> mEnergyUsage;
 	float mOldEnergyMultiplier;
+
+	vector<GameEntity *> mSurroundingEntities;
+	Destination mAttackedBy;
+	float mAttackedByCooldown;
 	
 	virtual float calculateKcalPerDay();
 	virtual bool isHungry();
@@ -142,6 +149,10 @@ protected:
 
 	virtual void doStateIdle(float dt) {}
 	virtual void moveAnimal(float dt);
+
+	virtual void dealWithThreats(float dt);
+
+	virtual GameEntity *findGreatestThreat();
 	
 	virtual void attackAnimal(Animal *target, float dt);
 	virtual void doActionEat(float dt);

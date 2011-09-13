@@ -52,7 +52,7 @@ void Destination::loadDestination(FormattedFileIterator &iter)
 	string typeCheck = *iter; ++iter;
 	if(typeCheck[0] == '@')
 	{
-		unsigned int following = lexical_cast<unsigned int>(*iter); ++iter;
+		int following = lexical_cast<int>(*iter); ++iter;
 		setEntityId(following);
 	}
 	else
@@ -79,6 +79,8 @@ void Destination::setEntity(GameEntity *entity)
 		mEntity = entity;
 		if(entity != NULL)
 			mEntityId = entity->getId();
+		else
+			mEntityId = -1;
 
 		mPathDirty = true;
 	}
@@ -94,7 +96,7 @@ GameEntity *Destination::getEntity()
 	return mEntity;
 }
 
-void Destination::setEntityId(const unsigned int &id)
+void Destination::setEntityId(const int &id)
 {
 	if(mEntity != NULL && mEntity->getId() == id)
 		return;
@@ -105,7 +107,7 @@ void Destination::setEntityId(const unsigned int &id)
 	mEntityId = id;
 	mPathDirty = true;
 }
-unsigned int Destination::getEntityId()
+int Destination::getEntityId()
 {
 	return mEntityId;
 }

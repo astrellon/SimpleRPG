@@ -33,8 +33,8 @@ public:
 	void setEntity(GameEntity *entity);
 	GameEntity *getEntity();
 
-	void setEntityId(const unsigned int &id);
-	unsigned int getEntityId();
+	void setEntityId(const int &id);
+	int getEntityId();
 
 	vector<Vector2f> getPath(Vector2f &startPosition);
 
@@ -47,7 +47,7 @@ protected:
 	bool mPathDirty;
 	Vector2f mLocation;
 	GameEntity *mEntity;
-	unsigned int mEntityId;
+	int mEntityId;
 	vector<Vector2f> mPath;
 
 	Vector2i mOldLocation;

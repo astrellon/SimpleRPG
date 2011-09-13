@@ -30,7 +30,7 @@ enum EntityProperty { ID, FACING, POSITION, DESTINATION, NAME, GRAPHIC, HEALTH,
 	STRENGTH, DEXTERITY, INTELLIGENCE, RUNNING_SPEED, WALKING_SPEED, TURNING_SPEED,
 	ENTITY_SIZE, ENTITY_MASS, DIET, DAMAGE_BASE, AMOUNT_EATEN, CURRENT_ACTION, 
 	ACTION_HISTORY, ATTACK_RATE, ATTACK_COOLDOWN, ENERGY, REST_ENERGY_PER_DAY, 
-	SPECIES, SPECIES_ALIGNMENT};
+	SPECIES, SPECIES_ALIGNMENT, SIGHT_RADIUS, ATTACKED_BY, ATTACKED_BY_COOLDOWN };
 
 const char *EntityPropertyNames[];
 
@@ -123,6 +123,9 @@ public:
 	virtual float getMass() { return mMass; }
 	virtual void  setMass(float mass) { mMass = mass; }
 
+	virtual float getLineOfSightRadius();
+	virtual void setLineOfSightRadius(float radius);
+
 	static int nextId() { return sId++; }
 	
 	void setId(unsigned int id);
@@ -152,6 +155,7 @@ protected:
 	float mHealth;
 	float mMaxHealth;
 	float mAmountEaten;
+	float mLineOfSightRadius;
 
 	float mSize;
 	float mMass;

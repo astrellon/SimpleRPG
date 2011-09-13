@@ -30,6 +30,10 @@ Animal::Animal(Game *game) : GameEntity(game)
 	mIntelligence = 1;
 
 	mMaxMenuLevel = 3;
+
+	mAttackedByCooldown = 0.0f;
+
+	mLineOfSightRadius = 10.0f;
 }
 
 Animal::~Animal(void)
@@ -193,6 +197,16 @@ void Animal::loadProperties(FormattedFileIterator &iter)
 		++iter;
 		mAttackCooldown = lexical_cast<float>(*iter); ++iter;
 	}
+	else if(iequals(propertyName, EntityPropertyNames[ATTACKED_BY_COOLDOWN]))
+	{
+		++iter;
+		mAttackedByCooldown = lexical_cast<float>(*iter); ++iter;
+	}
+	else if(iequals(propertyName, EntityPropertyNames[ATTACKED_BY]))
+	{
+		++iter;
+		mAttackedBy.setEntityId(lexical_cast<int>(*iter)); ++iter;
+	}
 	else if(iequals(propertyName, EntityPropertyNames[ENERGY]))
 	{
 		++iter;
@@ -249,6 +263,8 @@ void Animal::saveProperties(FormattedFile &file)
 	saveProperty(DAMAGE_BASE, file);
 	saveProperty(ATTACK_RATE, file);
 	saveProperty(ATTACK_COOLDOWN, file);
+	saveProperty(ATTACKED_BY, file);
+	saveProperty(ATTACKED_BY_COOLDOWN, file);
 	saveProperty(ENERGY, file);
 	saveProperty(REST_ENERGY_PER_DAY, file);
 	saveProperty(SPECIES_ALIGNMENT, file);
@@ -293,6 +309,12 @@ void Animal::saveProperty(const EntityProperty &propertyId, FormattedFile &file)
 		break;
 	case ATTACK_COOLDOWN:
 		file << EntityPropertyNames[ATTACK_COOLDOWN] << ' ' << getAttackCooldown() << '\n';
+		break;
+	case ATTACKED_BY:
+		file << EntityPropertyNames[ATTACKED_BY] << ' ' << mAttackedBy.getEntityId() << '\n';
+		break;
+	case ATTACKED_BY_COOLDOWN:
+		file << EntityPropertyNames[ATTACKED_BY_COOLDOWN] << ' ' << mAttackedByCooldown << '\n';
 		break;
 	case ENERGY:
 		file << EntityPropertyNames[ENERGY] << ' ' << getEnergy() << '\n';
@@ -341,8 +363,20 @@ void Animal::update(float dt)
 
 	mEnergyUsage.clear();
 
+	mAttackedByCooldown -= dt;
+	if(mAttackedByCooldown < 0.0f)
+	{
+		mAttackedByCooldown = 0.0f;
+		mAttackedBy.setEntity(NULL);
+	}
+
 	Action *action = getCurrentAction();
 	// If not in danger. Continue doing the same action.
+
+	mSurroundingEntities.clear();
+	getNearbyEntities(getLineOfSightRadius(), mSurroundingEntities);
+
+	dealWithThreats(dt);
 
 	switch(action->getAction())
 	{
@@ -374,6 +408,45 @@ void Animal::update(float dt)
 
 	mOldEnergyMultiplier = usageMultiplier;
 	changeEnergy(-getEnergyNeededPerDay() * usageMultiplier * dt / mGame->getDayLength());
+}
+
+void Animal::dealWithThreats(float dt)
+{
+	GameEntity *threat = findGreatestThreat();
+	if(threat == NULL || getEntityThreat(threat) < 1.0f)
+	{
+		return;
+	}
+
+	Action *action = getCurrentAction();
+	TargetAction *target = dynamic_cast<TargetAction *>(action);
+	if(target != NULL)
+	{
+		if(target->getTarget()->getEntity() == threat && target->getAction() == FLEE)
+		{
+			return;
+		}
+	}
+	target = new TargetAction(FLEE);
+	target->getTarget()->setEntity(threat);
+	setCurrentAction(target);
+}
+
+GameEntity *Animal::findGreatestThreat()
+{
+	GameEntity *greatest = NULL;
+	float greatestThreat = -100.0f;
+	for(vector<GameEntity *>::iterator iter = mSurroundingEntities.begin();
+		iter != mSurroundingEntities.end(); iter++)
+	{
+		float threat = getEntityThreat(*iter);
+		if (threat > greatestThreat)
+		{
+			greatestThreat = threat;
+			greatest = *iter;
+		}
+	}
+	return greatest;
 }
 
 void Animal::moveAnimal(float dt)
@@ -500,12 +573,18 @@ void Animal::attackAnimal(Animal *target, float dt)
 	while(mAttackCooldown <= 0.0f)
 	{
 		mAttackCooldown += 1.0f / getAttackRate();
-		target->receiveDamage(getAttackDamage());
+		target->receiveDamage(getAttackDamage(), this);
 	}
 }
 
-void Animal::receiveDamage(float damage)
+void Animal::receiveDamage(float damage, GameEntity *from)
 {
+	if(from != NULL)
+	{
+		mAttackedBy.setEntity(from);
+		mAttackedByCooldown = 100.0f;
+		changeSpeciesAlignment(from, -0.05f);
+	}
 	changeHealth(-damage);
 }
 
@@ -768,6 +847,16 @@ void Animal::setSpeciesAlignment(const string &species, const float &alignment)
 	mSpeciesAlignment[species] = alignment;
 }
 
+void Animal::changeSpeciesAlignment(GameEntity *entity, const float &alignment)
+{
+	changeSpeciesAlignment(entity->getSpecies(), alignment);
+}
+
+void Animal::changeSpeciesAlignment(const string &species, const float &alignment)
+{
+	mSpeciesAlignment[species] = getSpeciesAlignment(species) + alignment;
+}
+
 float Animal::getEntityThreat(Animal *entity)
 {
 	if (iequals(entity->getSpecies(), getSpecies()))
@@ -783,7 +872,13 @@ float Animal::getEntityThreat(Animal *entity)
 	int floatSign = (dietDiff < 0) ? -1 : 1;
 	total *= exp(floatSign * 4.0f * dietDiff * dietDiff);
 
-	return log10(total);
+	total = log10(total);
+
+	if(mAttackedBy.getEntity() == entity)
+	{
+		total *= 1.2f;
+	}
+	return total;
 }
 
 float Animal::getEntityThreat(GameEntity *entity) 

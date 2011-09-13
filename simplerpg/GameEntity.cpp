@@ -8,7 +8,8 @@ map<unsigned int, GameEntity *> GameEntity::sEntities;
 extern const char *EntityPropertyNames[] = { "id", "facing", "position", "destination", "name", "graphic",
 	"health", "strength", "dexterity", "intelligence", "running_speed", "walking_speed", "turning_speed",
 	"entity_size", "entity_mass", "diet", "damage_base", "amount_eaten", "current_action", "action_history",
-	"attack_rate", "attack_cooldown", "energy", "rest_energy_per_day", "species", "species_alignment" };
+	"attack_rate", "attack_cooldown", "energy", "rest_energy_per_day", "species", "species_alignment",
+	"sight_radius", "attacked_by", "attacked_by_cooldown" };
 
 GameEntity::GameEntity(Game *game)
 {
@@ -167,6 +168,7 @@ void GameEntity::saveProperties(FormattedFile &file)
 	saveProperty(ENTITY_SIZE, file);
 	saveProperty(ENTITY_MASS, file);
 	saveProperty(AMOUNT_EATEN, file);
+	saveProperty(SIGHT_RADIUS, file);
 	saveProperty(CURRENT_ACTION, file);
 	saveProperty(ACTION_HISTORY, file);
 }
@@ -201,6 +203,9 @@ void GameEntity::saveProperty(const EntityProperty &propertyId, FormattedFile &f
 		break;
 	case AMOUNT_EATEN:
 		file << EntityPropertyNames[AMOUNT_EATEN] << ' ' << getAmountEaten() << '\n';
+		break;
+	case SIGHT_RADIUS:
+		file << EntityPropertyNames[SIGHT_RADIUS] << ' ' << getLineOfSightRadius() << '\n';
 		break;
 	case CURRENT_ACTION:
 		file << EntityPropertyNames[CURRENT_ACTION] << '\n';
@@ -270,6 +275,10 @@ void GameEntity::loadProperties(FormattedFileIterator &iter)
 	else if(iequals(propertyName, EntityPropertyNames[AMOUNT_EATEN]))
 	{
 		mAmountEaten = lexical_cast<float>(*iter); ++iter;
+	}
+	else if(iequals(propertyName, EntityPropertyNames[AMOUNT_EATEN]))
+	{
+		setLineOfSightRadius(lexical_cast<float>(*iter)); ++iter;
 	}
 	else if(iequals(propertyName, EntityPropertyNames[CURRENT_ACTION]))
 	{
@@ -383,7 +392,7 @@ void GameEntity::displayActions(UIContainer &hud)
 	}
 	else if(mMenuLevel == 1)
 	{
-		float radius = 20.0f;
+		float radius = getLineOfSightRadius();
 		text << "<15>Nearby Entities</>:\n";
 		text << "<15>Radius</>:\t" << radius << '\n';
 
@@ -476,4 +485,15 @@ void GameEntity::getNearbyEntities(const float &radius, vector<GameEntity *> &re
 bool GameEntity::canSeeEntity(GameEntity *entity)
 {
 	return true;
+}
+
+float GameEntity::getLineOfSightRadius()
+{
+	// Potentially bring in time of day into affecting this.
+	return mLineOfSightRadius;
+}
+
+void GameEntity::setLineOfSightRadius(float radius)
+{
+	mLineOfSightRadius = radius;
 }

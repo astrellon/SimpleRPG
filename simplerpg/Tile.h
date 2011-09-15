@@ -28,6 +28,9 @@ public:
 	float getFoodValue() { return mFoodValue; }
 	void  setFoodValue(float value) { mFoodValue = value; }
 
+	float getMaxFoodValue() { return mMaxFoodValue; }
+	void  setMaxFoodValue(float value) { mMaxFoodValue = value; }
+
 	float getRegrowthRate() { return mRegrowthRate; }
 	void  setRegrowthRate(float rate) { mRegrowthRate = rate; }
 
@@ -50,6 +53,7 @@ protected:
 	string mName;
 
 	float mFoodValue;
+	float mMaxFoodValue;
 	float mRegrowthRate;
 
 	static map<int, Tile *> sTiles;

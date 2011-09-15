@@ -10,7 +10,7 @@
 
 #include "Tile.h"
 
-enum TileProperty { FOOD_VALUE, REGROWTH_VALUE };
+enum TileProperty { FOOD_VALUE, REGROWTH_VALUE, MAX_FOOD_VALUE };
 
 const char *TileDataPropertyNames[];
 
@@ -40,6 +40,16 @@ public:
 	}
 	void  changeFoodValue(float value) { setFoodValue(getFoodValue() + value); }
 
+	float getMaxFoodValue() { return mMaxFoodValue; }
+	void  setMaxFoodValue(float value)
+	{
+		if (mMaxFoodValue != value)
+		{
+			mMaxFoodValue = value;
+			mMaxFoodValueChanged = true;
+		}
+	}
+
 	float getRegrowthRate() { return mRegrowthRate; }
 	void  setRegrowthRate(float rate)
 	{
@@ -51,7 +61,9 @@ public:
 	}
 
 	bool getFoodValueChanged() { return mFoodValueChanged; }
+	bool getMaxFoodValueChanged() { return mMaxFoodValueChanged; }
 	bool getRegrowthRateChanged() { return mRegrowthRateChanged; }
+	
 
 	Tile *getTile() { return mTile; }
 	void setTile(Tile *tile) { mTile = tile; }
@@ -62,8 +74,10 @@ public:
 protected:
 	float mFoodValue;
 	float mRegrowthRate;
+	float mMaxFoodValue;
 
 	bool mFoodValueChanged;
+	bool mMaxFoodValueChanged;
 	bool mRegrowthRateChanged;
 	Tile *mTile;
 

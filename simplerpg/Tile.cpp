@@ -14,6 +14,7 @@ Tile::Tile()
 
 	setFoodValue(0.0f);
 	setRegrowthRate(0.0f);
+	setMaxFoodValue(0.0f);
 }
 
 Tile::Tile(Pixel pix, int code, string name, bool passable, bool transparent)
@@ -26,6 +27,7 @@ Tile::Tile(Pixel pix, int code, string name, bool passable, bool transparent)
 
 	setFoodValue(0.0f);
 	setRegrowthRate(0.0f);
+	setMaxFoodValue(0.0f);
 }
 
 Tile::~Tile(void)

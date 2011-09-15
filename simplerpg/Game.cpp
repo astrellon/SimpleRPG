@@ -128,6 +128,17 @@ void Game::setHudWidth(int width)
 	resize(mGameWidth, mGameHeight);
 }
 
+MapData *Game::getMapData(int x, int y)
+{
+	if (x < 0 || y < 0 || mMap == NULL || 
+		x >= mMap->getWidth() || y >= mMap->getHeight())
+	{
+		return NULL;
+	}
+
+	return &mMapData[x][y];
+}
+
 void Game::keyActions(const int key)
 {
 	mLastKey = key;
@@ -700,6 +711,16 @@ void Game::saveMap(string filename)
 		(*iter)->saveToFile(file);
 	}
 
+	file << "\n -- TileData\n";
+
+	for(int y = 0; y < gameMap->getHeight(); y++)
+	{
+		for(int x = 0; x < gameMap->getWidth(); x++)
+		{
+
+		}
+	}
+
 	file << "\n-- End";
 	mSaveCounter = 20;
 
@@ -721,6 +742,7 @@ void Game::loadMap(string filename)
 	static const int STATE_READ_ENTITIES = 3;
 	static const int STATE_END_OF_FILE = 4;
 	static const int STATE_OPTIONS = 5;
+	static const int STATE_MAP_DATA = 6;
 
 	vector<string> mapData;
 	int width = 0;
@@ -1280,14 +1302,3 @@ void Game::bresenhamLine(float x1, float y1, float x2, float y2, WINDOW *wnd, co
 
 	return;
 }
-/*
-bool Game::canSeePoint(const Vector2f &position, const Vector2f &target)
-{
-	RayResult cast;
-	bresenhamLine(position.x, position.y, target.x, target.y, NULL, '\0', &cast);
-	if(cast.point.x < 0 || cast.point.y < 0)
-	{
-		return true;
-	}
-	return false;
-}*/

@@ -33,6 +33,11 @@ class Animal;
 enum MenuLevel { MENU_MAIN, MENU_LOOK, MENU_FIND, MENU_QUIT, MENU_OPTIONS, MENU_RAY, MENU_NEAR };
 enum GameOption { HUD_WIDTH, CURRENT_TIME, CURRENT_DAY, DAY_LENGTH, CAMERA_LOCATION };
 
+typedef struct _MapData
+{
+	float foodValue;
+} MapData;
+
 const char *GamePropertyNames[];
 
 typedef struct _FindEntityResult
@@ -70,6 +75,9 @@ public:
 
 	Map *getMap() { return mMap; }
 	void setMap(Map *map) { mMap = map; }
+
+	MapData **getMapData() { return mMapData; }
+	MapData *getMapData(int x, int y);
 
 	void addEntity(GameEntity* entity);
 	void removeEntity(GameEntity* entity);
@@ -131,8 +139,6 @@ public:
 	virtual void drawLine(WINDOW *wnd, const char &c, const Vector2f &point, const float &direction, const float &length);
 	virtual void drawLine(WINDOW *wnd, float x1, float y1, float x2, float y2, const char &c);
 
-	//virtual bool canSeePoint(const Vector2f &position, const Vector2f &target);
-
 protected:
 	bool mRedisplay;
 	bool mGameRunning;
@@ -145,7 +151,11 @@ protected:
 
 	int mLastKey;
 
+	string mMapDataFilename;
+
 	Map *mMap;
+	MapData **mMapData;
+
 	Rect mScreenSize;
 	EntityList mEntities;
 	EntityList mUnderCursor;
@@ -175,6 +185,10 @@ protected:
 	// Used to display the "(Saved)" text in the menu when the game has been saved.
 	// Counts down to zero when the graphic will disappear.
 	int mSaveCounter;
+
+	bool compareString(const char *data, const string &str);
+
+	
 
 	void saveOptions(FormattedFile &file);
 	void saveOption(const GameOption &option, FormattedFile &file);

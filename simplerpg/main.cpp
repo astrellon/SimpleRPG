@@ -157,6 +157,10 @@ int main(int argc, char **argv)
 	ofstream logfile("logfile.log");
 	clog.rdbuf(logfile.rdbuf());
 
+	//Game gg(4, 4);
+	//cout << "Save Data: " << gg.saveMapData("map.data") << endl;
+	//cout << "Load Data: " << gg.loadMapData("map.data") << endl;
+
 	loadConfig("config.ini");
 
 	// If set from the command line, that file will be used to directly load

@@ -82,7 +82,9 @@
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)pdcurses.dll" "$(OutputPath)"
 copy "$(ProjectDir)map.txt" "$(OutputPath)"
+copy "$(ProjectDir)map1.txt" "$(OutputPath)"
 copy "$(ProjectDir)map2.txt" "$(OutputPath)"
+copy "$(ProjectDir)map.data" "$(OutputPath)"
 copy "$(ProjectDir)config.ini" "$(OutputPath)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -108,7 +110,9 @@ copy "$(ProjectDir)config.ini" "$(OutputPath)"</Command>
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)pdcurses.dll" "$(OutputPath)"
 copy "$(ProjectDir)map.txt" "$(OutputPath)"
+copy "$(ProjectDir)map1.txt" "$(OutputPath)"
 copy "$(ProjectDir)map2.txt" "$(OutputPath)"
+copy "$(ProjectDir)map.data" "$(OutputPath)"
 copy "$(ProjectDir)config.ini" "$(OutputPath)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -135,7 +139,9 @@ copy "$(ProjectDir)config.ini" "$(OutputPath)"</Command>
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)pdcurses.dll" "$(OutputPath)"
 copy "$(ProjectDir)map.txt" "$(OutputPath)"
+copy "$(ProjectDir)map1.txt" "$(OutputPath)"
 copy "$(ProjectDir)map2.txt" "$(OutputPath)"
+copy "$(ProjectDir)map.data" "$(OutputPath)"
 copy "$(ProjectDir)config.ini" "$(OutputPath)"</Command>
     </PostBuildEvent>
     <CustomBuildStep>

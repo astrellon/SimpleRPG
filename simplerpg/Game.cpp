@@ -60,6 +60,7 @@ Game::Game(int width, int height)
 	mHudWidth = 30;
 	
 	mMap = NULL;
+	mTileData = NULL;
 
 	mCursor = Vector2i(0, 0);
 	mCursorAngle = 0;
@@ -71,7 +72,6 @@ Game::Game(int width, int height)
 
 	mSelectedItem = NULL;
 
-	//mHud.scrollY(1);
 	mWholeHud.addChild(mWholeHudText);
 	mWholeHud.addChild(mHud);
 	mHud.addChild(mHudText);
@@ -128,7 +128,7 @@ void Game::setHudWidth(int width)
 	resize(mGameWidth, mGameHeight);
 }
 
-MapData *Game::getMapData(int x, int y)
+TileData *Game::getTileData(int x, int y)
 {
 	if (x < 0 || y < 0 || mMap == NULL || 
 		x >= mMap->getWidth() || y >= mMap->getHeight())
@@ -136,7 +136,7 @@ MapData *Game::getMapData(int x, int y)
 		return NULL;
 	}
 
-	return &mMapData[x][y];
+	return &mTileData[x][y];
 }
 
 void Game::keyActions(const int key)
@@ -711,14 +711,19 @@ void Game::saveMap(string filename)
 		(*iter)->saveToFile(file);
 	}
 
-	file << "\n -- TileData\n";
+	file << "\n-- TileData\n";
 
 	for(int y = 0; y < gameMap->getHeight(); y++)
 	{
 		for(int x = 0; x < gameMap->getWidth(); x++)
 		{
-
+			TileData *data = getTileData(x, y);
+			if(data != NULL)
+			{
+				data->saveToFile(file);
+			}
 		}
+		file << '\n';
 	}
 
 	file << "\n-- End";
@@ -743,6 +748,10 @@ void Game::loadMap(string filename)
 	static const int STATE_END_OF_FILE = 4;
 	static const int STATE_OPTIONS = 5;
 	static const int STATE_MAP_DATA = 6;
+	static const int STATE_TILE_DATA = 7;
+
+	vector<TileData> tileData;
+	TileData data;
 
 	vector<string> mapData;
 	int width = 0;
@@ -752,6 +761,8 @@ void Game::loadMap(string filename)
 
 	int state = STATE_EMPTY;
 	char c = '\0';
+
+	GameEntity *entity = NULL;
 
 	// Indicates that we want to change the current state of the file loader.
 	bool changeState = false;
@@ -810,6 +821,11 @@ void Game::loadMap(string filename)
 				state = STATE_OPTIONS;
 				clog << "Switch to reading options." << endl;
 			}
+			else if(iequals(line, "TileData"))
+			{
+				state = STATE_TILE_DATA;
+				clog << "Switch to reading tile data." << endl;
+			}
 			else
 			{
 				clog << "Unknown state " << line << endl;
@@ -831,8 +847,11 @@ void Game::loadMap(string filename)
 		{
 		default:
 		case STATE_EMPTY:
+
 			break;
+
 		case STATE_OPTIONS:
+
 			if(endState)
 			{
 				clog << "Finished reading options." << endl;
@@ -842,7 +861,9 @@ void Game::loadMap(string filename)
 			loadOptions(line, iter);
 
 			break;
+
 		case STATE_READ_TILES:
+
 			if(endState)
 			{
 				clog << "Tiles do nothing on end state." << endl;
@@ -860,7 +881,9 @@ void Game::loadMap(string filename)
 			}
 
 			break;
+
 		case STATE_READ_MAP:
+
 			if(endState)
 			{
 				clog << "Create map and add to game." << endl;
@@ -900,14 +923,16 @@ void Game::loadMap(string filename)
 			mapData.push_back(line);
 
 			break;
+
 		case STATE_READ_ENTITIES:
+
 			if(endState)
 			{
 				clog << "End state for entities." << endl;
 				break;
 			}
 
-			GameEntity *entity = GameEntityFactory::create(this, line);
+			entity = GameEntityFactory::create(this, line);
 			if(entity == NULL)
 			{
 				clog << "Error parsing entity " << line << endl;
@@ -920,8 +945,42 @@ void Game::loadMap(string filename)
 			}
 			
 			break;
+
+		case STATE_TILE_DATA:
+
+			if(endState)
+			{
+				clog << "End state for tile data." << endl;
+				break;
+			}
+
+			data = TileData();
+			data.loadFromFile(line, iter);
+			tileData.push_back(data);
+
+			break;
 		}
 		endState = false;
+	}
+
+	if(mTileData == NULL && mMap != NULL)
+	{
+		bool loadedTileData = !tileData.empty();
+		mTileData = new TileData*[mMap->getWidth()];
+		for(int x = 0; x < mMap->getWidth(); x++)
+		{
+			mTileData[x] = new TileData[mMap->getHeight()];
+			for(int y = 0; y < mMap->getHeight(); y++)
+			{
+				mTileData[x][y].setFromTile(mMap->getTile(x, y));
+				int index = x + y * mMap->getWidth();
+				if(loadedTileData && index < tileData.size())
+				{
+					mTileData[x][y].setFromLoaded(tileData[index]);
+					//clog << "Index: " << index << " (" << x << ',' << y << ") " << mTileData[x][y].getFoodValue() << endl;
+				}
+			}
+		}
 	}
 }
 
@@ -1150,7 +1209,6 @@ RayResult Game::fireRay(const Vector2f &point, const float &direction, const flo
 
 	return fireRay(Vector2f(x1, y1), Vector2f(x2, y2), length);
 }
-
 
 void Game::findNearby(Vector2f origin, const float &radius, vector<GameEntity *> &results)
 {

@@ -43,6 +43,15 @@ public:
 		return *mIter;
 	}
 
+	FormattedFileIterator &operator =(const FormattedFileIterator &iter)
+	{
+		mIter = iter.mIter;
+		fileStr = iter.fileStr;
+		mOpen = iter.mOpen;
+		mIgnoreComments = iter.mIgnoreComments;
+		return *this;
+	}
+
 protected:
 	boost::sregex_token_iterator mIter;
 	boost::sregex_token_iterator mEnd;

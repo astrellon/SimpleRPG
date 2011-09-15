@@ -4,6 +4,9 @@
 #include <string>
 #include "Pixel.h"
 
+#include "FormattedFile.h"
+#include "FormattedFileIterator.h"
+
 using namespace std;
 
 class Tile
@@ -22,6 +25,12 @@ public:
 	void setCode(const int &code) { mCode = code; }
 	int getCode() { return mCode; }
 
+	float getFoodValue() { return mFoodValue; }
+	void  setFoodValue(float value) { mFoodValue = value; }
+
+	float getRegrowthRate() { return mRegrowthRate; }
+	void  setRegrowthRate(float rate) { mRegrowthRate = rate; }
+
 	void setName(const string &name) { mName = name; }
 	string getName() { return mName; }
 
@@ -39,6 +48,9 @@ protected:
 	bool mPassable;
 	int mCode;
 	string mName;
+
+	float mFoodValue;
+	float mRegrowthRate;
 
 	static map<int, Tile *> sTiles;
 

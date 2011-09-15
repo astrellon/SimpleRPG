@@ -11,6 +11,9 @@ Tile::Tile()
 	pixel.setColour(15);
 	pixel.graphic = ' ';
 	setName("Unnamed");
+
+	setFoodValue(0.0f);
+	setRegrowthRate(0.0f);
 }
 
 Tile::Tile(Pixel pix, int code, string name, bool passable, bool transparent)
@@ -20,6 +23,9 @@ Tile::Tile(Pixel pix, int code, string name, bool passable, bool transparent)
 	pixel = pix;
 	setCode(code);
 	setName(name);
+
+	setFoodValue(0.0f);
+	setRegrowthRate(0.0f);
 }
 
 Tile::~Tile(void)

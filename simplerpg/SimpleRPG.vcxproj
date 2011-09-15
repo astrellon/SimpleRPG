@@ -169,6 +169,7 @@ copy "$(ProjectDir)config.ini" "$(OutputPath)"</Command>
     <ClCompile Include="Rect.cpp" />
     <ClCompile Include="TargetAction.cpp" />
     <ClCompile Include="Tile.cpp" />
+    <ClCompile Include="TileData.cpp" />
     <ClCompile Include="ui\UIComponent.cpp" />
     <ClCompile Include="ui\UIContainer.cpp" />
     <ClCompile Include="ui\UIList.cpp" />
@@ -200,6 +201,7 @@ copy "$(ProjectDir)config.ini" "$(OutputPath)"</Command>
     <ClInclude Include="resource.h" />
     <ClInclude Include="TargetAction.h" />
     <ClInclude Include="Tile.h" />
+    <ClInclude Include="TileData.h" />
     <ClInclude Include="ui\curses.h" />
     <ClInclude Include="ui\keyboard.h" />
     <ClInclude Include="ui\panel.h" />

@@ -37,7 +37,7 @@ void TileData::setFromLoaded(TileData &data)
 
 void TileData::setFromTile(Tile *tile)
 {
-	if(tile == NULL)
+	if (tile == NULL)
 	{
 		return;
 	}
@@ -50,17 +50,38 @@ void TileData::setFromTile(Tile *tile)
 	mRegrowthRateChanged = false;
 }
 
+void TileData::update(float dt)
+{
+	if (getFoodValue() < getMaxFoodValue() && getRegrowthRate() > 0.0f)
+	{
+		changeFoodValue(getRegrowthRate() * dt);
+	}
+
+	if (getFoodValue() > getMaxFoodValue())
+	{
+		setFoodValue(getMaxFoodValue());
+	}
+}
+
+void TileData::displayData(UIText &text)
+{
+	format fmt("<12>%.1f</>/<12>%.1f</>\n");
+	fmt % getFoodValue() % getMaxFoodValue();
+	text << "<15>Food</>:\t\t" << fmt.str();
+	text << "<15>Regrowth</>:\t" << getRegrowthRate() << '\n';
+}
+
 void TileData::saveToFile(FormattedFile &file)
 {
-	if(mTile == NULL || getFoodValue() != mTile->getFoodValue())
+	if (mTile == NULL || getFoodValue() != mTile->getFoodValue())
 	{
 		file << TileDataPropertyNames[FOOD_VALUE] << ' ' << getFoodValue() << ' ';
 	}
-	if(mTile == NULL || getRegrowthRate() != mTile->getRegrowthRate())
+	if (mTile == NULL || getRegrowthRate() != mTile->getRegrowthRate())
 	{
 		file << TileDataPropertyNames[REGROWTH_VALUE] << ' ' << getRegrowthRate() << ' ';
 	}
-	if(mTile == NULL || getMaxFoodValue() != mTile->getMaxFoodValue())
+	if (mTile == NULL || getMaxFoodValue() != mTile->getMaxFoodValue())
 	{
 		file << TileDataPropertyNames[MAX_FOOD_VALUE] << ' ' << getMaxFoodValue() << ' ';
 	}

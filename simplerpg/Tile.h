@@ -29,7 +29,14 @@ public:
 	void  setFoodValue(float value) { mFoodValue = value; }
 
 	float getMaxFoodValue() { return mMaxFoodValue; }
-	void  setMaxFoodValue(float value) { mMaxFoodValue = value; }
+	void  setMaxFoodValue(float value, bool updateFoodValue = true) 
+	{
+		mMaxFoodValue = value; 
+		if(updateFoodValue)
+		{
+			setFoodValue(value);
+		}
+	}
 
 	float getRegrowthRate() { return mRegrowthRate; }
 	void  setRegrowthRate(float rate) { mRegrowthRate = rate; }
@@ -57,6 +64,4 @@ protected:
 	float mRegrowthRate;
 
 	static map<int, Tile *> sTiles;
-
-	
 };

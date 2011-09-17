@@ -81,7 +81,11 @@ public:
 	void update(float dt);
 	void render(WINDOW *wnd);
 
-	void moveCamera(int dx, int dy);
+	void moveCamera(const int &dx, const int &dy);
+	void moveCamera(const Vector2i &diff);
+	void setCamera(const int &x, const int &y);
+	void setCamera(const Vector2i &pos);
+	Vector2i getCamera() { return Vector2i(mScreenSize.getX(), mScreenSize.getY()); }
 
 	void loadMap(string filename);
 	void saveMap(string filename);
@@ -90,9 +94,23 @@ public:
 	void setCursorMode(bool mode)
 	{
 		if(mode)
+		{
 			mUnderCursorDirty = true;
+		}
+
 		mCursorMode = mode;
 		mSelectedItem = NULL;
+
+		int screenX = mCursor.x - mScreenSize.getX();
+		int screenY = mCursor.y - mScreenSize.getY();
+
+		if (screenX < 2 || screenX > mScreenSize.getWidth() - 2||
+			screenY < 2 || screenY > mScreenSize.getHeight() - 2)
+		{
+			screenX = mScreenSize.getX() + mScreenSize.getWidth() / 2;
+			screenY = mScreenSize.getY() + mScreenSize.getHeight() / 2;
+			setCursorPosition(screenX, screenY);
+		}
 	}
 	Vector2i getCursorPosition() { return mCursor; }
 	void setCursorPosition(int xPos, int yPos);
@@ -184,13 +202,11 @@ protected:
 
 	bool compareString(const char *data, const string &str);
 
-	
-
 	void saveOptions(FormattedFile &file);
 	void saveOption(const GameOption &option, FormattedFile &file);
 	void loadOptions(string option, FormattedFileIterator &iter);
 
-	void renderChar(WINDOW *wnd, int x, int y, char c);
+	void renderChar(WINDOW *wnd, const int &x, const int &y, const char &c);
 
 	void switchKeyItem(IKeyActions *item, UIContainer &hud);
 

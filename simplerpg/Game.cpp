@@ -128,7 +128,7 @@ void Game::setHudWidth(int width)
 	resize(mGameWidth, mGameHeight);
 }
 
-TileData *Game::getTileData(int x, int y)
+inline TileData *Game::getTileData(int x, int y)
 {
 	if (x < 0 || y < 0 || mMap == NULL || 
 		x >= mMap->getWidth() || y >= mMap->getHeight())
@@ -186,14 +186,26 @@ void Game::keyActions(const int key)
 		if (key == 260)
 			cx--;
 		// Right
-		if (key == 261)
+		else if (key == 261)
 			cx++;
 		// Up
-		if (key == 259)
+		else if (key == 259)
 			cy--;
 		// Down
-		if (key == 258)
+		else if (key == 258)
 			cy++;
+		//  Shift Left
+		else if (key == 391)
+			cx -= 20;
+		//  Shift Right
+		else if (key == 400)
+			cx += 20;
+		//  Shift Up
+		else if (key == 547)
+			cy -= 20;
+		//  Shift Down
+		else if (key == 548)
+			cy += 20;
 
 		setCursorPosition(cx, cy);
 	}
@@ -525,6 +537,32 @@ void Game::setCursorPosition(int xPos, int yPos)
 	mCursor.x = xPos;
 	mCursor.y = yPos;
 
+	int cameraX = mScreenSize.getX();
+	int cameraY = mScreenSize.getY();
+
+	int screenX = mCursor.x - cameraX;
+	int screenY = mCursor.y - cameraY;
+
+	if(screenX < 10)
+	{
+		cameraX -= 10 - screenX;
+	}
+	else if(screenX > mScreenSize.getWidth() - 10)
+	{
+		cameraX += screenX - (mScreenSize.getWidth() - 10);
+	}
+
+	if(screenY < 10)
+	{
+		cameraY -= 10 - screenY;
+	}
+	else if(screenY > mScreenSize.getHeight() - 10)
+	{
+		cameraY += screenY - (mScreenSize.getHeight() - 10);
+	}
+
+	setCamera(cameraX, cameraY);
+
 	mUnderCursorDirty = true;
 }
 
@@ -578,6 +616,19 @@ void Game::removeEntity(GameEntity *entity)
 void Game::update(float dt)
 {
 	advanceTime(dt);
+
+	for(int y = 0; y < mMap->getHeight(); y++)
+	{
+		for(int x = 0; x < mMap->getWidth(); x++)
+		{
+			TileData *data = getTileData(x, y);
+			if(data != NULL)
+			{
+				data->update(dt);
+			}
+		}
+	}
+
 	for(vector<GameEntity *>::iterator iter = mEntities.begin(); iter != mEntities.end(); iter++)
 	{
 		(*iter)->update(dt);
@@ -592,6 +643,11 @@ void Game::displayUnderCursor(UIContainer &hud)
 	if(tile != NULL)
 	{
 		mHudText << "<15>Tile:</> " << tile->getName() << '\n';
+		TileData *data = getTileData(mCursor.x, mCursor.y);
+		if(data != NULL)
+		{
+			data->displayData(mHudText);
+		}
 	}
 
 	int num = 1;
@@ -639,7 +695,7 @@ void Game::render(WINDOW *wnd)
 	mWholeHud.render();
 }
 
-void Game::renderChar(WINDOW *wnd, int x, int y, char c)
+void Game::renderChar(WINDOW *wnd, const int &x, const int &y, const char &c)
 {
 	int xPos = x - mScreenSize.getX();
 	int yPos = y - mScreenSize.getY();
@@ -655,10 +711,26 @@ void Game::renderChar(WINDOW *wnd, int x, int y, char c)
 	}
 }
 
-void Game::moveCamera(int dx, int dy)
+void Game::moveCamera(const int &dx, const int &dy)
 {
 	mScreenSize.setX(mScreenSize.getX() + dx);
 	mScreenSize.setY(mScreenSize.getY() + dy);
+}
+
+void Game::moveCamera(const Vector2i &diff)
+{
+	moveCamera(diff.x, diff.y);
+}
+
+void Game::setCamera(const int &x, const int &y)
+{
+	mScreenSize.setX(x);
+	mScreenSize.setY(y);
+}
+
+void Game::setCamera(const Vector2i &pos)
+{
+	setCamera(pos.x, pos.y);
 }
 
 vector<Vector2f> *Game::findPath(Vector2i startPosition, Vector2i endPosition)

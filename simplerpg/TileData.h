@@ -7,8 +7,13 @@
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/format.hpp>
+
+#include "ui/ui.hpp"
 
 #include "Tile.h"
+
+using boost::format;
 
 enum TileProperty { FOOD_VALUE, REGROWTH_VALUE, MAX_FOOD_VALUE };
 
@@ -29,8 +34,8 @@ public:
 	void saveToFile(FormattedFile &file);
 	void loadFromFile(string line, FormattedFileIterator &iter);
 
-	float getFoodValue() { return mFoodValue; }
-	void  setFoodValue(float value)
+	inline float getFoodValue() { return mFoodValue; }
+	inline void  setFoodValue(float value)
 	{
 		if (mFoodValue != value)
 		{
@@ -38,10 +43,10 @@ public:
 			mFoodValueChanged = true;
 		}
 	}
-	void  changeFoodValue(float value) { setFoodValue(getFoodValue() + value); }
+	inline void  changeFoodValue(float value) { setFoodValue(getFoodValue() + value); }
 
-	float getMaxFoodValue() { return mMaxFoodValue; }
-	void  setMaxFoodValue(float value)
+	inline float getMaxFoodValue() { return mMaxFoodValue; }
+	inline void  setMaxFoodValue(float value)
 	{
 		if (mMaxFoodValue != value)
 		{
@@ -50,8 +55,8 @@ public:
 		}
 	}
 
-	float getRegrowthRate() { return mRegrowthRate; }
-	void  setRegrowthRate(float rate)
+	inline float getRegrowthRate() { return mRegrowthRate; }
+	inline void  setRegrowthRate(float rate)
 	{
 		if (mRegrowthRate != rate)
 		{
@@ -60,13 +65,16 @@ public:
 		}
 	}
 
-	bool getFoodValueChanged() { return mFoodValueChanged; }
-	bool getMaxFoodValueChanged() { return mMaxFoodValueChanged; }
-	bool getRegrowthRateChanged() { return mRegrowthRateChanged; }
+	inline bool getFoodValueChanged() { return mFoodValueChanged; }
+	inline bool getMaxFoodValueChanged() { return mMaxFoodValueChanged; }
+	inline bool getRegrowthRateChanged() { return mRegrowthRateChanged; }
 	
+	inline Tile *getTile() { return mTile; }
+	inline void setTile(Tile *tile) { mTile = tile; }
 
-	Tile *getTile() { return mTile; }
-	void setTile(Tile *tile) { mTile = tile; }
+	void update(float dt);
+
+	void displayData(UIText &text);
 
 	void setFromTile(Tile *tile);
 	void setFromLoaded(TileData &data);

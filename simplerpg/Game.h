@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <queue>
 #include <map>
 
 #include <boost/regex.hpp>
@@ -23,6 +24,7 @@
 using std::vector;
 using std::string;
 using std::map;
+using std::queue;
 
 using boost::math::round;
 using boost::algorithm::iequals;
@@ -31,7 +33,7 @@ using boost::lexical_cast;
 class GameEntity;
 class Animal;
 
-enum MenuLevel { MENU_MAIN, MENU_LOOK, MENU_FIND, MENU_QUIT, MENU_OPTIONS, MENU_RAY, MENU_NEAR };
+enum MenuLevel { MENU_MAIN, MENU_LOOK, MENU_FIND, MENU_QUIT, MENU_OPTIONS, MENU_RAY, MENU_NEAR, MENU_FOOD };
 enum GameOption { HUD_WIDTH, CURRENT_TIME, CURRENT_DAY, DAY_LENGTH, CAMERA_LOCATION };
 
 const char *GamePropertyNames[];
@@ -70,10 +72,22 @@ public:
 	int getHudWidth() { return mHudWidth; }
 
 	Map *getMap() { return mMap; }
-	void setMap(Map *map) { mMap = map; }
+	void setMap(Map *map)
+	{
+		mMap = map;
+		if(map != NULL)
+		{
+			mCheckedTiles = new bool*[map->getWidth()];
+			for(int x = 0; x < map->getWidth(); x++)
+			{
+				mCheckedTiles[x] = new bool[map->getHeight()];
+			}
+		}
+	}
 
 	TileData **getTileData() { return mTileData; }
-	TileData *getTileData(int x, int y);
+	TileData *getTileData(const int &x, const int &y);
+	TileData *getTileData(const Vector2i &position);
 
 	void addEntity(GameEntity* entity);
 	void removeEntity(GameEntity* entity);
@@ -126,6 +140,8 @@ public:
 	FindEntityResult findClosestEntity(Vector2f startPosition, const string &entityType);
 	FindEntityResult findClosestEntity(Vector2f startPosition, const string &entityType, const GameEntity *ignore);
 	vector<Vector2f> *findPath(Vector2i startPosition, Vector2i endPosition);
+
+	Vector2i findClosestTileWithFood(Vector2i position, float facing = 0.0f);
 
 	virtual bool getGameRunning() { return mGameRunning; }
 	virtual bool getGamePaused() { return mGamePaused; }
@@ -185,6 +201,8 @@ protected:
 	UIList mHud;
 	UIText mHudText;
 
+	bool **mCheckedTiles;
+
 	MenuLevel mMenuLevel;
 	Vector2i mCursor;
 	int mCursorAngle;
@@ -195,6 +213,8 @@ protected:
 	float mCurrentTime;
 	int mCurrentDay;
 	float mDayLength;
+
+	Vector2i mDebugPosition;
 
 	// Used to display the "(Saved)" text in the menu when the game has been saved.
 	// Counts down to zero when the graphic will disappear.
@@ -213,4 +233,8 @@ protected:
 	void bresenhamLine(float x1, float y1, float x2, float y2, WINDOW *wnd, const char &c, RayResult *result);
 
 	static const char *LOOK_FOR_TABLE[];
+
+private:
+
+	void checkAdjacentTile(const int &x, const int &y, queue<Vector2i> &openList);
 };

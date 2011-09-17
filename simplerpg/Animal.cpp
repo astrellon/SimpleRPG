@@ -643,6 +643,7 @@ void Animal::doActionAttack(float dt)
 			}
 			else
 			{
+				// Plants cannot be attacked.
 				action->setCompleted(true);
 				setCurrentAction(new TargetAction(IDLE));
 			}
@@ -673,21 +674,30 @@ void Animal::doActionEat(float dt)
 
 	if(action->getStep() == 0)
 	{
-		FindEntityResult result;
-		if(getDiet() < 0.5f)
+		
+		/*if(getDiet() < 0.5f)
 		{
 			result = mGame->findClosestEntity(getPosition(), "Plant", this);
 		}
 		else if(getDiet() >= 0.5f)
 		{
 			result = mGame->findClosestEntity(getPosition(), "Animal", this);
-		}
-
-		if(result.entity != NULL && result.path != NULL)
+		}*/
+		if(getDiet() < 0.5f)
 		{
-			action->getTarget()->setEntity(result.entity);
-			result.clear();
-			action->nextStep();
+			
+		}
+		else
+		{
+			FindEntityResult result;
+			result = mGame->findClosestEntity(getPosition(), "Animal", this);
+
+			if(result.entity != NULL && result.path != NULL)
+			{
+				action->getTarget()->setEntity(result.entity);
+				result.clear();
+				action->nextStep();
+			}
 		}
 	}
 	else if(action->getStep() == 1)
@@ -785,9 +795,7 @@ float Animal::calculateKcalPerDay()
 
 bool Animal::isHungry()
 {
-	float kcalday = calculateKcalPerDay();
-	float diff = kcalday - getEnergy();
-	return diff < kcalday * 0.5f;
+	return getEnergy() < calculateKcalPerDay() * 0.4f;
 }
 
 void Animal::changeHealth(float health)

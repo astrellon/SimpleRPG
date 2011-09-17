@@ -89,6 +89,8 @@ Game::Game(int width, int height)
 	mCurrentDay = 0;
 	mDayLength = 600.0f;
 
+	mCheckedTiles = NULL;
+
 	mLastKey = -1;
 }
 
@@ -128,7 +130,7 @@ void Game::setHudWidth(int width)
 	resize(mGameWidth, mGameHeight);
 }
 
-inline TileData *Game::getTileData(int x, int y)
+inline TileData *Game::getTileData(const int &x, const int &y)
 {
 	if (x < 0 || y < 0 || mMap == NULL || 
 		x >= mMap->getWidth() || y >= mMap->getHeight())
@@ -137,6 +139,11 @@ inline TileData *Game::getTileData(int x, int y)
 	}
 
 	return &mTileData[x][y];
+}
+
+inline TileData *Game::getTileData(const Vector2i &position)
+{
+	return getTileData(position.x, position.y);
 }
 
 void Game::keyActions(const int key)
@@ -280,6 +287,13 @@ void Game::keyActions(const int key)
 		if (key == 'n')
 		{
 			mMenuLevel = MENU_NEAR;
+			setCursorMode(true);
+			setGamePaused(true);
+		}
+
+		if (key == 'f')
+		{
+			mMenuLevel = MENU_FOOD;
 			setCursorMode(true);
 			setGamePaused(true);
 		}
@@ -428,12 +442,25 @@ void Game::keyActions(const int key)
 			mCursorLength = 0;
 		}
 		break;
+
+	case MENU_FOOD:
+		if (key == 27)
+		{
+			mMenuLevel = MENU_MAIN;
+			setCursorMode(false);
+			setGamePaused(false);
+		}
+
+		break;
 	}
 }
 
 void Game::displayActions()
 {
 	mHudText.clearText();
+
+	vector<GameEntity *> results;
+	TileData *closestFood = NULL;
 	
 	switch (mMenuLevel)
 	{
@@ -454,6 +481,7 @@ void Game::displayActions()
 
 		mHudText << "<11>r</>: Ray tester.\n";
 		mHudText << "<11>n</>: Nearby tester.\n";
+		mHudText << "<11>f</>: Nearest food tile.\n";
 		
 		mHudText << "\n<11>q</>: Quit.\n";
 
@@ -507,11 +535,11 @@ void Game::displayActions()
 		break;
 
 	case MENU_NEAR:
+
 		mHudText << "<15>Nearby Test Menu:</>\n\n";
 		mHudText << "<15>Position</>:\t(" << mCursor.toString(12) << ")\n";
 		mHudText << "<15>Radius</>:\t\t<12>" << mCursorLength << "</>\n";
 
-		vector<GameEntity *> results;
 		findNearby(mCursor, mCursorLength, results);
 
 		mHudText << "<15>Results</>:\t" << results.size() << "\n\n";
@@ -520,6 +548,25 @@ void Game::displayActions()
 			GameEntity *entity = results[i];
 			mHudText << "<12>" << i << "</>: " << entity->getEntityName() << " (" << entity->getSpecies() << ")\n";
 		}
+
+	case MENU_FOOD:
+
+		mHudText << "<15>Closest tile with food:</>\n\n";
+		mHudText << "<15>Position</>:\t(" << mCursor.toString(12) << ")\n\n";
+
+		mDebugPosition = findClosestTileWithFood(mCursor);
+		closestFood = getTileData(mDebugPosition);
+		if(closestFood != NULL)
+		{
+			mHudText << "<15>Tile</>:\t" << closestFood->getTile()->getName() << '\n'; 
+			closestFood->displayData(mHudText);
+		}
+		else
+		{
+			mHudText << "None Found\n";
+		}
+
+		break;
 	}
 }
 
@@ -686,6 +733,13 @@ void Game::render(WINDOW *wnd)
 		renderChar(wnd, result.point.x, result.point.y, '*');
 	}
 
+	if(mMenuLevel == MENU_FOOD)
+	{
+		wattron(wnd, COLOR_PAIR(8));
+		wattron(wnd, A_BOLD);
+		renderChar(wnd, mDebugPosition.x, mDebugPosition.y, '$');
+	}
+
 	mWholeHudText.clearText();
 	mWholeHudText << "<15>Current Day: </>" << getCurrentDay() << '\n';
 	mWholeHudText << "<15>Current Time: </>" << getCurrentTimeString() << '\n';
@@ -736,6 +790,69 @@ void Game::setCamera(const Vector2i &pos)
 vector<Vector2f> *Game::findPath(Vector2i startPosition, Vector2i endPosition)
 {
 	return getMap()->search(startPosition, endPosition);
+}
+
+inline void Game::checkAdjacentTile(const int &x, const int &y, queue<Vector2i> &openList)
+{
+	if(x < mMap->getWidth() && !mCheckedTiles[x][y])
+	{
+		Tile *tile = mMap->getTile(x, y);
+		if(tile != NULL && tile->getPassable())
+		{
+			mCheckedTiles[x][y] = true;
+			openList.push(Vector2i(x, y));
+		}
+	}
+}
+
+Vector2i Game::findClosestTileWithFood(Vector2i position, float facing)
+{
+	if (position.x < 0 || position.y < 0 || 
+		position.x >= mMap->getWidth() || position.y >= mMap->getHeight())
+	{
+		return Vector2i(-1, -1);
+	}
+	
+	for(int x = 0; x < mMap->getWidth(); x++)
+	{
+		for(int y = 0; y < mMap->getHeight(); y++)
+		{
+			mCheckedTiles[x][y] = false;
+		}
+	}
+	
+	queue<Vector2i> openList;
+	openList.push(position);
+	mCheckedTiles[position.x][position.y] = true;
+	Vector2i result(-1, -1);
+	
+	while(!openList.empty())
+	{
+		Vector2i current = openList.front();
+		openList.pop();
+
+		TileData *data = getTileData(current);
+
+		float minValue = max(5, data->getMaxFoodValue() * 0.1f);
+		if(data->getFoodValue() > 0 && data->getFoodValue() > minValue)
+		{
+			result = current;
+			break;
+		}
+		else
+		{
+			// Right
+			checkAdjacentTile(current.x + 1, current.y, openList);
+			// Down
+			checkAdjacentTile(current.x, current.y + 1, openList);
+			// Left
+			checkAdjacentTile(current.x - 1, current.y, openList);
+			// Up
+			checkAdjacentTile(current.x, current.y - 1, openList);
+		}
+	}
+
+	return result;
 }
 
 void Game::saveMap(string filename)

@@ -30,12 +30,13 @@ Rdddr.....^^...^,,,,,^^TTR
 Rrrrr..ww~~~~^.,,,,,,^^TTR
 Rdddr.w~***~~w.,,,,,,,^^TR
 Rdwwww~*****~w..,,,,#d###R
-Rdw~*****~~w....^,,,d;;;;R
-R..ww~~~ww...~~TT^,;#;;;;R
-R^.........~~~~~TT^^#;;;;R
+Rdw~*****~~w....^,,,dddddR
+R..ww~~~ww...~~TT^,;#ddddR
+R^.........~~~~~TT^^#ddddR
 RRRRRRRRRRRRRRRRRRRRRRRRRR
 
 -- Entities
+/*
 Animal
 	id 0
 	species "Wolf"
@@ -81,7 +82,7 @@ Animal
 		"Shrubbery" 0.1
 	end
 end
-
+*/
 Animal
 	id 1
 	species "Rabbit"
@@ -107,6 +108,7 @@ Animal
 	turning_speed 2.6
 	entity_size 0.3
 	entity_mass 0.8
+	REST_ENERGY_PER_DAY 10
 	diet 0.1
 	damage_base 1
 	attack_rate 1.2

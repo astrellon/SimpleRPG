@@ -19,7 +19,7 @@ using boost::algorithm::iequals;
 using boost::lexical_cast;
 
 enum EntityAction { IDLE, EAT, FLEE, ATTACK, SLEEP, BREED, MAX_ID };
-enum ActionProperty { ACTION, COMPLETE, STEP, TARGET };
+enum ActionProperty { ACTION, COMPLETED, STEP, TARGET, COMPLETED_TIME };
 
 class Action
 {
@@ -33,6 +33,15 @@ public:
 
 	virtual bool getCompleted() { return mCompleted; }
 	virtual void setCompleted(bool completed) { mCompleted = completed; }
+	
+	virtual string getCompletedTime() { return mCompletedTime; }
+	virtual void setCompletedTime(string time) { mCompletedTime = time; }
+
+	virtual void setCompleted(bool completed, string time) 
+	{
+		setCompleted(completed); 
+		setCompletedTime(time); 
+	}
 
 	virtual int getStep() { return mStep; }
 	virtual void setStep(int step) { mStep = (step > 0 ? step : 0); }
@@ -58,6 +67,7 @@ protected:
 	EntityAction mAction;
 	bool mCompleted;
 	int mStep;
+	string mCompletedTime;
 
 	virtual void init();
 

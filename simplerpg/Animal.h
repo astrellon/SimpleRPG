@@ -13,6 +13,17 @@ using namespace std;
 
 typedef map<string, float> SpeciesAlignment;
 
+#define loadProp(name, func, type)	\
+	if(iequals(propertyName, EntityPropertyNames[name])) { \
+	++iter;							\
+	func(lexical_cast<type>(*iter));\
+	++iter; }
+
+#define saveProp(name, func)	\
+	case name:					\
+		file << EntityPropertyNames[name] << ' ' << func() << '\n';	\
+		break;
+
 class Game;
 
 class Animal : public GameEntity
@@ -36,8 +47,8 @@ public:
 	virtual float getWalkingSpeedBase() { return mWalkingSpeed; }
 	virtual void  setWalkingSpeedBase(float speed) { mWalkingSpeed = speed; }
 
-	virtual bool getWalking() { return mWalking; }
-	virtual void setWalking(bool walking) { mWalking = walking; }
+	virtual bool  getWalking() { return mWalking; }
+	virtual void  setWalking(bool walking) { mWalking = walking; }
 
 	virtual float getCurrentSpeed() { return getWalking() ? getWalkingSpeed() : getRunningSpeed(); }
 
@@ -62,15 +73,28 @@ public:
 
 	virtual string getEntityType() { return "Animal"; }
 
-	virtual void eatPlant(Plant *plant);
-	virtual void eatAnimal(Animal *animal);
+	virtual void  eatPlant(Plant *plant);
+	virtual void  eatAnimal(Animal *animal);
 
 	virtual float getEnergyNeededPerDay() { return mEnergyNeededPerDay; }
 	virtual void  setEnergyNeededPerDay(float energy) { mEnergyNeededPerDay = energy; }
 	
 	virtual float getEnergy() { return mEnergy; }
-	virtual void  setEnergy(float energy) { mEnergy = energy; }
+	virtual void  setEnergy(float energy) 
+	{
+		if (energy < 0.0f)
+		{
+			energy = 0.0f;
+		}
+		mEnergy = energy; 
+	}
 	virtual void  changeEnergy(float energy) { setEnergy(getEnergy() + energy); }
+
+	virtual float getHungerLowerLimit() { return mHungerLowerLimit; }
+	virtual void  setHungerLowerLimit(float limit) { mHungerLowerLimit = limit; }
+
+	virtual float getHungerUpperLimit() { return mHungerUpperLimit; }
+	virtual void  setHungerUpperLimit(float limit) { mHungerUpperLimit = limit; }
 
 	virtual float getHealth() { return mHealth; }
 	virtual void  setHealth(float health);
@@ -88,20 +112,27 @@ public:
 	virtual void  setAttackRate(float rate) { mAttackRate = rate; }
 
 	virtual float getAttackCooldown() { return mAttackCooldown; }
+	virtual void  setAttackCooldown(float cooldown) { mAttackCooldown = cooldown; }
 
-	virtual void receiveDamage(float damage, GameEntity *from = NULL);
+	virtual float getAttackedByCooldown() { return mAttackedByCooldown; }
+	virtual void  setAttackedByCooldown(float cooldown) { mAttackedByCooldown = cooldown; }
 
-	virtual void killAnimal();
-	virtual bool isDead() { return mHealth <= 0.0f; }
+	virtual float getHungerDamageCooldown() { return mHungerDamageCooldown; }
+	virtual void  setHungerDamageCooldown(float cooldown) { mHungerDamageCooldown = cooldown; }
+
+	virtual void  receiveDamage(float damage, GameEntity *from = NULL);
+
+	virtual void  killAnimal();
+	virtual bool  isDead() { return mHealth <= 0.0f; }
 
 	virtual float getSpeciesAlignment(GameEntity *entity);
 	virtual float getSpeciesAlignment(const string &species);
 
-	virtual void setSpeciesAlignment(GameEntity *entity, const float &alignment);
-	virtual void setSpeciesAlignment(const string &species, const float &alignment);
+	virtual void  setSpeciesAlignment(GameEntity *entity, const float &alignment);
+	virtual void  setSpeciesAlignment(const string &species, const float &alignment);
 
-	virtual void changeSpeciesAlignment(GameEntity *entity, const float &alignment);
-	virtual void changeSpeciesAlignment(const string &species, const float &alignment);
+	virtual void  changeSpeciesAlignment(GameEntity *entity, const float &alignment);
+	virtual void  changeSpeciesAlignment(const string &species, const float &alignment);
 
 	virtual float getEntityThreat(Animal *entity);
 	virtual float getEntityThreat(GameEntity *entity);
@@ -121,8 +152,11 @@ protected:
 	float mDamageBase;
 	float mAttackRate;
 	float mAttackCooldown;
-
+	
 	float mHunger;
+	float mHungerLowerLimit;
+	float mHungerUpperLimit;
+	float mHungerDamageCooldown;
 
 	float mStrength;
 	float mDexterity;
@@ -143,9 +177,10 @@ protected:
 	float mAttackedByCooldown;
 	
 	virtual float calculateKcalPerDay();
-	virtual bool isHungry();
+	virtual bool isHungry(bool useUpperLimit = false);
 	
 	virtual void eatEntity(GameEntity *entity);
+	virtual bool eatTile(TileData *data, float dt);
 
 	virtual void doStateIdle(float dt) {}
 	virtual void moveAnimal(float dt);

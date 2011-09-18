@@ -35,6 +35,7 @@ R..ww~~~ww...~~TT^,;#ddddR
 R^.........~~~~~TT^^#ddddR
 RRRRRRRRRRRRRRRRRRRRRRRRRR
 
+
 -- Entities
 /*
 Animal
@@ -47,20 +48,20 @@ Animal
 	current_action
 	TargetAction
 		action Attack
-		complete 0
+		completed 0
 		step 0
 		target @ 1
 	end
 	action_history
 		TargetAction
 			action Attack
-			complete 1
+			completed 1
 			step 3
 			target @ 2
 		end
 		Action
 			action Eat
-			complete 1
+			completed 1
 			step 6
 		end
 	end
@@ -93,7 +94,7 @@ Animal
 	current_action
 	Action
 		action Idle
-		complete 0
+		completed 0
 		step 2
 	end
 	action_history
@@ -108,7 +109,9 @@ Animal
 	turning_speed 2.6
 	entity_size 0.3
 	entity_mass 0.8
-	REST_ENERGY_PER_DAY 10
+	rest_energy_per_day 50
+	hunger_lower_limit 0.4
+	hunger_upper_limit 0.8
 	diet 0.1
 	damage_base 1
 	attack_rate 1.2
@@ -124,7 +127,7 @@ Plant
 	current_action
 	Action
 		action Idle
-		complete 0
+		completed 0
 		step 0
 	end
 	action_history
@@ -142,7 +145,7 @@ Plant
 	current_action
 	Action
 		action Idle
-		complete 0
+		completed 0
 		step 0
 	end
 	action_history

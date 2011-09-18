@@ -109,3 +109,14 @@ void TileData::loadFromFile(string line, FormattedFileIterator &iter)
 		++iter;
 	}
 }
+
+float TileData::eatTile(float amountWanted)
+{
+	if(getFoodValue() < amountWanted)
+	{
+		amountWanted = getFoodValue();
+	}
+
+	changeFoodValue(-amountWanted);
+	return amountWanted;
+}

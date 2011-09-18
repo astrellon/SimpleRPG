@@ -76,6 +76,8 @@ public:
 
 	void displayData(UIText &text);
 
+	float eatTile(float amountWanted);
+
 	void setFromTile(Tile *tile);
 	void setFromLoaded(TileData &data);
 

@@ -141,7 +141,7 @@ public:
 	FindEntityResult findClosestEntity(Vector2f startPosition, const string &entityType, const GameEntity *ignore);
 	vector<Vector2f> *findPath(Vector2i startPosition, Vector2i endPosition);
 
-	Vector2i findClosestTileWithFood(Vector2i position, float facing = 0.0f);
+	Vector2i findClosestTileWithFood(Vector2i position);
 
 	virtual bool getGameRunning() { return mGameRunning; }
 	virtual bool getGamePaused() { return mGamePaused; }
@@ -158,7 +158,7 @@ public:
 	virtual float getDayLength() { return mDayLength; }
 	virtual void  setDayLength(float length) { mDayLength = length; }
 
-	virtual string getCurrentTimeString();
+	virtual string getCurrentTimeString(bool includeDay = false);
 
 	static Game *CURRENT_GAME;
 

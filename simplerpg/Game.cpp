@@ -805,7 +805,7 @@ inline void Game::checkAdjacentTile(const int &x, const int &y, queue<Vector2i> 
 	}
 }
 
-Vector2i Game::findClosestTileWithFood(Vector2i position, float facing)
+Vector2i Game::findClosestTileWithFood(Vector2i position)
 {
 	if (position.x < 0 || position.y < 0 || 
 		position.x >= mMap->getWidth() || position.y >= mMap->getHeight())
@@ -1333,16 +1333,26 @@ void Game::advanceTime(float dt)
 	setCurrentTime(getCurrentTime() + dt); 
 }
 
-string Game::getCurrentTimeString()
+string Game::getCurrentTimeString(bool includeDay)
 {
 	float div = getCurrentTime() * 24 / getDayLength();
 	int hours = (int)div;
 	int minutes = (int)((div - (float)hours) * 60);
 
-	format fmt("%02u:%02u");
-	fmt % hours % minutes;
+	if(includeDay)
+	{
+		format fmt("%u %02u:%02u");
+		fmt % getCurrentDay() % hours % minutes;
 
-	return fmt.str();
+		return fmt.str();
+	}
+	else
+	{
+		format fmt("%02u:%02u");
+		fmt % hours % minutes;
+
+		return fmt.str();
+	}
 }
 
 RayResult Game::fireRay(const Vector2f &point, const Vector2f &direction, const float &length)

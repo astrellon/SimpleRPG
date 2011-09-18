@@ -15,6 +15,9 @@ Animal::Animal(Game *game) : GameEntity(game)
 	mHealth = 1.0f;
 	mMaxHealth = 1.0f;
 	mHunger = 0.0f;
+	mHungerLowerLimit = 0.4f;
+	mHungerUpperLimit = 0.8f;
+	mHungerDamageCooldown = 0.0f;
 
 	mEnergyNeededPerDay = 1.0f;
 	mEnergy = 1.0f;
@@ -145,75 +148,28 @@ void Animal::loadProperties(FormattedFileIterator &iter)
 		}
 		mMaxHealth = lexical_cast<float>(*iter); ++iter;
 	}
-	else if(iequals(propertyName, EntityPropertyNames[STRENGTH]))
-	{
-		++iter;
-		setStrength(lexical_cast<float>(*iter)); ++iter;
-	}
-	else if(iequals(propertyName, EntityPropertyNames[DEXTERITY]))
-	{
-		++iter;
-		setDexterity(lexical_cast<float>(*iter)); ++iter;
-	}
-	else if(iequals(propertyName, EntityPropertyNames[INTELLIGENCE]))
-	{
-		++iter;
-		setIntelligence(lexical_cast<float>(*iter)); ++iter;
-	}
-	else if(iequals(propertyName, EntityPropertyNames[RUNNING_SPEED]))
-	{
-		++iter;
-		setRunningSpeedBase(lexical_cast<float>(*iter)); ++iter;
-	}
-	else if(iequals(propertyName, EntityPropertyNames[WALKING_SPEED]))
-	{
-		++iter;
-		setWalkingSpeedBase(lexical_cast<float>(*iter)); ++iter;
-	}
-	else if(iequals(propertyName, EntityPropertyNames[TURNING_SPEED]))
-	{
-		++iter;
-		setTurningSpeedBase(lexical_cast<float>(*iter)); ++iter;
-	}
-	else if(iequals(propertyName, EntityPropertyNames[DIET]))
-	{
-		++iter;
-		setDiet(lexical_cast<float>(*iter)); ++iter;
-	}
-	else if(iequals(propertyName, EntityPropertyNames[DAMAGE_BASE]))
-	{
-		++iter;
-		setDamageBase(lexical_cast<float>(*iter)); ++iter;
-	}
-	else if(iequals(propertyName, EntityPropertyNames[ATTACK_RATE]))
-	{
-		++iter;
-		setAttackRate(lexical_cast<float>(*iter)); ++iter;
-	}
-	else if(iequals(propertyName, EntityPropertyNames[ATTACK_COOLDOWN]))
-	{
-		++iter;
-		mAttackCooldown = lexical_cast<float>(*iter); ++iter;
-	}
-	else if(iequals(propertyName, EntityPropertyNames[ATTACKED_BY_COOLDOWN]))
-	{
-		++iter;
-		mAttackedByCooldown = lexical_cast<float>(*iter); ++iter;
-	}
+
+	else loadProp(STRENGTH, setStrength, float)
+	else loadProp(DEXTERITY, setDexterity, float)
+	else loadProp(INTELLIGENCE, setIntelligence, float)
+	else loadProp(RUNNING_SPEED, setRunningSpeedBase, float)
+	else loadProp(WALKING_SPEED, setWalkingSpeedBase, float)
+	else loadProp(TURNING_SPEED, setTurningSpeedBase, float)
+	else loadProp(DIET, setDiet, float)
+	else loadProp(DAMAGE_BASE, setDamageBase, float)
+	else loadProp(ATTACK_RATE, setAttackRate, float)
+	else loadProp(ATTACK_COOLDOWN, setAttackCooldown, float)
+	else loadProp(ATTACKED_BY_COOLDOWN, setAttackedByCooldown, float)
+	else loadProp(ENERGY, setEnergy, float)
+	else loadProp(REST_ENERGY_PER_DAY, setEnergyNeededPerDay, float)
+	else loadProp(HUNGER_LOWER_LIMIT, setHungerLowerLimit, float)
+	else loadProp(HUNGER_UPPER_LIMIT, setHungerUpperLimit, float)
+	else loadProp(HUNGER_DAMAGE_COOLDOWN, setHungerDamageCooldown, float)
+
 	else if(iequals(propertyName, EntityPropertyNames[ATTACKED_BY]))
 	{
 		++iter;
 		mAttackedBy.setEntityId(lexical_cast<int>(*iter)); ++iter;
-	}
-	else if(iequals(propertyName, EntityPropertyNames[ENERGY]))
-	{
-		++iter;
-		setEnergy(lexical_cast<float>(*iter)); ++iter;
-	}
-	else if(iequals(propertyName, EntityPropertyNames[REST_ENERGY_PER_DAY]))
-	{
-		++iter;
-		setEnergyNeededPerDay(lexical_cast<float>(*iter)); ++iter;
 	}
 	else if(iequals(propertyName, EntityPropertyNames[SPECIES_ALIGNMENT]))
 	{
@@ -265,6 +221,9 @@ void Animal::saveProperties(FormattedFile &file)
 	saveProperty(ATTACKED_BY_COOLDOWN, file);
 	saveProperty(ENERGY, file);
 	saveProperty(REST_ENERGY_PER_DAY, file);
+	saveProperty(HUNGER_LOWER_LIMIT, file);
+	saveProperty(HUNGER_UPPER_LIMIT, file);
+	saveProperty(HUNGER_DAMAGE_COOLDOWN, file);
 	saveProperty(SPECIES_ALIGNMENT, file);
 }
 
@@ -278,48 +237,28 @@ void Animal::saveProperty(const EntityProperty &propertyId, FormattedFile &file)
 	case HEALTH:
 		file << EntityPropertyNames[HEALTH] << ' ' << getHealth() << ' ' << getMaxHealth() << '\n';
 		break;
-	case STRENGTH:
-		file << EntityPropertyNames[STRENGTH] << ' ' << getStrength() << '\n';
-		break;
-	case DEXTERITY:
-		file << EntityPropertyNames[DEXTERITY] << ' ' << getDexterity() << '\n';
-		break;
-	case INTELLIGENCE:
-		file << EntityPropertyNames[INTELLIGENCE] << ' ' << getIntelligence() << '\n';
-		break;
-	case RUNNING_SPEED:
-		file << EntityPropertyNames[RUNNING_SPEED] << ' ' << getRunningSpeedBase() << '\n';
-		break;
-	case WALKING_SPEED:
-		file << EntityPropertyNames[WALKING_SPEED] << ' ' << getWalkingSpeedBase() << '\n';
-		break;
-	case TURNING_SPEED:
-		file << EntityPropertyNames[TURNING_SPEED] << ' ' << getTurningSpeedBase() << '\n';
-		break;
-	case DAMAGE_BASE:
-		file << EntityPropertyNames[DAMAGE_BASE] << ' ' << getDamageBase() << '\n';
-		break;
-	case DIET:
-		file << EntityPropertyNames[DIET] << ' ' << getDiet() << '\n';
-		break;
-	case ATTACK_RATE:
-		file << EntityPropertyNames[ATTACK_RATE] << ' ' << getAttackRate() << '\n';
-		break;
-	case ATTACK_COOLDOWN:
-		file << EntityPropertyNames[ATTACK_COOLDOWN] << ' ' << getAttackCooldown() << '\n';
-		break;
+	
+	saveProp(STRENGTH, getStrength)
+	saveProp(DEXTERITY, getDexterity)
+	saveProp(INTELLIGENCE, getIntelligence)
+	saveProp(RUNNING_SPEED, getRunningSpeedBase)
+	saveProp(WALKING_SPEED, getWalkingSpeedBase)
+	saveProp(TURNING_SPEED, getTurningSpeedBase)
+	saveProp(DAMAGE_BASE, getDamageBase)
+	saveProp(DIET, getDiet)
+	saveProp(ATTACK_RATE, getAttackRate)
+	saveProp(ATTACK_COOLDOWN, getAttackCooldown)
+	saveProp(ATTACKED_BY_COOLDOWN, getAttackedByCooldown)
+	saveProp(ENERGY, getEnergy)
+	saveProp(REST_ENERGY_PER_DAY, getEnergyNeededPerDay)
+	saveProp(HUNGER_LOWER_LIMIT, getHungerLowerLimit)
+	saveProp(HUNGER_UPPER_LIMIT, getHungerUpperLimit)
+	saveProp(HUNGER_DAMAGE_COOLDOWN, getHungerDamageCooldown)
+
 	case ATTACKED_BY:
 		file << EntityPropertyNames[ATTACKED_BY] << ' ' << mAttackedBy.getEntityId() << '\n';
 		break;
-	case ATTACKED_BY_COOLDOWN:
-		file << EntityPropertyNames[ATTACKED_BY_COOLDOWN] << ' ' << mAttackedByCooldown << '\n';
-		break;
-	case ENERGY:
-		file << EntityPropertyNames[ENERGY] << ' ' << getEnergy() << '\n';
-		break;
-	case REST_ENERGY_PER_DAY:
-		file << EntityPropertyNames[REST_ENERGY_PER_DAY] << ' ' << getEnergyNeededPerDay() << '\n';
-		break;
+	
 	case SPECIES_ALIGNMENT:
 		file << EntityPropertyNames[SPECIES_ALIGNMENT] << '\n';
 		file.changeTabLevel(1);
@@ -366,6 +305,20 @@ void Animal::update(float dt)
 	{
 		mAttackedByCooldown = 0.0f;
 		mAttackedBy.setEntity(NULL);
+	}
+
+	if(getHungerDamageCooldown() > 0.0f)
+	{
+		setHungerDamageCooldown(getHungerDamageCooldown() - dt);
+	}
+
+	if(getEnergy() < 0.1f)
+	{
+		if(getHungerDamageCooldown() <= 0.0f)
+		{
+			receiveDamage(getMaxHealth() / 20.0f, NULL);
+			setHungerDamageCooldown(20.0f);
+		}
 	}
 
 	Action *action = getCurrentAction();
@@ -480,7 +433,7 @@ void Animal::moveAnimal(float dt)
 		Vector2f nextPos = path[0];
 		Vector2f toNextPos = nextPos.sub(pos);
 		double l = toNextPos.length();
-		if(l < 0.4)
+		if(l < 0.4f)
 		{
 			path.erase(path.begin());
 			if(path.empty())
@@ -644,20 +597,20 @@ void Animal::doActionAttack(float dt)
 			else
 			{
 				// Plants cannot be attacked.
-				action->setCompleted(true);
+				action->setCompleted(true, mGame->getCurrentTimeString(true));
 				setCurrentAction(new TargetAction(IDLE));
 			}
 		}
 		else if(plant != NULL)
 		{
 			clog << "Cannot attack plant (" << plant->getEntityName() << ")" << endl;
-			action->setCompleted(true);
+			action->setCompleted(true, mGame->getCurrentTimeString(true));
 			setCurrentAction(new TargetAction(IDLE));
 		}
 		else
 		{
 			clog << getEntityName() << " cannot attack " << action->getTarget()->getEntity()->getEntityType() << endl;
-			action->setCompleted(true);
+			action->setCompleted(true, mGame->getCurrentTimeString(true));
 			setCurrentAction(new TargetAction(IDLE));
 			return;
 		}
@@ -674,18 +627,14 @@ void Animal::doActionEat(float dt)
 
 	if(action->getStep() == 0)
 	{
-		
-		/*if(getDiet() < 0.5f)
-		{
-			result = mGame->findClosestEntity(getPosition(), "Plant", this);
-		}
-		else if(getDiet() >= 0.5f)
-		{
-			result = mGame->findClosestEntity(getPosition(), "Animal", this);
-		}*/
 		if(getDiet() < 0.5f)
 		{
-			
+			Vector2i foodLocation = mGame->findClosestTileWithFood(getPosition());
+			if(foodLocation.x >= 0 && foodLocation.y >= 0)
+			{
+				action->getTarget()->setLocation(foodLocation);
+				action->setStep(4);
+			}
 		}
 		else
 		{
@@ -739,12 +688,12 @@ void Animal::doActionEat(float dt)
 		else
 		{
 			clog << getEntityName() << " cannot eat " << action->getTarget()->getEntity()->getEntityType() << endl;
-			action->setCompleted(true);
+			action->setCompleted(true, mGame->getCurrentTimeString(true));
 			setCurrentAction(new Action(IDLE));
 			return;
 		}
 	}
-	else if(action->getStep() >= 3)
+	else if(action->getStep() == 3)
 	{
 		double simpleDist = distanceToEntity(action->getTarget()->getEntity());
 		if(simpleDist <= 1.0f)
@@ -753,10 +702,47 @@ void Animal::doActionEat(float dt)
 			return;
 		}
 		eatEntity(action->getTarget()->getEntity());
-		if(!isHungry())
+		if(!isHungry(true))
 		{
-			action->setCompleted(true);
+			action->setCompleted(true, mGame->getCurrentTimeString(true));
 			setCurrentAction(new Action(IDLE));
+		}
+	}
+
+	else if(action->getStep() == 4)
+	{
+		// Direct distance between this animal and the target.
+		double simpleDist = action->getTarget()->getLocation().sub(getPosition()).length();
+		setWalking(true);
+		if(simpleDist <= 1.0f)
+		{
+			action->nextStep();
+		}
+	}
+	else if(action->getStep() == 5)
+	{
+		Vector2i pos = action->getTarget()->getLocation();
+		double simpleDist = pos.sub(getPosition()).length();
+		if(simpleDist >	getAttackRange())
+		{
+			action->prevStep();
+		}
+		TileData *data = mGame->getTileData(pos);
+		if(data == NULL)
+		{
+			clog << "Error attempting to eat at tile " << pos.toString() << endl;
+			setCurrentAction(new Action(IDLE));
+			return;
+		}
+		bool tilePlentiful = eatTile(data, dt);
+		if(!isHungry(true))
+		{
+			action->setCompleted(true, mGame->getCurrentTimeString(true));
+			setCurrentAction(new Action(IDLE));
+		}
+		else if(!tilePlentiful)
+		{
+			action->setStep(0);
 		}
 	}
 }
@@ -773,7 +759,21 @@ void Animal::eatAnimal(Animal *animal)
 
 void Animal::eatPlant(Plant *plant)
 {
-	eatPlant(plant);
+	eatEntity(plant);
+}
+
+bool Animal::eatTile(TileData *tile, float dt)
+{
+	if(tile == NULL)
+	{
+		return false;
+	}
+
+	float amountWanted = getSize() * getEnergyNeededPerDay() / 10.0f * dt;
+	float amountEaten = tile->eatTile(amountWanted);
+	changeEnergy(amountEaten);
+
+	return amountEaten > amountWanted * 0.5f;
 }
 
 float Animal::calculateKcalPerDay()
@@ -793,9 +793,10 @@ float Animal::calculateKcalPerDay()
 	return energy;*/
 }
 
-bool Animal::isHungry()
+bool Animal::isHungry(bool useUpperLimit)
 {
-	return getEnergy() < calculateKcalPerDay() * 0.4f;
+	float limit = useUpperLimit ? getHungerUpperLimit() : getHungerLowerLimit();
+	return getEnergy() < calculateKcalPerDay() * limit;
 }
 
 void Animal::changeHealth(float health)

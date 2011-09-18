@@ -2,7 +2,7 @@
 
 map<string, EntityAction> Action::EntityActionLookup;
 const char *Action::EntityActionNames[] = { "Idle", "Eat", "Flee", "Attack", "Sleep", "Breed", "Invalid_action" };
-const char *Action::ActionPropertyNames[] = { "action", "complete", "step", "target" };
+const char *Action::ActionPropertyNames[] = { "action", "completed", "step", "target", "completed_time" };
 const float Action::EntityActionPriority[] = { 0.0f, 0.8f, 1.0f, 0.5f, 0.7f, 0.4f, 0.0f };
 
 bool Action::initLookupMap = false;
@@ -26,6 +26,7 @@ void Action::init()
 {
 	mStep = 0;
 	mCompleted = false;
+	mCompletedTime = "0 0";
 
 	if(!initLookupMap)
 	{
@@ -72,13 +73,17 @@ void Action::loadProperties(FormattedFileIterator &iter)
 	{
 		setAction(EntityActionLookup[*iter]); ++iter;
 	}
-	else if(iequals(propertyName, ActionPropertyNames[COMPLETE]))
+	else if(iequals(propertyName, ActionPropertyNames[COMPLETED]))
 	{
 		setCompleted(lexical_cast<bool>(*iter)); ++iter;
 	}
 	else if(iequals(propertyName, ActionPropertyNames[STEP]))
 	{
 		setStep(lexical_cast<int>(*iter));	++iter;
+	}
+	else if(iequals(propertyName, ActionPropertyNames[COMPLETED_TIME]))
+	{
+		setCompletedTime(*iter);	++iter;
 	}
 	else
 	{
@@ -93,11 +98,14 @@ void Action::saveProperty(const ActionProperty &propertyId, FormattedFile &file)
 	case ACTION:
 		file << ActionPropertyNames[ACTION] << ' ' << EntityActionNames[getAction()] << '\n';
 		break;
-	case COMPLETE:
-		file << ActionPropertyNames[COMPLETE] << ' ' << (getCompleted() ? '1' : '0') << '\n';
+	case COMPLETED:
+		file << ActionPropertyNames[COMPLETED] << ' ' << (getCompleted() ? '1' : '0') << '\n';
 		break;
 	case STEP:
 		file << ActionPropertyNames[STEP] << ' ' << getStep() << '\n';
+		break;
+	case COMPLETED_TIME:
+		file << ActionPropertyNames[COMPLETED_TIME] << ' ' << getCompletedTime() << '\n';
 		break;
 	default:
 		clog << "Unable to save unknown action property " << propertyId << endl;
@@ -108,6 +116,7 @@ void Action::saveProperty(const ActionProperty &propertyId, FormattedFile &file)
 void Action::saveProperties(FormattedFile &file)
 {
 	saveProperty(ACTION, file);
-	saveProperty(COMPLETE, file);
+	saveProperty(COMPLETED, file);
+	saveProperty(COMPLETED_TIME, file);
 	saveProperty(STEP, file);
 }

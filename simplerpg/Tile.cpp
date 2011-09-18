@@ -48,19 +48,19 @@ void Tile::registerDefaults()
 {
 	// Short grass
 	Tile *tile = new Tile(Pixel('.', COLOR_GREEN, true), 0, "Short grass");
-	tile->setMaxFoodValue(50);
+	tile->setMaxFoodValue(20);
 	tile->setRegrowthRate(0.03f);
 	Tile::registerTile(tile);
 
 	// Tree or bush
 	tile = new Tile(Pixel('^', COLOR_GREEN, true), 1, "Trees", false);
-	tile->setMaxFoodValue(400);
+	tile->setMaxFoodValue(500);
 	tile->setRegrowthRate(0.025f);
 	Tile::registerTile(tile);
 
 	// Grass
 	tile = new Tile(Pixel(',', COLOR_GREEN, false), 2, "Grass");
-	tile->setMaxFoodValue(80);
+	tile->setMaxFoodValue(60);
 	tile->setRegrowthRate(0.04f);
 	Tile::registerTile(tile);
 

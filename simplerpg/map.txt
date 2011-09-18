@@ -109,7 +109,7 @@ Animal
 	turning_speed 2.6
 	entity_size 0.3
 	entity_mass 0.8
-	rest_energy_per_day 50
+	rest_energy_per_day 200
 	hunger_lower_limit 0.4
 	hunger_upper_limit 0.8
 	diet 0.1

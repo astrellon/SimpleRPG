@@ -794,7 +794,9 @@ vector<Vector2f> *Game::findPath(Vector2i startPosition, Vector2i endPosition)
 
 inline void Game::checkAdjacentTile(const int &x, const int &y, queue<Vector2i> &openList)
 {
-	if(x < mMap->getWidth() && !mCheckedTiles[x][y])
+	if (x >= 0 && x < mMap->getWidth() && 
+		y >= 0 && y < mMap->getHeight() &&
+		!mCheckedTiles[x][y])
 	{
 		Tile *tile = mMap->getTile(x, y);
 		if(tile != NULL && tile->getPassable())

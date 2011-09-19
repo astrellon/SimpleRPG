@@ -1,6 +1,8 @@
 ﻿#include "Animal.h"
 #include "Game.h"
 
+const Pixel Animal::GRAPHIC_DEAD('X', COLOR_MAGENTA, false);
+
 Animal::Animal(Game *game) : GameEntity(game)
 {
 	srand( (unsigned int)time(NULL) );
@@ -117,16 +119,28 @@ void Animal::displayActions(UIContainer &hud)
 
 Pixel Animal::getGraphic()
 {
-	double angle = mTransform.getAngle() * 180 / M_PI;
-	if(angle >= -45 && angle < 45)
-		mGraphic.graphic = 'V';
-	else if(angle >= 45 && angle < 135)
-		mGraphic.graphic = '<';
-	else if(angle >= -135 && angle < -45)
-		mGraphic.graphic = '>';
-	else
-		mGraphic.graphic = '^';
-	
+	if(mGraphicFlashCooldown < GRAPHIC_FLASH_COOLDOWN * 0.5f)
+	{
+		if(isDead())
+		{
+			return GRAPHIC_DEAD;
+		}
+		else
+		{
+			double angle = mTransform.getAngle() * 180 / M_PI;
+			Pixel facingGraphic;
+			if (angle >= -45 && angle < 45)
+				facingGraphic.graphic = 'V';
+			else if(angle >= 45 && angle < 135)
+				facingGraphic.graphic = '<';
+			else if(angle >= -135 && angle < -45)
+				facingGraphic.graphic = '>';
+			else
+				facingGraphic.graphic = '^';
+
+			return facingGraphic;
+		}
+	}
 	return GameEntity::getGraphic();
 }
 
@@ -278,6 +292,12 @@ void Animal::saveProperty(const EntityProperty &propertyId, FormattedFile &file)
 
 void Animal::update(float dt)
 {
+	mGraphicFlashCooldown -= dt;
+	if(mGraphicFlashCooldown < 0.0f)
+	{
+		mGraphicFlashCooldown += GRAPHIC_FLASH_COOLDOWN;
+	}
+
 	if(isDead())
 	{
 		return;

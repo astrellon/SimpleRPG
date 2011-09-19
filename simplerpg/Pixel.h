@@ -2,6 +2,17 @@
 
 #include "ui/ui.hpp"
 
+#include "FormattedFile.h"
+#include "FormattedFileIterator.h"
+
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/lexical_cast.hpp>
+
+using boost::algorithm::iequals;
+using boost::lexical_cast;
+
+const char *PixelColourNames[];
+
 class Pixel
 {
 public:
@@ -32,6 +43,9 @@ public:
 		wattron(wnd, COLOR_PAIR(mColour));
 		mvwaddch(wnd, y, x, graphic);
 	}
+
+	void savePixel(FormattedFile &file);
+	void loadPixel(FormattedFileIterator &iter);
 
 protected:
 	int mColour;

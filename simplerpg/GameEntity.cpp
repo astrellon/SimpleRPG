@@ -3,6 +3,8 @@
 
 unsigned int GameEntity::sId = 0;
 
+const float GameEntity::GRAPHIC_FLASH_COOLDOWN = 2.0f;
+
 map<unsigned int, GameEntity *> GameEntity::sEntities;
 
 extern const char *EntityPropertyNames[] = { "id", "facing", "position", "destination", "name", "graphic",
@@ -31,6 +33,12 @@ GameEntity::GameEntity(Game *game)
 	mMaxMenuLevel = 2;
 
 	mLineOfSightRadius = 10.0f;
+
+	mGraphic.bold = true;
+	mGraphic.setColour(COLOR_WHITE);
+	mGraphic.graphic = 'o';
+
+	mGraphicFlashCooldown = GRAPHIC_FLASH_COOLDOWN;
 }
 
 GameEntity::~GameEntity(void)
@@ -168,6 +176,7 @@ void GameEntity::saveProperties(FormattedFile &file)
 	saveProperty(POSITION, file);
 	saveProperty(FACING, file);
 	saveProperty(NAME, file);
+	saveProperty(GRAPHIC, file);
 	saveProperty(ENTITY_SIZE, file);
 	saveProperty(ENTITY_MASS, file);
 	saveProperty(AMOUNT_EATEN, file);
@@ -209,6 +218,10 @@ void GameEntity::saveProperty(const EntityProperty &propertyId, FormattedFile &f
 		break;
 	case SIGHT_RADIUS:
 		file << EntityPropertyNames[SIGHT_RADIUS] << ' ' << getLineOfSightRadius() << '\n';
+		break;
+	case GRAPHIC:
+		file << EntityPropertyNames[GRAPHIC] << ' ';
+		mGraphic.savePixel(file);
 		break;
 	case CURRENT_ACTION:
 		file << EntityPropertyNames[CURRENT_ACTION] << '\n';
@@ -282,6 +295,13 @@ void GameEntity::loadProperties(FormattedFileIterator &iter)
 	else if(iequals(propertyName, EntityPropertyNames[AMOUNT_EATEN]))
 	{
 		setLineOfSightRadius(lexical_cast<float>(*iter)); ++iter;
+	}
+	else if(iequals(propertyName, EntityPropertyNames[GRAPHIC]))
+	{
+		/*mGraphic.setColour(lexical_cast<int>(*iter));	++iter;
+		mGraphic.bold = (lexical_cast<bool>(*iter));	++iter;
+		mGraphic.graphic = string(*iter)[0];			++iter;*/
+		mGraphic.loadPixel(iter);
 	}
 	else if(iequals(propertyName, EntityPropertyNames[CURRENT_ACTION]))
 	{

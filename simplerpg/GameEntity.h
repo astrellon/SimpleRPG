@@ -147,6 +147,7 @@ public:
 protected:
 	unsigned int mId;
 	Pixel mGraphic;
+	float mGraphicFlashCooldown;
 	Game* mGame;
 	Matrix3x3f mTransform;
 	string mName;
@@ -185,6 +186,8 @@ protected:
 	virtual void onAddedToGame() {}
 
 	virtual void getNearbyEntities(const float &radius, vector<GameEntity *> &result, const string *restrictToSpecies);
+
+	static const float GRAPHIC_FLASH_COOLDOWN;
 
 private:
 	static unsigned int sId;

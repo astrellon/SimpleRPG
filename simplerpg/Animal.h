@@ -201,5 +201,7 @@ protected:
 	virtual TargetAction *castTargetAction(Action *action, const string &actionName, bool checkForSelfTarget = true);
 
 	float getTurnAmount(float facing, float dest);
+
+	static const Pixel GRAPHIC_DEAD;
 };
 

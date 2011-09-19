@@ -90,6 +90,7 @@ Animal
 	position 9.93701 4.02985
 	facing 1.60264
 	name "Jeff"
+	graphic yellow 1 r
 	amount_eaten 0
 	current_action
 	Action

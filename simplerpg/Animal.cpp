@@ -129,6 +129,7 @@ Pixel Animal::getGraphic()
 		{
 			double angle = mTransform.getAngle() * 180 / M_PI;
 			Pixel facingGraphic;
+			facingGraphic.setColour(7);
 			if (angle >= -45 && angle < 45)
 				facingGraphic.graphic = 'V';
 			else if(angle >= 45 && angle < 135)
@@ -745,7 +746,7 @@ void Animal::doActionEat(float dt)
 		double simpleDist = pos.sub(getPosition()).length();
 		if(simpleDist >	getAttackRange())
 		{
-			action->prevStep();
+			action->setStep(0);
 		}
 		TileData *data = mGame->getTileData(pos);
 		if(data == NULL)

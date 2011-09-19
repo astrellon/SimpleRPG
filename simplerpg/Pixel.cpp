@@ -35,23 +35,31 @@ void Pixel::savePixel(FormattedFile &file)
 
 void Pixel::loadPixel(FormattedFileIterator &iter)
 {
-	string line = *iter;	++iter;
-	char c = line[0];
+	int colour = getColourFromString(*iter);	++iter;
+	if (colour >= 0)
+	{
+		setColour(colour);
+	}
+	bold = (*iter)[0] == '1';					++iter;
+	graphic = (*iter)[0];						++iter;
+}
+
+int Pixel::getColourFromString(const string &colourName)
+{
+	char c = colourName[0];
 	if(c >= '0' && c <= '8')
 	{
-		setColour(c - '0');
+		return c - '0';
 	}
 	else
 	{
 		for(int i = 0; i < 8; i++)
 		{
-			if(iequals(line, PixelColourNames[i]))
+			if(iequals(colourName, PixelColourNames[i]))
 			{
-				setColour(i);
-				break;
+				return i;
 			}
 		}
+		return -1;
 	}
-	bold = (*iter)[0] == '1';	++iter;
-	graphic = (*iter)[0];		++iter;
 }

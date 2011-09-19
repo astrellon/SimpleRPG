@@ -33,7 +33,8 @@ using boost::lexical_cast;
 class GameEntity;
 class Animal;
 
-enum MenuLevel { MENU_MAIN, MENU_LOOK, MENU_FIND, MENU_QUIT, MENU_OPTIONS, MENU_RAY, MENU_NEAR, MENU_FOOD };
+enum MenuLevel { MENU_MAIN, MENU_LOOK, MENU_FIND, MENU_QUIT, MENU_OPTIONS, MENU_RAY, 
+	MENU_NEAR, MENU_FOOD, MENU_MOVE };
 enum GameOption { HUD_WIDTH, CURRENT_TIME, CURRENT_DAY, DAY_LENGTH, CAMERA_LOCATION };
 
 const char *GamePropertyNames[];
@@ -128,7 +129,7 @@ public:
 	}
 	Vector2i getCursorPosition() { return mCursor; }
 	void setCursorPosition(int xPos, int yPos);
-	void displayUnderCursor(UIContainer &hud);
+	void displayUnderCursor(/*UIContainer &hud*/);
 
 	virtual void keyActions(const int key);
 	virtual void displayActions();
@@ -191,7 +192,7 @@ protected:
 	EntityList mUnderCursor;
 	bool mUnderCursorDirty;
 
-	Animal *mDebugAnimal;
+	GameEntity *mDebugEntity;
 	FindEntityResult mFoundEntity;
 	IKeyActions *mSelectedItem;
 

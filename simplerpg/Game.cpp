@@ -85,6 +85,9 @@ Game::Game(int width, int height)
 	mGameRunning = true;
 	mGamePaused = false;
 
+	mDebugEntity = NULL;
+	mDebugPosition = Vector2i(-1, -1);
+
 	mCurrentTime = 0.0f;
 	mCurrentDay = 0;
 	mDayLength = 600.0f;
@@ -298,6 +301,13 @@ void Game::keyActions(const int key)
 			setGamePaused(true);
 		}
 
+		if (key == 'm')
+		{
+			mMenuLevel = MENU_MOVE;
+			setCursorMode(true);
+			setGamePaused(true);
+		}
+
 		break;
 
 	case MENU_LOOK:
@@ -452,6 +462,38 @@ void Game::keyActions(const int key)
 		}
 
 		break;
+
+	case MENU_MOVE:
+		if (key == 27)
+		{
+			if(mDebugEntity == NULL)
+			{
+				mMenuLevel = MENU_MAIN;
+				setCursorMode(false);
+				setGamePaused(false);
+			}
+			mDebugEntity = NULL;
+		}
+
+		if(mDebugEntity == NULL && key >= '1' && key <= '9')
+		{
+			EntityList list = getUnderCursor();
+			int numPressed = key - '1';
+			if(!list.empty() && numPressed < (int)list.size())
+			{
+				mDebugEntity = list[numPressed];
+			}
+		}
+
+		if(mDebugEntity != NULL && (key == 10 || key == 459))
+		{
+			Tile *tile = mMap->getTile(mCursor);
+			if (tile != NULL && tile->getPassable())
+			{
+				mDebugEntity->move(mCursor.sub(mDebugEntity->getPosition()), false);
+			}
+		}
+		break;
 	}
 }
 
@@ -482,6 +524,7 @@ void Game::displayActions()
 		mHudText << "<11>r</>: Ray tester.\n";
 		mHudText << "<11>n</>: Nearby tester.\n";
 		mHudText << "<11>f</>: Nearest food tile.\n";
+		mHudText << "<11>m</>: Move entity.\n";
 		
 		mHudText << "\n<11>q</>: Quit.\n";
 
@@ -497,7 +540,7 @@ void Game::displayActions()
 		}
 		else
 		{
-			displayUnderCursor(mHud);
+			displayUnderCursor(/*mHud*/);
 		}
 		break;
 	case MENU_FIND:
@@ -566,6 +609,22 @@ void Game::displayActions()
 			mHudText << "None Found\n";
 		}
 
+		break;
+
+	case MENU_MOVE:
+
+		mHudText << "<15>Move entity menu:</>\n\n";
+		if(mDebugEntity == NULL)
+		{
+			mHudText << "No entity selected.\n\n";
+			displayUnderCursor();
+		}
+		else
+		{
+			mHudText << "<15>Entity</>:\t" << mDebugEntity->getEntityName() << " (" << mDebugEntity->getSpecies() << ")\n";
+			mHudText << "<15>Current Position</>:\t" << ((Vector2i)mDebugEntity->getPosition()).toString(12) << '\n';
+			mHudText << "<15>New Position</>:\t\t" << mCursor.toString(12) << '\n';
+		}
 		break;
 	}
 }
@@ -682,7 +741,7 @@ void Game::update(float dt)
 	}
 }
 
-void Game::displayUnderCursor(UIContainer &hud)
+void Game::displayUnderCursor(/*UIContainer &hud*/)
 {
 	getUnderCursor();
 

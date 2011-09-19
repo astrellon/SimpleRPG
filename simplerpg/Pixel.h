@@ -47,6 +47,8 @@ public:
 	void savePixel(FormattedFile &file);
 	void loadPixel(FormattedFileIterator &iter);
 
+	static int getColourFromString(const string &colourName);
+
 protected:
 	int mColour;
 };

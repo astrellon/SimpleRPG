@@ -34,7 +34,7 @@ class GameEntity;
 class Animal;
 
 enum MenuLevel { MENU_MAIN, MENU_LOOK, MENU_FIND, MENU_QUIT, MENU_OPTIONS, MENU_RAY, 
-	MENU_NEAR, MENU_FOOD, MENU_MOVE };
+	MENU_NEAR, MENU_FOOD, MENU_MOVE, MENU_SELECTION };
 enum GameOption { HUD_WIDTH, CURRENT_TIME, CURRENT_DAY, DAY_LENGTH, CAMERA_LOCATION };
 
 const char *GamePropertyNames[];
@@ -216,6 +216,8 @@ protected:
 	float mDayLength;
 
 	Vector2i mDebugPosition;
+
+	Rect mSelection;
 
 	// Used to display the "(Saved)" text in the menu when the game has been saved.
 	// Counts down to zero when the graphic will disappear.

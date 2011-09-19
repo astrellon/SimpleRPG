@@ -95,6 +95,8 @@ Game::Game(int width, int height)
 	mCheckedTiles = NULL;
 
 	mLastKey = -1;
+
+	mSelection = Rect(-1, -1, 0, 0);
 }
 
 Game::~Game(void)
@@ -308,6 +310,13 @@ void Game::keyActions(const int key)
 			setGamePaused(true);
 		}
 
+		if (key == 'e')
+		{
+			mMenuLevel = MENU_SELECTION;
+			setCursorMode(true);
+			setGamePaused(true);
+		}
+
 		break;
 
 	case MENU_LOOK:
@@ -331,6 +340,7 @@ void Game::keyActions(const int key)
 		break;
 
 	case MENU_FIND:
+
 		if (key == 27)
 		{
 			setCursorMode(false);
@@ -355,6 +365,7 @@ void Game::keyActions(const int key)
 		break;
 
 	case MENU_QUIT:
+
 		if (key == 'y' || key == 'q')
 		{
 			// QUIT!.
@@ -376,6 +387,7 @@ void Game::keyActions(const int key)
 		break;
 
 	case MENU_OPTIONS:
+
 		if (key == 27)
 		{
 			mMenuLevel = MENU_MAIN;
@@ -396,6 +408,7 @@ void Game::keyActions(const int key)
 		break;
 
 	case MENU_RAY:
+
 		if (key == 27)
 		{
 			mMenuLevel = MENU_MAIN;
@@ -433,6 +446,7 @@ void Game::keyActions(const int key)
 		break;
 
 	case MENU_NEAR:
+
 		if (key == 27)
 		{
 			mMenuLevel = MENU_MAIN;
@@ -454,6 +468,9 @@ void Game::keyActions(const int key)
 		break;
 
 	case MENU_FOOD:
+
+		// This menu only needs to be the current one and the actual
+		// graphic is set from the render function.
 		if (key == 27)
 		{
 			mMenuLevel = MENU_MAIN;
@@ -464,6 +481,7 @@ void Game::keyActions(const int key)
 		break;
 
 	case MENU_MOVE:
+
 		if (key == 27)
 		{
 			if(mDebugEntity == NULL)
@@ -493,6 +511,36 @@ void Game::keyActions(const int key)
 				mDebugEntity->move(mCursor.sub(mDebugEntity->getPosition()), false);
 			}
 		}
+		break;
+
+	case MENU_SELECTION:
+
+		if (key == 27)
+		{
+			mMenuLevel = MENU_MAIN;
+			setCursorMode(false);
+			setGamePaused(false);
+			mSelection.setRect(-1, -1, 0, 0);
+		}
+
+		if(key == 10 || key == 459)
+		{
+			if(mSelection.getX() < 0 || mSelection.getY() < 0)
+			{
+				mSelection.setX(mCursor.x);
+				mSelection.setY(mCursor.y);
+			}
+			else if(mSelection.getWidth() <= 0 || mSelection.getHeight() <= 0)
+			{
+				mSelection.setWidth(mCursor.x - mSelection.getX());
+				mSelection.setHeight(mCursor.y - mSelection.getY());
+			}
+			else
+			{
+				mSelection.setRect(mCursor.x, mCursor.y, 0, 0);
+			}
+		}
+
 		break;
 	}
 }
@@ -525,6 +573,7 @@ void Game::displayActions()
 		mHudText << "<11>n</>: Nearby tester.\n";
 		mHudText << "<11>f</>: Nearest food tile.\n";
 		mHudText << "<11>m</>: Move entity.\n";
+		mHudText << "<11>e</>: Selection tool.\n";
 		
 		mHudText << "\n<11>q</>: Quit.\n";
 
@@ -583,10 +632,10 @@ void Game::displayActions()
 		mHudText << "<15>Position</>:\t(" << mCursor.toString(12) << ")\n";
 		mHudText << "<15>Radius</>:\t\t<12>" << mCursorLength << "</>\n";
 
-		findNearby(mCursor, mCursorLength, results);
+		findNearby(mCursor, (float)mCursorLength, results);
 
 		mHudText << "<15>Results</>:\t" << results.size() << "\n\n";
-		for(int i = 0; i < results.size(); i++)
+		for(size_t i = 0; i < results.size(); i++)
 		{
 			GameEntity *entity = results[i];
 			mHudText << "<12>" << i << "</>: " << entity->getEntityName() << " (" << entity->getSpecies() << ")\n";
@@ -625,6 +674,16 @@ void Game::displayActions()
 			mHudText << "<15>Current Position</>:\t" << ((Vector2i)mDebugEntity->getPosition()).toString(12) << '\n';
 			mHudText << "<15>New Position</>:\t\t" << mCursor.toString(12) << '\n';
 		}
+		break;
+
+	case MENU_SELECTION:
+
+		mHudText << "<15>Section menu:</>\n\n";
+		mHudText << "<15>Point</>:\t<12>" << mSelection.getX() << "</>, <12>" << mSelection.getY() << "</>\n";
+		mHudText << "<15>Size</>:\t<12>" << mSelection.getWidth() << "</>, <12>" << mSelection.getHeight() << "</>\n";
+
+		
+
 		break;
 	}
 }
@@ -741,7 +800,7 @@ void Game::update(float dt)
 	}
 }
 
-void Game::displayUnderCursor(/*UIContainer &hud*/)
+void Game::displayUnderCursor()
 {
 	getUnderCursor();
 
@@ -789,7 +848,7 @@ void Game::render(WINDOW *wnd)
 		drawLine(wnd, '*', mCursor, angle, (float)mCursorLength);
 
 		wattron(wnd, COLOR_PAIR(8));
-		renderChar(wnd, result.point.x, result.point.y, '*');
+		renderChar(wnd, (int)result.point.x, (int)result.point.y, '*');
 	}
 
 	if(mMenuLevel == MENU_FOOD)
@@ -797,6 +856,33 @@ void Game::render(WINDOW *wnd)
 		wattron(wnd, COLOR_PAIR(8));
 		wattron(wnd, A_BOLD);
 		renderChar(wnd, mDebugPosition.x, mDebugPosition.y, '$');
+	}
+
+	if(mMenuLevel == MENU_SELECTION)
+	{
+		int x = mSelection.getX();
+		int y = mSelection.getY();
+		int w = mSelection.getWidth();
+		int h = mSelection.getHeight();
+		
+		wattron(wnd, A_BOLD);
+		wattron(wnd, COLOR_PAIR(4));
+
+		if ((x >= 0 && y >= 0) && (w <= 0 || h <= 0))
+		{
+			renderChar(wnd, x, y, '+');
+		}
+		else if(x >= 0 && y >= 0 && w > 0 && h > 0)
+		{
+			// Top
+			drawLine(wnd, x, y, x + w, y, '+');
+			// Right
+			drawLine(wnd, x + w, y, x + w, y + h, '+');
+			// Left
+			drawLine(wnd, x, y, x, y + h, '+');
+			// Bottom
+			drawLine(wnd, x, y + h, x + w, y + h, '+');
+		}
 	}
 
 	mWholeHudText.clearText();
@@ -1224,7 +1310,7 @@ void Game::loadMap(string filename)
 			{
 				mTileData[x][y].setFromTile(mMap->getTile(x, y));
 				int index = x + y * mMap->getWidth();
-				if(loadedTileData && index < tileData.size())
+				if(loadedTileData && index < (int)tileData.size())
 				{
 					mTileData[x][y].setFromLoaded(tileData[index]);
 					//clog << "Index: " << index << " (" << x << ',' << y << ") " << mTileData[x][y].getFoodValue() << endl;
@@ -1531,7 +1617,7 @@ void Game::bresenhamLine(float x1, float y1, float x2, float y2, WINDOW *wnd, co
 	Tile *t = NULL;
 	if(result != NULL)
 	{
-		t = map->getTile(x1, y1);
+		t = map->getTile((int)x1, (int)y1);
 		if (t == NULL)
 		{
 			return;
@@ -1589,8 +1675,8 @@ void Game::bresenhamLine(float x1, float y1, float x2, float y2, WINDOW *wnd, co
 			}
 			if(t != NULL && !t->getTransparent())
 			{
-				result->point.x = steep ? y : x;
-				result->point.y = steep ? x : y;
+				result->point.x = (float)(steep ? y : x);
+				result->point.y = (float)(steep ? x : y);
 				result->tile = t;
 				if(!swapped)
 				{

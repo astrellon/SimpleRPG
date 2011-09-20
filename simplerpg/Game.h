@@ -168,6 +168,7 @@ public:
 	virtual void findNearby(Vector2f origin, const float &radius, vector<GameEntity *> &results);
 	virtual void drawLine(WINDOW *wnd, const char &c, const Vector2f &point, const Vector2f &direction, const float &length);
 	virtual void drawLine(WINDOW *wnd, const char &c, const Vector2f &point, const float &direction, const float &length);
+	virtual void drawLine(WINDOW *wnd, const int &x1, const int &y1, const int &x2, const int &y2, const char &c);
 	virtual void drawLine(WINDOW *wnd, float x1, float y1, float x2, float y2, const char &c);
 
 protected:

@@ -523,21 +523,60 @@ void Game::keyActions(const int key)
 			mSelection.setRect(-1, -1, 0, 0);
 		}
 
+		int sx = mSelection.getX();
+		int sy = mSelection.getY();
+		int sw = mSelection.getWidth();
+		int sh = mSelection.getHeight();
+
 		if(key == 10 || key == 459)
 		{
-			if(mSelection.getX() < 0 || mSelection.getY() < 0)
+			if(sx < 0 || sy < 0)
 			{
 				mSelection.setX(mCursor.x);
 				mSelection.setY(mCursor.y);
 			}
-			else if(mSelection.getWidth() <= 0 || mSelection.getHeight() <= 0)
+			else if(sw <= 0 || sh <= 0)
 			{
-				mSelection.setWidth(mCursor.x - mSelection.getX());
-				mSelection.setHeight(mCursor.y - mSelection.getY());
+				mSelection.setWidth(mCursor.x - sx);
+				mSelection.setHeight(mCursor.y - sy);
 			}
 			else
 			{
 				mSelection.setRect(mCursor.x, mCursor.y, 0, 0);
+			}
+		}
+
+		if (sx >= 0 && sy >= 0 && sw > 0 && sh > 0 && key >= '1' && key <= '4')
+		{
+			// Remove all food from selection.
+			for(int x = sx; x < sx + sw; x++)
+			{
+				for(int y = sy; y < sy + sh; y++)
+				{
+					TileData *data = getTileData(x, y);
+					Tile *tile = mMap->getTile(x, y);
+					if(data == NULL)
+					{
+						continue;
+					}
+
+					if(key == '1')
+					{
+						data->setFoodValue(0);
+					}
+					else if(key == '2' && tile != NULL)
+					{
+						data->setFoodValue(tile->getMaxFoodValue());
+					}
+					else if(key == '3')
+					{
+						data->setRegrowthRate(0.0f);
+					}
+					else if(key == '4' && tile != NULL)
+					{
+						data->setRegrowthRate(tile->getRegrowthRate());
+					}
+				}
 			}
 		}
 
@@ -682,7 +721,11 @@ void Game::displayActions()
 		mHudText << "<15>Point</>:\t<12>" << mSelection.getX() << "</>, <12>" << mSelection.getY() << "</>\n";
 		mHudText << "<15>Size</>:\t<12>" << mSelection.getWidth() << "</>, <12>" << mSelection.getHeight() << "</>\n";
 
-		
+		mHudText << '\n';
+		mHudText << "<12>1</>: Remove all food.\n";
+		mHudText << "<12>2</>: Regrow all food.\n";
+		mHudText << "<12>3</>: Stop all food growth.\n";
+		mHudText << "<12>4</>: Reset food growth.\n";
 
 		break;
 	}
@@ -831,13 +874,6 @@ void Game::render(WINDOW *wnd)
 		(*iter)->render(mScreenSize, wnd);
 	}
 
-	if(mCursorMode)
-	{
-		wattron(wnd, COLOR_PAIR(9));
-		wattroff(wnd, A_BOLD);
-		renderChar(wnd, mCursor.x, mCursor.y, 'X');
-	}
-
 	if(mMenuLevel == MENU_RAY)
 	{
 		float angle = (float)mCursorAngle * M_PIF / 180.0f;
@@ -882,7 +918,16 @@ void Game::render(WINDOW *wnd)
 			drawLine(wnd, x, y, x, y + h, '+');
 			// Bottom
 			drawLine(wnd, x, y + h, x + w, y + h, '+');
+
+			renderChar(wnd, x + w, y + h, '+');
 		}
+	}
+
+	if(mCursorMode)
+	{
+		wattron(wnd, COLOR_PAIR(9));
+		wattroff(wnd, A_BOLD);
+		renderChar(wnd, mCursor.x, mCursor.y, 'X');
 	}
 
 	mWholeHudText.clearText();
@@ -1603,6 +1648,11 @@ void Game::drawLine(WINDOW *wnd, const char &c, const Vector2f &point, const flo
 	float y2 = sinf(direction) * length + y1;
 
 	bresenhamLine(x1, y1, x2, y2, wnd, c, NULL);
+}
+
+void Game::drawLine(WINDOW *wnd, const int &x1, const int &y1, const int &x2, const int &y2, const char &c)
+{
+	drawLine(wnd, (float)x1, (float)y1, (float)x2, (float)y2, c);
 }
 
 void Game::drawLine(WINDOW *wnd, float x1, float y1, float x2, float y2, const char &c)

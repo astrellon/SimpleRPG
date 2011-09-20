@@ -181,6 +181,7 @@ copy "$(ProjectDir)config.ini" "$(OutputPath)"</Command>
   <ItemGroup>
     <ClInclude Include="ActionFactory.h" />
     <ClInclude Include="Animal.h" />
+    <ClInclude Include="GameEntityRef.h" />
     <ClInclude Include="AStarNode.h" />
     <ClInclude Include="Debug.h" />
     <ClInclude Include="Destination.h" />

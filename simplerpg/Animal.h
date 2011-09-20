@@ -5,6 +5,7 @@
 #include "Plant.h"
 #include "ui/ui.hpp"
 #include "Destination.h"
+#include "GameEntityRef.h"
 
 #include <boost/format.hpp>
 
@@ -25,6 +26,26 @@ typedef map<string, float> SpeciesAlignment;
 		break;
 
 class Game;
+class Animal;
+
+typedef GameEntityRef<Animal> AnimalRef;
+typedef struct _AnimalChildren
+{
+	Animal *child1;
+	Animal *child2;
+
+	_AnimalChildren()
+	{
+		child1 = NULL;
+		child2 = NULL;
+	}
+
+	_AnimalChildren(Animal *c1, Animal *c2)
+	{
+		child1 = c1;
+		child2 = c2;
+	}
+} AnimalChildren;
 
 class Animal : public GameEntity
 {
@@ -139,6 +160,11 @@ public:
 
 	virtual float getAttackRange();
 
+	AnimalChildren breed(Animal *parent1, Animal *parent2);
+
+	AnimalRef &getParent1() { return mParent1; }
+	AnimalRef &getParent2() { return mParent2; }
+
 protected:
 
 	Destination mDestination;
@@ -171,6 +197,9 @@ protected:
 
 	vector<float> mEnergyUsage;
 	float mOldEnergyMultiplier;
+
+	AnimalRef mParent1;
+	AnimalRef mParent2;
 
 	vector<GameEntity *> mSurroundingEntities;
 	Destination mAttackedBy;

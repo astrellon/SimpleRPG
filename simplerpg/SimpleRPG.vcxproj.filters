@@ -212,6 +212,9 @@
     <ClInclude Include="TileData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GameEntityRef.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="map.txt" />

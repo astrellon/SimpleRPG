@@ -111,8 +111,7 @@ Animal
 	entity_size 0.3
 	entity_mass 0.8
 	rest_energy_per_day 200
-	hunger_lower_limit 0.4
-	hunger_upper_limit 0.8
+	hunger_limits 0.4 0.8
 	diet 0.1
 	damage_base 1
 	attack_rate 1.2

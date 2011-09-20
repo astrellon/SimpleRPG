@@ -177,14 +177,24 @@ void Animal::loadProperties(FormattedFileIterator &iter)
 	else loadProp(ATTACKED_BY_COOLDOWN, setAttackedByCooldown, float)
 	else loadProp(ENERGY, setEnergy, float)
 	else loadProp(REST_ENERGY_PER_DAY, setEnergyNeededPerDay, float)
-	else loadProp(HUNGER_LOWER_LIMIT, setHungerLowerLimit, float)
-	else loadProp(HUNGER_UPPER_LIMIT, setHungerUpperLimit, float)
 	else loadProp(HUNGER_DAMAGE_COOLDOWN, setHungerDamageCooldown, float)
 
+	else if(iequals(propertyName, EntityPropertyNames[HUNGER_LIMITS]))
+	{
+		++iter;
+		setHungerLowerLimit(lexical_cast<float>(*iter));	++iter;
+		setHungerUpperLimit(lexical_cast<float>(*iter));	++iter;
+	}
 	else if(iequals(propertyName, EntityPropertyNames[ATTACKED_BY]))
 	{
 		++iter;
 		mAttackedBy.setEntityId(lexical_cast<int>(*iter)); ++iter;
+	}
+	else if(iequals(propertyName, EntityPropertyNames[PARENTS]))
+	{
+		++iter;
+		getParent1().setEntityId(lexical_cast<int>(*iter));	++iter;
+		getParent2().setEntityId(lexical_cast<int>(*iter));	++iter;
 	}
 	else if(iequals(propertyName, EntityPropertyNames[SPECIES_ALIGNMENT]))
 	{
@@ -236,8 +246,8 @@ void Animal::saveProperties(FormattedFile &file)
 	saveProperty(ATTACKED_BY_COOLDOWN, file);
 	saveProperty(ENERGY, file);
 	saveProperty(REST_ENERGY_PER_DAY, file);
-	saveProperty(HUNGER_LOWER_LIMIT, file);
-	saveProperty(HUNGER_UPPER_LIMIT, file);
+	saveProperty(PARENTS, file);
+	saveProperty(HUNGER_LIMITS, file);
 	saveProperty(HUNGER_DAMAGE_COOLDOWN, file);
 	saveProperty(SPECIES_ALIGNMENT, file);
 }
@@ -266,10 +276,14 @@ void Animal::saveProperty(const EntityProperty &propertyId, FormattedFile &file)
 	saveProp(ATTACKED_BY_COOLDOWN, getAttackedByCooldown)
 	saveProp(ENERGY, getEnergy)
 	saveProp(REST_ENERGY_PER_DAY, getEnergyNeededPerDay)
-	saveProp(HUNGER_LOWER_LIMIT, getHungerLowerLimit)
-	saveProp(HUNGER_UPPER_LIMIT, getHungerUpperLimit)
 	saveProp(HUNGER_DAMAGE_COOLDOWN, getHungerDamageCooldown)
-
+	
+	case PARENTS:
+		file << EntityPropertyNames[PARENTS] << ' ' << getParent1().getEntityId() << ' ' << getParent2().getEntityId() << '\n';
+		break;
+	case HUNGER_LIMITS:
+		file << EntityPropertyNames[HUNGER_LIMITS] << ' ' << getHungerLowerLimit() << ' ' << getHungerUpperLimit() << '\n';
+		break;
 	case ATTACKED_BY:
 		file << EntityPropertyNames[ATTACKED_BY] << ' ' << mAttackedBy.getEntityId() << '\n';
 		break;
@@ -922,4 +936,11 @@ float Animal::getEntityThreat(GameEntity *entity)
 float Animal::getAttackRange()
 {
 	return getSize() * 0.6f;
+}
+
+AnimalChildren Animal::breed(Animal *parent1, Animal *parent2)
+{
+
+
+	return AnimalChildren();
 }

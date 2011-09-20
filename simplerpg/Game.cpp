@@ -560,18 +560,22 @@ void Game::keyActions(const int key)
 						continue;
 					}
 
+					// Remove food value
 					if(key == '1')
 					{
 						data->setFoodValue(0);
 					}
+					// Regrow food value
 					else if(key == '2' && tile != NULL)
 					{
 						data->setFoodValue(tile->getMaxFoodValue());
 					}
+					// Disable regrowth.
 					else if(key == '3')
 					{
 						data->setRegrowthRate(0.0f);
 					}
+					// Enable regrowth.
 					else if(key == '4' && tile != NULL)
 					{
 						data->setRegrowthRate(tile->getRegrowthRate());

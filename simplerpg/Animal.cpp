@@ -181,6 +181,7 @@ void Animal::loadProperties(FormattedFileIterator &iter)
 	else loadProp(HUNGER_DAMAGE_COOLDOWN, setHungerDamageCooldown, float)
 	else loadProp(MUTATION_RATE, setMutationRate, float)
 	else loadProp(MUTATION_AMOUNT, setMutationAmount, float)
+	else loadProp(ACCUMULATED_ENERGY, setAccumulatedEnergy, float)
 
 	else if(iequals(propertyName, EntityPropertyNames[HUNGER_LIMITS]))
 	{
@@ -249,6 +250,7 @@ void Animal::saveProperties(FormattedFile &file)
 	saveProperty(ATTACKED_BY_COOLDOWN, file);
 	saveProperty(ENERGY, file);
 	saveProperty(REST_ENERGY_PER_DAY, file);
+	saveProperty(ACCUMULATED_ENERGY, file);
 	saveProperty(PARENTS, file);
 	saveProperty(HUNGER_LIMITS, file);
 	saveProperty(HUNGER_DAMAGE_COOLDOWN, file);
@@ -284,6 +286,7 @@ void Animal::saveProperty(const EntityProperty &propertyId, FormattedFile &file)
 	saveProp(HUNGER_DAMAGE_COOLDOWN, getHungerDamageCooldown)
 	saveProp(MUTATION_RATE, getMutationRate)
 	saveProp(MUTATION_AMOUNT, getMutationAmount)
+	saveProp(ACCUMULATED_ENERGY, getAccumulatedEnergy);
 	
 	case PARENTS:
 		file << EntityPropertyNames[PARENTS] << ' ' << getParent1().getEntityId() << ' ' << getParent2().getEntityId() << '\n';
@@ -973,8 +976,6 @@ AnimalChildren Animal::breed(Animal *p1, Animal *p2)
 		c->getParent1().setEntity(p1);
 		c->getParent2().setEntity(p2);
 
-
-
 		c->setDiet(breedProperty(p1->getDiet(), p2->getDiet(), r, a, 2.0f, 0.0f, 1.0f));
 		
 		c->setStrength(breedProperty(p1->getStrength(), p2->getStrength(), a, r));
@@ -1031,4 +1032,9 @@ float Animal::breedProperty(const float &parent1Value, const float &parent2Value
 		}
 	}
 	return value;
+}
+
+float Animal::getFitness()
+{
+	return mAccumulatedEnergy / mEnergyNeededPerDay;
 }

@@ -109,6 +109,10 @@ public:
 		{
 			energy = 0.0f;
 		}
+		if(energy > mEnergy)
+		{
+			setAccumulatedEnergy(getAccumulatedEnergy() + (energy - mEnergy));
+		}
 		mEnergy = energy; 
 	}
 	virtual void  changeEnergy(float energy) { setEnergy(getEnergy() + energy); }
@@ -166,9 +170,14 @@ public:
 	virtual float getMutationAmount() { return mMutationAmount; }
 	virtual void  setMutationAmount(float amount) { mMutationAmount = amount; }
 
+	virtual float getAccumulatedEnergy() { return mAccumulatedEnergy; }
+	virtual void  setAccumulatedEnergy(float energy) { mAccumulatedEnergy = energy; }
+
 	virtual float getAttackRange();
 
 	static AnimalChildren breed(Animal *parent1, Animal *parent2);
+
+	virtual float getFitness();
 
 	AnimalRef &getParent1() { return mParent1; }
 	AnimalRef &getParent2() { return mParent2; }
@@ -215,6 +224,8 @@ protected:
 
 	float mMutationRate;
 	float mMutationAmount;
+
+	float mAccumulatedEnergy;
 	
 	virtual float calculateKcalPerDay();
 	virtual bool isHungry(bool useUpperLimit = false);

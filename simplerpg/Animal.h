@@ -160,6 +160,12 @@ public:
 	virtual float getEntityThreat(Animal *entity);
 	virtual float getEntityThreat(GameEntity *entity);
 
+	virtual float getMutationRate() { return mMutationRate; }
+	virtual void  setMutationRate(float rate) { mMutationRate = rate; }
+
+	virtual float getMutationAmount() { return mMutationAmount; }
+	virtual void  setMutationAmount(float amount) { mMutationAmount = amount; }
+
 	virtual float getAttackRange();
 
 	static AnimalChildren breed(Animal *parent1, Animal *parent2);
@@ -206,6 +212,9 @@ protected:
 	vector<GameEntity *> mSurroundingEntities;
 	Destination mAttackedBy;
 	float mAttackedByCooldown;
+
+	float mMutationRate;
+	float mMutationAmount;
 	
 	virtual float calculateKcalPerDay();
 	virtual bool isHungry(bool useUpperLimit = false);
@@ -233,7 +242,7 @@ protected:
 
 	float getTurnAmount(float facing, float dest);
 
-	static float breedProperty(const float &parent1Value, const float &parent2Value, const float &mutationAmount, const float &mutationRate, float diff = 4.0f, float minClamp = -1.0f, float maxClamp = -1.0f);
+	static float breedProperty(const float &parent1Value, const float &parent2Value, const float &mutationAmount = -1.0f, const float &mutationRate = -1.0f, float diff = 4.0f, float minClamp = -1.0f, float maxClamp = -1.0f);
 
 	static const Pixel GRAPHIC_DEAD;
 };

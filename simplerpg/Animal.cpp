@@ -35,6 +35,9 @@ Animal::Animal(Game *game) : GameEntity(game)
 	mMaxMenuLevel = 3;
 
 	mAttackedByCooldown = 0.0f;
+
+	mMutationRate = 0.1f;
+	mMutationAmount = 0.1f;
 }
 
 Animal::~Animal(void)
@@ -176,6 +179,8 @@ void Animal::loadProperties(FormattedFileIterator &iter)
 	else loadProp(ENERGY, setEnergy, float)
 	else loadProp(REST_ENERGY_PER_DAY, setEnergyNeededPerDay, float)
 	else loadProp(HUNGER_DAMAGE_COOLDOWN, setHungerDamageCooldown, float)
+	else loadProp(MUTATION_RATE, setMutationRate, float)
+	else loadProp(MUTATION_AMOUNT, setMutationAmount, float)
 
 	else if(iequals(propertyName, EntityPropertyNames[HUNGER_LIMITS]))
 	{
@@ -247,6 +252,8 @@ void Animal::saveProperties(FormattedFile &file)
 	saveProperty(PARENTS, file);
 	saveProperty(HUNGER_LIMITS, file);
 	saveProperty(HUNGER_DAMAGE_COOLDOWN, file);
+	saveProperty(MUTATION_RATE, file);
+	saveProperty(MUTATION_AMOUNT, file);
 	saveProperty(SPECIES_ALIGNMENT, file);
 }
 
@@ -275,6 +282,8 @@ void Animal::saveProperty(const EntityProperty &propertyId, FormattedFile &file)
 	saveProp(ENERGY, getEnergy)
 	saveProp(REST_ENERGY_PER_DAY, getEnergyNeededPerDay)
 	saveProp(HUNGER_DAMAGE_COOLDOWN, getHungerDamageCooldown)
+	saveProp(MUTATION_RATE, getMutationRate)
+	saveProp(MUTATION_AMOUNT, getMutationAmount)
 	
 	case PARENTS:
 		file << EntityPropertyNames[PARENTS] << ' ' << getParent1().getEntityId() << ' ' << getParent2().getEntityId() << '\n';
@@ -941,6 +950,9 @@ AnimalChildren Animal::breed(Animal *p1, Animal *p2)
 	Animal *child1 = new Animal(p1->mGame);
 	Animal *child2 = new Animal(p2->mGame);
 
+	float r = (p1->getMutationRate() + p2->getMutationRate()) * 0.5f;
+	float a = (p1->getMutationAmount() + p2->getMutationAmount()) * 0.5f;
+
 	for(int i = 0; i <= 1; i++)
 	{
 		Animal *c = child1;
@@ -961,26 +973,30 @@ AnimalChildren Animal::breed(Animal *p1, Animal *p2)
 		c->getParent1().setEntity(p1);
 		c->getParent2().setEntity(p2);
 
-		c->setDiet(breedProperty(p1->getDiet(), p2->getDiet(), 0.1f, 0.1f, 2.0f, 0.0f, 1.0f));
+
+
+		c->setDiet(breedProperty(p1->getDiet(), p2->getDiet(), r, a, 2.0f, 0.0f, 1.0f));
 		
-		c->setStrength(breedProperty(p1->getStrength(), p2->getStrength(), 0.1f, 0.1f));
-		c->setDexterity(breedProperty(p1->getDexterity(), p2->getDexterity(), 0.1f, 0.1f));
-		c->setIntelligence(breedProperty(p1->getIntelligence(), p2->getIntelligence(), 0.1f, 0.1f));
+		c->setStrength(breedProperty(p1->getStrength(), p2->getStrength(), a, r));
+		c->setDexterity(breedProperty(p1->getDexterity(), p2->getDexterity(), a, r));
+		c->setIntelligence(breedProperty(p1->getIntelligence(), p2->getIntelligence(), a, r));
 
-		c->setRunningSpeedBase(breedProperty(p1->getRunningSpeedBase(), p2->getRunningSpeedBase(), 0.1f, 0.1f));
-		c->setWalkingSpeedBase(breedProperty(p1->getWalkingSpeedBase(), p2->getWalkingSpeedBase(), 0.1f, 0.1f));
-		c->setTurningSpeedBase(breedProperty(p1->getTurningSpeedBase(), p2->getTurningSpeedBase(), 0.1f, 0.1f));
-		c->setAggression(breedProperty(p1->getAggression(), p2->getAggression(), 0.1f, 0.1f));
-		c->setEnergyNeededPerDay(breedProperty(p1->getEnergyNeededPerDay(), p2->getEnergyNeededPerDay(), 0.1f, 0.1f));
-		c->setHungerLowerLimit(breedProperty(p1->getHungerLowerLimit(), p2->getHungerLowerLimit(), 0.1f, 0.1f));
-		c->setHungerUpperLimit(breedProperty(p1->getHungerUpperLimit(), p2->getHungerUpperLimit(), 0.1f, 0.1f));
-		c->setMaxHealth(breedProperty(p1->getMaxHealth(), p2->getMaxHealth(), 0.1f, 0.1f));
+		c->setRunningSpeedBase(breedProperty(p1->getRunningSpeedBase(), p2->getRunningSpeedBase(), a, r));
+		c->setWalkingSpeedBase(breedProperty(p1->getWalkingSpeedBase(), p2->getWalkingSpeedBase(), a, r));
+		c->setTurningSpeedBase(breedProperty(p1->getTurningSpeedBase(), p2->getTurningSpeedBase(), a, r));
+		c->setAggression(breedProperty(p1->getAggression(), p2->getAggression(), a, r));
+		c->setEnergyNeededPerDay(breedProperty(p1->getEnergyNeededPerDay(), p2->getEnergyNeededPerDay(), a, r));
+		c->setHungerLowerLimit(breedProperty(p1->getHungerLowerLimit(), p2->getHungerLowerLimit(), a, r));
+		c->setHungerUpperLimit(breedProperty(p1->getHungerUpperLimit(), p2->getHungerUpperLimit(), a, r));
+		c->setMaxHealth(breedProperty(p1->getMaxHealth(), p2->getMaxHealth(), a, r));
 		c->setHealth(c->getMaxHealth());
-		c->setMass(breedProperty(p1->getMass(), p2->getMass(), 0.1f, 0.1f));
-		c->setSize(breedProperty(p1->getSize(), p2->getSize(), 0.1f, 0.1f));
-		c->setDamageBase(breedProperty(p1->getDamageBase(), p2->getDamageBase(), 0.1f, 0.1f));
-		c->setAttackRate(breedProperty(p1->getAttackRate(), p2->getAttackRate(), 0.1f, 0.1f));
+		c->setMass(breedProperty(p1->getMass(), p2->getMass(), a, r));
+		c->setSize(breedProperty(p1->getSize(), p2->getSize(), a, r));
+		c->setDamageBase(breedProperty(p1->getDamageBase(), p2->getDamageBase(), a, r));
+		c->setAttackRate(breedProperty(p1->getAttackRate(), p2->getAttackRate(), a, r));
 
+		c->setMutationAmount(breedProperty(p1->getMutationAmount(), p2->getMutationAmount(), a, r));
+		c->setMutationRate(breedProperty(p1->getMutationRate(), p2->getMutationRate(), a, r));
 	}
 
 	return AnimalChildren(child1, child2);
@@ -1005,12 +1021,14 @@ float Animal::breedProperty(const float &parent1Value, const float &parent2Value
 
 	float value = math::nextDist(minv, maxv, average);
 
-	float mutate = math::nextFloat();
-	if (mutate < mutationRate)
+	if(mutationRate > 0.0f && mutationAmount > 0.0f)
 	{
-		float amount = mutationAmount * value;
-		value = value + (amount * (math::nextFloat() - 0.5f) * 2.0f);
+		float mutate = math::nextFloat();
+		if (mutate < mutationRate)
+		{
+			float amount = mutationAmount * value;
+			value = value + (amount * (math::nextFloat() - 0.5f) * 2.0f);
+		}
 	}
-
 	return value;
 }

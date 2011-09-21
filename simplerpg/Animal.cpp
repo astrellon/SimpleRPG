@@ -5,8 +5,6 @@ const Pixel Animal::GRAPHIC_DEAD('X', COLOR_MAGENTA, false);
 
 Animal::Animal(Game *game) : GameEntity(game)
 {
-	//srand( (unsigned int)time(NULL) );
-
 	mWalking = true;
 	mWalkingSpeed = 1.1f;
 	mRunningSpeed = 10.0f;
@@ -963,12 +961,56 @@ AnimalChildren Animal::breed(Animal *p1, Animal *p2)
 		c->getParent1().setEntity(p1);
 		c->getParent2().setEntity(p2);
 
-		c->setDiet(breedProperty(p1->getDiet(), p2->getDiet(), 2.0f, 0.0f, 1.0f));
+		c->setDiet(breedProperty(p1->getDiet(), p2->getDiet(), 0.1f, 0.1f, 2.0f, 0.0f, 1.0f));
 		
-		c->setStrength(breedProperty(p1->getStrength(), p2->getStrength()));
-		c->setDexterity(breedProperty(p1->getDexterity(), p2->getDexterity()));
-		c->setIntelligence(breedProperty(p1->getIntelligence(), p2->getIntelligence()));
+		c->setStrength(breedProperty(p1->getStrength(), p2->getStrength(), 0.1f, 0.1f));
+		c->setDexterity(breedProperty(p1->getDexterity(), p2->getDexterity(), 0.1f, 0.1f));
+		c->setIntelligence(breedProperty(p1->getIntelligence(), p2->getIntelligence(), 0.1f, 0.1f));
+
+		c->setRunningSpeedBase(breedProperty(p1->getRunningSpeedBase(), p2->getRunningSpeedBase(), 0.1f, 0.1f));
+		c->setWalkingSpeedBase(breedProperty(p1->getWalkingSpeedBase(), p2->getWalkingSpeedBase(), 0.1f, 0.1f));
+		c->setTurningSpeedBase(breedProperty(p1->getTurningSpeedBase(), p2->getTurningSpeedBase(), 0.1f, 0.1f));
+		c->setAggression(breedProperty(p1->getAggression(), p2->getAggression(), 0.1f, 0.1f));
+		c->setEnergyNeededPerDay(breedProperty(p1->getEnergyNeededPerDay(), p2->getEnergyNeededPerDay(), 0.1f, 0.1f));
+		c->setHungerLowerLimit(breedProperty(p1->getHungerLowerLimit(), p2->getHungerLowerLimit(), 0.1f, 0.1f));
+		c->setHungerUpperLimit(breedProperty(p1->getHungerUpperLimit(), p2->getHungerUpperLimit(), 0.1f, 0.1f));
+		c->setMaxHealth(breedProperty(p1->getMaxHealth(), p2->getMaxHealth(), 0.1f, 0.1f));
+		c->setHealth(c->getMaxHealth());
+		c->setMass(breedProperty(p1->getMass(), p2->getMass(), 0.1f, 0.1f));
+		c->setSize(breedProperty(p1->getSize(), p2->getSize(), 0.1f, 0.1f));
+		c->setDamageBase(breedProperty(p1->getDamageBase(), p2->getDamageBase(), 0.1f, 0.1f));
+		c->setAttackRate(breedProperty(p1->getAttackRate(), p2->getAttackRate(), 0.1f, 0.1f));
+
 	}
 
 	return AnimalChildren(child1, child2);
+}
+
+float Animal::breedProperty(const float &parent1Value, const float &parent2Value, const float &mutationAmount, const float &mutationRate, float diff, float minClamp, float maxClamp)
+{
+	float average = (parent1Value + parent2Value) * 0.5f;
+	float t = diff * (max(parent1Value, parent2Value) - average);
+		
+	float maxv = average + t;
+	if (maxClamp >= 0.0f && maxv > maxClamp)
+	{
+		maxv = maxClamp;
+	}
+
+	float minv = average - t;
+	if (minClamp >= 0.0f && minv < minClamp)
+	{
+		minv = minClamp;
+	}
+
+	float value = math::nextDist(minv, maxv, average);
+
+	float mutate = math::nextFloat();
+	if (mutate < mutationRate)
+	{
+		float amount = mutationAmount * value;
+		value = value + (amount * (math::nextFloat() - 0.5f) * 2.0f);
+	}
+
+	return value;
 }

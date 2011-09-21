@@ -88,8 +88,21 @@ void breedTest(UIText &breedTester)
 
 	Animal parent1(NULL);
 	parent1.setDiet(0.5f);
+	parent1.setStrength(4);
+	parent1.setDexterity(18);
+	parent1.setIntelligence(6);
+	parent1.setAggression(0.1f);
+	parent1.setAttackRate(1.2f);
+	parent1.setSpecies("Rabbit");
+	
 	Animal parent2(NULL);
 	parent2.setDiet(0.6f);
+	parent2.setStrength(3.5);
+	parent2.setDexterity(19);
+	parent2.setIntelligence(6.5);
+	parent2.setAggression(0.08f);
+	parent2.setAttackRate(1.5f);
+	parent2.setSpecies("Rabbit");
 
 	string filename = "breedTest.txt";
 
@@ -203,10 +216,6 @@ int main(int argc, char **argv)
 {
 	ofstream logfile("logfile.log");
 	clog.rdbuf(logfile.rdbuf());
-
-	//Game gg(4, 4);
-	//cout << "Save Data: " << gg.saveMapData("map.data") << endl;
-	//cout << "Load Data: " << gg.loadMapData("map.data") << endl;
 
 	loadConfig("config.ini");
 

@@ -129,10 +129,12 @@ public:
 
 	static int nextId() { return sId++; }
 	
-	void setId(unsigned int id);
+	void setId(int id);
 	unsigned int getId() { return mId; }
 
-	static GameEntity *getEntityById(unsigned int id);
+	static GameEntity *getEntityById(int id);
+	static void removeEntity(int id);
+	static void removeEntity(GameEntity *entity);
 
 	virtual Action *getCurrentAction() { return mCurrentAction; }
 	virtual vector<Action *> *getPastActions() { return &mPastActions; }

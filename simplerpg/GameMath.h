@@ -6,6 +6,10 @@
 #include "Vector2.h"
 #include "Matrix3x3.h"
 
+#include <iostream>
+
+using namespace std;
+
 #ifndef M_PI
 #define M_PI 3.1415926535897932384626433832795
 #endif
@@ -19,7 +23,12 @@ namespace math
 		return (float)rand() / (float)RAND_MAX;
 	}
 
-	inline float distF(const float &x, const float &min, const float &max, const float &mid)
+	inline double nextDouble()
+	{
+		return (double)rand() / (double)RAND_MAX;
+	}
+
+	inline double distF(const double &x, const double &min, const double &max, const double &mid)
 	{
 		if(x < mid)
 		{
@@ -28,9 +37,9 @@ namespace math
 		return (x - max) / (mid - max);
 	}
 
-	inline float distG(const float &x)
+	inline double distG(const double &x)
 	{
-		return 0.5f;
+		return 0.5;
 	}
 
 	float nextDist(const float &min, const float &max, const float &mid);

@@ -3,10 +3,15 @@
 float math::nextDist(const float &min, const float &max, const float &mid)
 {
 	float total = max - min;
+	if(abs(total) < 0.01)
+	{
+		return nextFloat() * total + min;
+	}
+
 	while(true)
 	{
-		float x = total * nextFloat() + min;
-		float u = nextFloat();
+		double x = total * nextDouble() + min;
+		double u = nextDouble();
         
 		if(u < distF(x, min, max, mid) / (CONST_A * distG(x)))
 		{

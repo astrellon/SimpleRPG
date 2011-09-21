@@ -8,6 +8,8 @@
 #include "GameEntityRef.h"
 
 #include <boost/format.hpp>
+#include <boost/random.hpp>
+#include <boost/random/normal_distribution.hpp>
 
 using boost::format;
 using namespace std;
@@ -160,7 +162,7 @@ public:
 
 	virtual float getAttackRange();
 
-	AnimalChildren breed(Animal *parent1, Animal *parent2);
+	static AnimalChildren breed(Animal *parent1, Animal *parent2);
 
 	AnimalRef &getParent1() { return mParent1; }
 	AnimalRef &getParent2() { return mParent2; }
@@ -230,6 +232,26 @@ protected:
 	virtual TargetAction *castTargetAction(Action *action, const string &actionName, bool checkForSelfTarget = true);
 
 	float getTurnAmount(float facing, float dest);
+
+	static float breedProperty(const float &parent1Value, const float &parent2Value, float diff = 4.0f, float minClamp = -1.0f, float maxClamp = -1.0f)
+	{
+		float average = (parent1Value + parent2Value) * 0.5f;
+		float t = diff * (max(parent1Value, parent2Value) - average);
+		
+		float maxv = average + t;
+		if (maxClamp >= 0.0f && maxv > maxClamp)
+		{
+			maxv = maxClamp;
+		}
+
+		float minv = average - t;
+		if (minClamp >= 0.0f && minv < minClamp)
+		{
+			minv = minClamp;
+		}
+
+		return math::nextDist(minv, maxv, average);
+	}
 
 	static const Pixel GRAPHIC_DEAD;
 };

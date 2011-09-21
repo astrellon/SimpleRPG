@@ -5,7 +5,7 @@ const Pixel Animal::GRAPHIC_DEAD('X', COLOR_MAGENTA, false);
 
 Animal::Animal(Game *game) : GameEntity(game)
 {
-	srand( (unsigned int)time(NULL) );
+	//srand( (unsigned int)time(NULL) );
 
 	mWalking = true;
 	mWalkingSpeed = 1.1f;
@@ -938,9 +938,37 @@ float Animal::getAttackRange()
 	return getSize() * 0.6f;
 }
 
-AnimalChildren Animal::breed(Animal *parent1, Animal *parent2)
+AnimalChildren Animal::breed(Animal *p1, Animal *p2)
 {
+	Animal *child1 = new Animal(p1->mGame);
+	Animal *child2 = new Animal(p2->mGame);
 
+	for(int i = 0; i <= 1; i++)
+	{
+		Animal *c = child1;
+		if(i == 1)
+		{
+			c = child2;
+		}
 
-	return AnimalChildren();
+		if(iequals(p1->getSpecies(), p2->getSpecies()))
+		{
+			c->setSpecies(p1->getSpecies());
+		}
+		else
+		{
+			c->setSpecies(p1->getSpecies() + '_' + p2->getSpecies());
+		}
+
+		c->getParent1().setEntity(p1);
+		c->getParent2().setEntity(p2);
+
+		c->setDiet(breedProperty(p1->getDiet(), p2->getDiet(), 2.0f, 0.0f, 1.0f));
+		
+		c->setStrength(breedProperty(p1->getStrength(), p2->getStrength()));
+		c->setDexterity(breedProperty(p1->getDexterity(), p2->getDexterity()));
+		c->setIntelligence(breedProperty(p1->getIntelligence(), p2->getIntelligence()));
+	}
+
+	return AnimalChildren(child1, child2);
 }

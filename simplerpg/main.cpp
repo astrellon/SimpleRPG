@@ -82,6 +82,53 @@ void distTest()
 	file.close();
 }
 
+void breedTest(UIText &breedTester)
+{
+	breedTester.clearText();
+
+	Animal parent1(NULL);
+	parent1.setDiet(0.5f);
+	Animal parent2(NULL);
+	parent2.setDiet(0.6f);
+
+	string filename = "breedTest.txt";
+
+	FormattedFile file(filename);
+	if(!file.isOpen())
+	{
+		breedTester << "Unable to open breed testing log file '<12>" << filename << "'</>\n";
+		return;
+	}
+
+	file << "// Breed tester file\n";
+	file << "// Parent 1\n";
+	parent1.saveToFile(file);
+	file << "// Parent 2\n";
+	parent2.saveToFile(file);
+
+	breedTester << "\nWorking...\n";
+
+	int n = 100;
+
+	for(int i = 0; i < n; i += 2)
+	{
+		AnimalChildren children = Animal::breed(&parent1, &parent2);
+
+		file << "// Child " << i << '\n';
+		children.child1->saveToFile(file);
+
+		file << "// Child " << (i + 1) << '\n';
+		children.child2->saveToFile(file);
+
+		delete children.child1;
+		delete children.child2;
+	}
+
+	file.closeFile();
+
+	breedTester << "\nOutputted <12>" << n << "</> breed tests to '<12>" << filename << "</>'\n";
+}
+
 void threatTest(UIText &threatTester)
 {
 	threatTester.clearText();
@@ -264,7 +311,11 @@ int main(int argc, char **argv)
 
 	mainMenu.addChild(new UIText("<15>Alan Lawrey's Thesis project 2011</>\n"));
 
-	mainMenu.setMenuItem(0, new UIText("<12>1</>: Load world.\n<12>2</>: Output rejection samplying test.\n<12>3</>: Threat tester.\n<12>q</>: Quit."));
+	mainMenu.setMenuItem(0, new UIText("<12>1</>: Load world.\n"
+		"<12>2</>: Output rejection samplying test.\n"
+		"<12>3</>: Threat tester.\n"
+		"<12>4</>: Breed tester.\n"
+		"<12>q</>: Quit."));
 
 	UIList mainItem2;
 	UIText mainItem2Title;
@@ -290,6 +341,12 @@ int main(int argc, char **argv)
 	UIText threatTester;
 	mainItem5.addChild(threatTester);
 	mainMenu.setMenuItem(4, mainItem5);
+
+	UIList mainItem6;
+	mainItem6.addChild(new UIText("<12>1</>: Test breeding.\n<12>Any</>: Go back."));
+	UIText breedTester;
+	mainItem6.addChild(breedTester);
+	mainMenu.setMenuItem(5, mainItem6);
 
 	path currentPath(initial_path<path>());
 	currentPath = system_complete(path("."));
@@ -337,8 +394,11 @@ int main(int argc, char **argv)
 					{
 						mainMenu.setMenuLevel(4);
 					}
-					else if
-					(c == 27)
+					else if(c == '4')
+					{
+						mainMenu.setMenuLevel(5);
+					}
+					else if(c == 27)
 					{
 						quit = true;
 					}
@@ -423,6 +483,17 @@ int main(int argc, char **argv)
 					{
 						mainMenu.goBack();
 					}
+					break;
+				case 5:
+					if(c == '1')
+					{
+						breedTest(breedTester);
+					}
+					else
+					{
+						mainMenu.goBack();
+					}
+					break;
 				}
 			}
 

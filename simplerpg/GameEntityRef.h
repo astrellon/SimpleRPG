@@ -27,7 +27,7 @@ public:
 		}
 		else
 		{
-			setEntityId(entity->getEntityId());
+			setEntityId(entity->getId());
 		}
 		mEntity = entity;
 	}

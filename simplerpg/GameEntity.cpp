@@ -43,6 +43,7 @@ GameEntity::GameEntity(Game *game)
 
 GameEntity::~GameEntity(void)
 {
+	removeEntity(this);
 }
 
 void GameEntity::setCurrentAction(Action *action)
@@ -451,7 +452,7 @@ void GameEntity::setupDisplay(UIContainer &hud)
 	hud.addChild(mHudText);
 }
 
-void GameEntity::setId( unsigned int id )
+void GameEntity::setId(int id)
 {
 	EntityMap::iterator iter = sEntities.find(id);
 	if(iter == sEntities.end())
@@ -471,7 +472,7 @@ void GameEntity::setId( unsigned int id )
 	}
 }
 
-GameEntity * GameEntity::getEntityById( unsigned int id )
+GameEntity *GameEntity::getEntityById(int id)
 {
 	EntityMap::iterator iter = sEntities.find(id);
 	if(iter == sEntities.end())
@@ -479,6 +480,24 @@ GameEntity * GameEntity::getEntityById( unsigned int id )
 		return NULL;
 	}
 	return iter->second;
+}
+
+void GameEntity::removeEntity(GameEntity *entity)
+{
+	if(entity == NULL)
+	{
+		return;
+	}
+	removeEntity(entity->getId());
+}
+void GameEntity::removeEntity(int id)
+{
+	EntityMap::iterator iter = sEntities.find(id);
+	if(iter == sEntities.end())
+	{
+		return;
+	}
+	sEntities.erase(iter);
 }
 
 void GameEntity::getNearbyEntities(const float &radius, vector<GameEntity *> &result)

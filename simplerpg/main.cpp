@@ -69,9 +69,16 @@ Game *startGame(string filename)
 	return game;
 }
 
-void distTest()
+void distTest(UIText &text)
 {
-	ofstream file("distTest.txt");
+	string filename = "distTest.txt";
+	ofstream file(filename);
+
+	if(!file.is_open())
+	{
+		text << "Unable to open normal distribution testing log file '<12>" << filename << "'</>\n";
+		return;
+	}
 
 	int n = 10000;
 	for(int i = 0; i < n; i++)
@@ -80,12 +87,46 @@ void distTest()
 	}
 
 	file.close();
+
+	text << "\nOutputted <12>" << n << "</> normal distribution tests to '<12>" << filename << "</>'\n";
+}
+
+void rouletteTest(UIText &text)
+{
+	string filename = "rouletteTest.txt";
+	ofstream file(filename);
+
+	if(!file.is_open())
+	{
+		text << "Unable to open roulette distribution testing log file '<12>" << filename << "'</>\n";
+		return;
+	}
+
+	vector<float> probs;
+	probs.push_back(2.0f);
+	probs.push_back(1.1f);
+	probs.push_back(1.1f);
+	probs.push_back(3.5f);
+	probs.push_back(2.7f);
+	probs.push_back(4.3f);
+	probs.push_back(5.1f);
+	probs.push_back(1.5f);
+	probs.push_back(1.8f);
+	probs.push_back(4.0f);
+
+	int n = 10000;
+	for(int i = 0; i < n; i++)
+	{
+		file << math::nextRoulette(probs) << endl;
+	}
+
+	file.close();
+
+	text << "\nOutputted <12>" << n << "</> roulette distribution tests to '<12>" << filename << "</>'\n";
 }
 
 void breedTest(UIText &breedTester)
 {
-	breedTester.clearText();
-
 	Animal parent1(NULL);
 	parent1.setDiet(0.5f);
 	parent1.setStrength(4);
@@ -343,7 +384,11 @@ int main(int argc, char **argv)
 	mainMenu.setMenuItem(1, mainItem2);
 
 	mainMenu.setMenuItem(2, new UIText("<12>1</>: Really quit?\n<12>Any</>: Return to main."));
-	mainMenu.setMenuItem(3, new UIText("<12>1</>: Write out distrubution test file.\n<12>Any</>: Go back."));
+
+	UIText randomTester("<12>1</>: Write normal distrubution test file.\n"
+		"<12>2</>: Write distrubution test file.\n"
+		"<12>Any</>: Go back.");
+	mainMenu.setMenuItem(3, randomTester);
 	
 	UIList mainItem5;
 	mainItem5.addChild(new UIText("<12>1</>: Test threat levels.\n<12>Any</>: Go back."));
@@ -351,11 +396,8 @@ int main(int argc, char **argv)
 	mainItem5.addChild(threatTester);
 	mainMenu.setMenuItem(4, mainItem5);
 
-	UIList mainItem6;
-	mainItem6.addChild(new UIText("<12>1</>: Test breeding.\n<12>Any</>: Go back."));
-	UIText breedTester;
-	mainItem6.addChild(breedTester);
-	mainMenu.setMenuItem(5, mainItem6);
+	UIText breedTester("<12>1</>: Test breeding.\n<12>Any</>: Go back.");
+	mainMenu.setMenuItem(5, breedTester);
 
 	path currentPath(initial_path<path>());
 	currentPath = system_complete(path("."));
@@ -476,7 +518,11 @@ int main(int argc, char **argv)
 				case 3:
 					if(c == '1')
 					{
-						distTest();
+						distTest(randomTester);
+					}
+					else if(c == '2')
+					{
+						rouletteTest(randomTester);
 					}
 					else
 					{

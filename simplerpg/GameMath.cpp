@@ -20,6 +20,26 @@ float math::nextDist(const float &min, const float &max, const float &mid)
 	}
 }
 
+int math::nextRoulette(const vector<float> &probabilities)
+{
+	float maxProb = -1.0f;
+	for(int i = 0; i < probabilities.size(); i++)
+	{
+		maxProb = max(maxProb, probabilities[i]);
+	}
+
+	while(true)
+	{
+		double x = nextDouble() * probabilities.size();
+		double u = nextDouble();
+        
+		if(u < probabilities[floor(x)] / (CONST_A * distG(x)))
+		{
+			return x;
+		}
+	}
+}
+
 Vector2f math::getClosetToRay(Vector2f A, Vector2f B, Vector2f P, bool segmentClamp)
 {
 	Vector2f AP = P.sub(A);

@@ -97,6 +97,8 @@ Game::Game(int width, int height)
 	mLastKey = -1;
 
 	mSelection = Rect(-1, -1, 0, 0);
+
+	mTimeScale = 1;
 }
 
 Game::~Game(void)
@@ -405,6 +407,15 @@ void Game::keyActions(const int key)
 			setHudWidth(getHudWidth() + 1);
 		}
 
+		if (key == '[')
+		{
+			setTimeScale(getTimeScale() - 1);
+		}
+		if (key == ']')
+		{
+			setTimeScale(getTimeScale() + 1);
+		}
+
 		break;
 
 	case MENU_RAY:
@@ -658,7 +669,9 @@ void Game::displayActions()
 
 	case MENU_OPTIONS:
 		mHudText << "<15>Options:</>\n\n";
-		mHudText << "Menu size: <12>" << getHudWidth() << "</> <11>+</>/<11>-</>\n";
+		mHudText << "<15>Menu size</>:\t<12>" << getHudWidth() << "</> <11>+</>/<11>-</>\n";
+		mHudText << "<15>Time scale</>:\t<12>" << getTimeScale() << "</> <11>[</>/<11>]</>\n";
+
 		break;
 
 	case MENU_RAY:
@@ -936,7 +949,7 @@ void Game::render(WINDOW *wnd)
 
 	mWholeHudText.clearText();
 	mWholeHudText << "<15>Current Day: </>" << getCurrentDay() << '\n';
-	mWholeHudText << "<15>Current Time: </>" << getCurrentTimeString() << '\n';
+	mWholeHudText << "<15>Current Time: </>" << getCurrentTimeString() << " (<12>x" << getTimeScale() << "</>)\n";
 
 	mWholeHud.setWindow(wnd);
 	displayActions();

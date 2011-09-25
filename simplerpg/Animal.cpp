@@ -105,7 +105,8 @@ void Animal::displayActions(UIContainer &hud)
 		fmt2 % getEnergy() % getEnergyNeededPerDay() % mOldEnergyMultiplier;
 
 		text << "<15>Energy</>:\t" << fmt2.str();
-		text << "\n<15>Cooldown</>: " << getAttackCooldown() << '\n';
+		//text << "\n<15>Cooldown</>: " << getAttackCooldown() << '\n';
+		text << "<15>Fitness</>:\t" << getFitness() << '\n';
 		
 	}
 	else if(mMenuLevel == 2)

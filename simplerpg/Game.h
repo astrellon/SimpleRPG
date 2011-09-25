@@ -163,6 +163,16 @@ public:
 
 	static Game *CURRENT_GAME;
 
+	inline int  getTimeScale() { return mTimeScale; }
+	inline void setTimeScale(int scale) 
+	{ 
+		if(scale < 1)
+		{
+			scale = 1;
+		}
+		mTimeScale = scale;
+	}
+
 	virtual RayResult fireRay(const Vector2f &point, const Vector2f &direction, const float &length);
 	virtual RayResult fireRay(const Vector2f &point, const float &direction, const float &length);
 	virtual void findNearby(Vector2f origin, const float &radius, vector<GameEntity *> &results);
@@ -215,6 +225,8 @@ protected:
 	float mCurrentTime;
 	int mCurrentDay;
 	float mDayLength;
+
+	int mTimeScale;
 
 	Vector2i mDebugPosition;
 

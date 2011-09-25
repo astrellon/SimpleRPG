@@ -386,7 +386,7 @@ int main(int argc, char **argv)
 	mainMenu.setMenuItem(2, new UIText("<12>1</>: Really quit?\n<12>Any</>: Return to main."));
 
 	UIText randomTester("<12>1</>: Write normal distrubution test file.\n"
-		"<12>2</>: Write distrubution test file.\n"
+		"<12>2</>: Write roulette distrubution test file.\n"
 		"<12>Any</>: Go back.");
 	mainMenu.setMenuItem(3, randomTester);
 	
@@ -631,10 +631,6 @@ int main(int argc, char **argv)
 			{
 				int c = wgetch(gameWnd);
 
-				if(c == 's')
-				{
-					game->saveMap("test.out");
-				}
 				game->keyActions(c);
 			}
 
@@ -653,7 +649,17 @@ int main(int argc, char **argv)
 
 			if(!paused && !game->getGamePaused())
 			{
-				game->update(dt);
+				if(game->getTimeScale() > 1)
+				{
+					for(int i = 0; i < game->getTimeScale(); i++)
+					{
+						game->update(0.04f);
+					}
+				}
+				else
+				{
+					game->update(dt);
+				}
 			}
 
 			wclear(gameWnd);

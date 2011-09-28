@@ -99,6 +99,8 @@ Game::Game(int width, int height)
 	mSelection = Rect(-1, -1, 0, 0);
 
 	mTimeScale = 1;
+
+	mUpdating = false;
 }
 
 Game::~Game(void)
@@ -407,13 +409,23 @@ void Game::keyActions(const int key)
 			setHudWidth(getHudWidth() + 1);
 		}
 
+		if (key == ']')
+		{
+			setTimeScale(getTimeScale() + 1);
+		}
 		if (key == '[')
 		{
 			setTimeScale(getTimeScale() - 1);
 		}
-		if (key == ']')
+		// Shift + ]
+		if (key == 125)
 		{
-			setTimeScale(getTimeScale() + 1);
+			setTimeScale(getTimeScale() + 10);
+		}
+		// Shift + [
+		if (key == 123)
+		{
+			setTimeScale(getTimeScale() - 10);
 		}
 
 		break;
@@ -605,7 +617,8 @@ void Game::displayActions()
 
 	vector<GameEntity *> results;
 	TileData *closestFood = NULL;
-	
+	string species = "Rabbit";
+
 	switch (mMenuLevel)
 	{
 	default:
@@ -688,7 +701,19 @@ void Game::displayActions()
 		mHudText << "<15>Position</>:\t(" << mCursor.toString(12) << ")\n";
 		mHudText << "<15>Radius</>:\t\t<12>" << mCursorLength << "</>\n";
 
-		findNearby(mCursor, (float)mCursorLength, results);
+		findNearby(mCursor, (float)mCursorLength, results, NULL);
+
+		mHudText << "<15>Results</>:\t" << results.size() << "\n\n";
+		for(size_t i = 0; i < results.size(); i++)
+		{
+			GameEntity *entity = results[i];
+			mHudText << "<12>" << i << "</>: " << entity->getEntityName() << " (" << entity->getSpecies() << ")\n";
+		}
+
+		results.clear();
+		mHudText << "\nNeaby <12>" << species << "</>s\n";
+
+		findNearby(mCursor, (float)mCursorLength, results, species);
 
 		mHudText << "<15>Results</>:\t" << results.size() << "\n\n";
 		for(size_t i = 0; i < results.size(); i++)
@@ -808,7 +833,7 @@ EntityList Game::getUnderCursor()
 
 	mUnderCursor.clear();
 
-	for(EntityList::iterator iter = mEntities.begin(); iter != mEntities.end(); iter++)
+	for(EntityList::iterator iter = mEntities.begin(); iter != mEntities.end(); ++iter)
 	{
 		GameEntity *entity = *iter;
 		Vector2i pos = entity->getPosition();
@@ -823,17 +848,29 @@ EntityList Game::getUnderCursor()
 
 void Game::addEntity(GameEntity *entity)
 {
-	mEntities.push_back(entity);
+	EntityList *list = &mEntities;
+	if(mUpdating)
+	{
+		list = &mNewEntities;
+	}
+	list->push_back(entity);
 }
 
 void Game::removeEntity(GameEntity *entity)
 {
-	for(vector<GameEntity *>::iterator iter = mEntities.begin(); iter != mEntities.end(); iter++)
+	if(mUpdating)
 	{
-		if((*iter) == entity)
+		mRemoveEntities.push_back(entity);
+	}
+	else
+	{
+		for(vector<GameEntity *>::iterator iter = mEntities.begin(); iter != mEntities.end(); ++iter)
 		{
-			mEntities.erase(iter);
-			break;
+			if((*iter) == entity)
+			{
+				mEntities.erase(iter);
+				break;
+			}
 		}
 	}
 }
@@ -854,10 +891,25 @@ void Game::update(float dt)
 		}
 	}
 
-	for(vector<GameEntity *>::iterator iter = mEntities.begin(); iter != mEntities.end(); iter++)
+	for(EntityList::iterator iter = mNewEntities.begin(); iter != mNewEntities.end(); ++iter)
+	{
+		addEntity(*iter);
+	}
+
+	mNewEntities.clear();
+
+	mUpdating = true;
+	for(EntityList::iterator iter = mEntities.begin(); iter != mEntities.end(); ++iter)
 	{
 		(*iter)->update(dt);
 	}
+	mUpdating = false;
+
+	for(EntityList::iterator iter = mRemoveEntities.begin(); iter != mRemoveEntities.end(); ++iter)
+	{
+		removeEntity(*iter);
+	}
+	mRemoveEntities.clear();
 }
 
 void Game::displayUnderCursor()
@@ -876,7 +928,7 @@ void Game::displayUnderCursor()
 	}
 
 	int num = 1;
-	for(EntityList::iterator iter = mUnderCursor.begin(); iter != mUnderCursor.end(); iter++)
+	for(EntityList::iterator iter = mUnderCursor.begin(); iter != mUnderCursor.end(); ++iter)
 	{
 		mHudText << "<12>" << num++ << "</>: " << (*iter)->getEntityName() << " (" << (*iter)->getSpecies() << ") \n";
 	}
@@ -886,7 +938,7 @@ void Game::render(WINDOW *wnd)
 {
 	mMap->renderMap(mScreenSize, wnd);
 
-	for(vector<GameEntity *>::iterator iter = mEntities.begin(); iter != mEntities.end(); iter++)
+	for(vector<GameEntity *>::iterator iter = mEntities.begin(); iter != mEntities.end(); ++iter)
 	{
 		(*iter)->render(mScreenSize, wnd);
 	}
@@ -1084,7 +1136,7 @@ void Game::saveMap(string filename)
 	map<Tile *, char> tileLookup;
 
 	file << "\n-- Tiles\n";
-	for(map<char, Tile *>::iterator iter = tileMap->begin(); iter != tileMap->end(); iter++)
+	for(map<char, Tile *>::iterator iter = tileMap->begin(); iter != tileMap->end(); ++iter)
 	{
 		file << iter->first << ' ' << iter->second->getCode() << '\n';
 		tileLookup[iter->second] = iter->first;
@@ -1104,7 +1156,7 @@ void Game::saveMap(string filename)
 
 	file << "\n-- Entities\n";
 
-	for(vector<GameEntity *>::iterator iter = mEntities.begin(); iter != mEntities.end(); iter++)
+	for(vector<GameEntity *>::iterator iter = mEntities.begin(); iter != mEntities.end(); ++iter)
 	{
 		(*iter)->saveToFile(file);
 	}
@@ -1405,20 +1457,69 @@ FindEntityResult Game::findClosestEntity(Vector2f position, const string &entity
 	return findClosestEntity(position, entityType, NULL);
 }
 
-FindEntityResult Game::findClosestEntity(Vector2f position, const string &entityType, const GameEntity *ignore)
+FindEntityResult Game::findClosestEntity(Vector2f startPosition, const string &entityType, const GameEntity *ignore)
+{
+	return findClosestEntity(startPosition, entityType, ignore, NULL);
+}
+
+FindEntityResult Game::findClosestEntity(Vector2f startPosition, const string &entityType, const GameEntity *ignore, const string &species)
+{
+	return findClosestEntity(startPosition, entityType, ignore, &species);
+}
+
+FindEntityResult Game::findBreedingPartner(Animal *origin)
+{
+	Animal *shortestAnimal = NULL;
+	vector<Vector2f> *shortestPath = NULL;
+	float shortest = 1e30f;
+	Map *m = getMap();
+	Vector2i positionInt = (Vector2i)origin->getPosition();
+	for(EntityList::iterator iter = mEntities.begin(); iter != mEntities.end(); ++iter)
+	{
+		Animal *ani = dynamic_cast<Animal*>(*iter);
+		if(ani == NULL || ani == origin)
+		{
+			continue;
+		}
+
+		if (iequals(origin->getSpecies(), ani->getSpecies()) &&
+			ani->wantsToBreed())
+		{
+			vector<Vector2f> *path = m->search(positionInt, ani->getPosition());
+			if (path != NULL)
+			{
+				float length = lengthOfPath(path);
+				if(length < shortest)
+				{
+					shortest = length;
+					shortestAnimal = ani;
+					if(shortestPath != NULL)
+					{
+						delete shortestPath;
+					}
+					shortestPath = path;
+				}
+			}
+		}
+	}
+	return FindEntityResult(shortestAnimal, shortestPath);
+}
+
+FindEntityResult Game::findClosestEntity(Vector2f position, const string &entityType, const GameEntity *ignore, const string *species)
 {
 	GameEntity *shortestEntity = NULL;
 	vector<Vector2f> *shortestPath = NULL;
 	float shortest = 1e30f;
 	Map *m = getMap();
 	Vector2i positionInt = (Vector2i)position;
-	for(EntityList::iterator iter = mEntities.begin(); iter != mEntities.end(); iter++)
+	for(EntityList::iterator iter = mEntities.begin(); iter != mEntities.end(); ++iter)
 	{
 		GameEntity *entity = *iter;
-		if(iequals(entity->getEntityType(), entityType))
+		if  (iequals(entity->getEntityType(), entityType) && 
+			(species == NULL || (species != NULL && iequals(*species, entity->getSpecies()))))
 		{
 			vector<Vector2f> *path = m->search(positionInt, entity->getPosition());
-			if(path != NULL)
+			if (path != NULL)
 			{
 				float length = lengthOfPath(path);
 				if(length < shortest && (entity != ignore && ignore != NULL))
@@ -1426,7 +1527,9 @@ FindEntityResult Game::findClosestEntity(Vector2f position, const string &entity
 					shortest = length;
 					shortestEntity = entity;
 					if(shortestPath != NULL)
+					{
 						delete shortestPath;
+					}
 					shortestPath = path;
 				}
 			}
@@ -1573,7 +1676,7 @@ RayResult Game::fireRay(const Vector2f &point, const Vector2f &direction, const 
 
 	EntityList lookingAt;
 
-	for(EntityList::iterator iter = mEntities.begin(); iter != mEntities.end(); iter++)
+	for(EntityList::iterator iter = mEntities.begin(); iter != mEntities.end(); ++iter)
 	{
 		GameEntity *entity = *iter;
 		if(math::getDistanceToRay(point, direction, length, entity->getPosition()) < entity->getSize())
@@ -1584,7 +1687,7 @@ RayResult Game::fireRay(const Vector2f &point, const Vector2f &direction, const 
 
 	EntityList canSee;
 
-	for(EntityList::iterator iter = lookingAt.begin(); iter != lookingAt.end(); iter++)
+	for(EntityList::iterator iter = lookingAt.begin(); iter != lookingAt.end(); ++iter)
 	{
 		GameEntity *entity = *iter;
 		RayResult test;
@@ -1618,13 +1721,23 @@ RayResult Game::fireRay(const Vector2f &point, const float &direction, const flo
 	return fireRay(Vector2f(x1, y1), Vector2f(x2, y2), length);
 }
 
-void Game::findNearby(Vector2f origin, const float &radius, vector<GameEntity *> &results)
+void Game::findNearby(Vector2f origin, const float &radius, vector<GameEntity *> &results, string &restrictToSpecies)
+{
+	findNearby(origin, radius, results, &restrictToSpecies);
+}
+
+void Game::findNearby(Vector2f origin, const float &radius, vector<GameEntity *> &results, string *restrictToSpecies)
 {
 	vector<GameEntity *> withinRadius;
 
-	for(EntityList::iterator iter = mEntities.begin(); iter != mEntities.end(); iter++)
+	for(EntityList::iterator iter = mEntities.begin(); iter != mEntities.end(); ++iter)
 	{
 		GameEntity *entity = *iter;
+		if(restrictToSpecies != NULL && !iequals(*restrictToSpecies, entity->getSpecies()))
+		{
+			continue;
+		}
+
 		Vector2f diff = origin.sub(entity->getPosition());
 		if(diff.length() < radius)
 		{
@@ -1632,7 +1745,7 @@ void Game::findNearby(Vector2f origin, const float &radius, vector<GameEntity *>
 		}
 	}
 
-	for(EntityList::iterator iter = withinRadius.begin(); iter != withinRadius.end(); iter++)
+	for(EntityList::iterator iter = withinRadius.begin(); iter != withinRadius.end(); ++iter)
 	{
 		GameEntity *entity = *iter;
 		RayResult cast;
@@ -1772,4 +1885,38 @@ void Game::bresenhamLine(float x1, float y1, float x2, float y2, WINDOW *wnd, co
 	}
 
 	return;
+}
+
+void Game::loadNameList(string filename)
+{
+	ifstream file(filename);
+	if(!file.is_open())
+	{
+		clog << "Unable to open name list '" << filename << "'" << endl;
+		return;
+	}
+
+	char buff[255];
+	while(!file.eof())
+	{
+		file.getline(buff, 255);
+		string line = buff;
+		if(line.length() > 0)
+		{
+			mListOfNames.push_back(line);
+		}
+	}
+
+	clog << "Loaded " << mListOfNames.size() << " names." << endl;
+}
+
+string Game::getRandomName()
+{
+	if(mListOfNames.size() == 0)
+	{
+		return "Animal";
+	}
+
+	int num = round(math::nextFloat() * mListOfNames.size());
+	return mListOfNames[num];
 }

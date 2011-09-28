@@ -13,7 +13,7 @@ UIContainer::~UIContainer()
 vector<UIComponent *>::iterator UIContainer::findChild(UIComponent *child)
 {
 	vector<UIComponent *>::iterator found = mChildren.end();
-	for(vector<UIComponent *>::iterator iter = mChildren.begin(); iter != mChildren.end(); iter++)
+	for(vector<UIComponent *>::iterator iter = mChildren.begin(); iter != mChildren.end(); ++iter)
 	{
 		if(*iter == child)
 		{
@@ -114,7 +114,7 @@ void UIContainer::renderRaw(bool nullRender, bool overrideFormat)
 	mMeasuredWidth = 0;
 	mMeasuredHeight = 0;
 
-	for(vector<UIComponent *>::iterator iter = mChildren.begin(); iter != mChildren.end(); iter++)
+	for(vector<UIComponent *>::iterator iter = mChildren.begin(); iter != mChildren.end(); ++iter)
 	{
 		UIComponent *comp = *iter;
 		

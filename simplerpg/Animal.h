@@ -31,23 +31,6 @@ class Game;
 class Animal;
 
 typedef GameEntityRef<Animal> AnimalRef;
-typedef struct _AnimalChildren
-{
-	Animal *child1;
-	Animal *child2;
-
-	_AnimalChildren()
-	{
-		child1 = NULL;
-		child2 = NULL;
-	}
-
-	_AnimalChildren(Animal *c1, Animal *c2)
-	{
-		child1 = c1;
-		child2 = c2;
-	}
-} AnimalChildren;
 
 class Animal : public GameEntity
 {
@@ -60,50 +43,52 @@ public:
 
 	Destination *getDestination();
 
-	virtual void displayActions(UIContainer &hud);
+	void displayActions(UIContainer &hud);
 
-	virtual float getRunningSpeed();
-	virtual float getRunningSpeedBase() { return mRunningSpeed; }
-	virtual void  setRunningSpeedBase(float speed) { mRunningSpeed = speed; }
+	virtual string getSpeciesName();
 
-	virtual float getWalkingSpeed();
-	virtual float getWalkingSpeedBase() { return mWalkingSpeed; }
-	virtual void  setWalkingSpeedBase(float speed) { mWalkingSpeed = speed; }
+	float getRunningSpeed();
+	float getRunningSpeedBase() { return mRunningSpeed; }
+	void  setRunningSpeedBase(float speed) { mRunningSpeed = speed; }
 
-	virtual bool  getWalking() { return mWalking; }
-	virtual void  setWalking(bool walking) { mWalking = walking; }
+	float getWalkingSpeed();
+	float getWalkingSpeedBase() { return mWalkingSpeed; }
+	void  setWalkingSpeedBase(float speed) { mWalkingSpeed = speed; }
 
-	virtual float getCurrentSpeed() { return getWalking() ? getWalkingSpeed() : getRunningSpeed(); }
+	bool  getWalking() { return mWalking; }
+	void  setWalking(bool walking) { mWalking = walking; }
 
-	virtual float getTurningSpeed();
-	virtual float getTurningSpeedBase() { return mTurningSpeed; }
-	virtual void  setTurningSpeedBase(float speed) { mTurningSpeed = speed; }
+	float getCurrentSpeed() { return getWalking() ? getWalkingSpeed() : getRunningSpeed(); }
 
-	virtual float getAggression() { return mAggression; }
-	virtual void  setAggression(float aggression) { mAggression = aggression; }
+	float getTurningSpeed();
+	float getTurningSpeedBase() { return mTurningSpeed; }
+	void  setTurningSpeedBase(float speed) { mTurningSpeed = speed; }
 
-	virtual float getDiet() { return mDiet; }
-	virtual void  setDiet(float diet) { mDiet = diet; }
+	float getAggression() { return mAggression; }
+	void  setAggression(float aggression) { mAggression = aggression; }
 
-	virtual float getStrength() { return mStrength; }
-	virtual void  setStrength(float strength) { mStrength = strength; }
+	float getDiet() { return mDiet; }
+	void  setDiet(float diet) { mDiet = diet; }
 
-	virtual float getDexterity() { return mDexterity; }
-	virtual void  setDexterity(float dexterity) { mDexterity = dexterity; }
+	float getStrength() { return mStrength; }
+	void  setStrength(float strength) { mStrength = strength; }
 
-	virtual float getIntelligence() { return mIntelligence; }
-	virtual void  setIntelligence(float intelligence) { mIntelligence = intelligence; }
+	float getDexterity() { return mDexterity; }
+	void  setDexterity(float dexterity) { mDexterity = dexterity; }
 
-	virtual string getEntityType() { return "Animal"; }
+	float getIntelligence() { return mIntelligence; }
+	void  setIntelligence(float intelligence) { mIntelligence = intelligence; }
 
-	virtual void  eatPlant(Plant *plant);
-	virtual void  eatAnimal(Animal *animal);
+	string getEntityType() { return "Animal"; }
 
-	virtual float getEnergyNeededPerDay() { return mEnergyNeededPerDay; }
-	virtual void  setEnergyNeededPerDay(float energy) { mEnergyNeededPerDay = energy; }
+	void  eatPlant(Plant *plant);
+	void  eatAnimal(Animal *animal);
+
+	float getEnergyNeededPerDay() { return mEnergyNeededPerDay; }
+	void  setEnergyNeededPerDay(float energy) { mEnergyNeededPerDay = energy; }
 	
-	virtual float getEnergy() { return mEnergy; }
-	virtual void  setEnergy(float energy) 
+	float getEnergy() { return mEnergy; }
+	void  setEnergy(float energy) 
 	{
 		if (energy < 0.0f)
 		{
@@ -113,71 +98,105 @@ public:
 		{
 			setAccumulatedEnergy(getAccumulatedEnergy() + (energy - mEnergy));
 		}
-		mEnergy = energy; 
+		mEnergy = energy;
 	}
-	virtual void  changeEnergy(float energy) { setEnergy(getEnergy() + energy); }
+	void  changeEnergy(float energy) { setEnergy(getEnergy() + energy); }
 
-	virtual float getHungerLowerLimit() { return mHungerLowerLimit; }
-	virtual void  setHungerLowerLimit(float limit) { mHungerLowerLimit = limit; }
+	float getHungerLowerLimit() { return mHungerLowerLimit; }
+	void  setHungerLowerLimit(float limit) { mHungerLowerLimit = limit; }
 
-	virtual float getHungerUpperLimit() { return mHungerUpperLimit; }
-	virtual void  setHungerUpperLimit(float limit) { mHungerUpperLimit = limit; }
+	float getHungerUpperLimit() { return mHungerUpperLimit; }
+	void  setHungerUpperLimit(float limit) { mHungerUpperLimit = limit; }
 
-	virtual float getHealth() { return mHealth; }
-	virtual void  setHealth(float health);
-	virtual void  changeHealth(float health);
+	float getHungerBreedLimit() { return mHungerBreedLimit; }
+	void  setHungerBreedLimit(float limit) { mHungerBreedLimit = limit; }
 
-	virtual float getMaxHealth() { return mMaxHealth; }
-	virtual void  setMaxHealth(float health) { mMaxHealth = health; }
+	float getHealth() { return mHealth; }
+	void  setHealth(float health);
+	void  changeHealth(float health);
 
-	virtual float getDamageBase() { return mDamageBase; }
-	virtual void  setDamageBase(float damage) { mDamageBase = damage; }
+	float getMaxHealth() { return mMaxHealth; }
+	void  setMaxHealth(float health) { mMaxHealth = health; }
 
-	virtual float getAttackDamage() { return getDamageBase(); }
+	float getDamageBase() { return mDamageBase; }
+	void  setDamageBase(float damage) { mDamageBase = damage; }
 
-	virtual float getAttackRate() { return mAttackRate; }
-	virtual void  setAttackRate(float rate) { mAttackRate = rate; }
+	float getAttackDamage() { return getDamageBase(); }
 
-	virtual float getAttackCooldown() { return mAttackCooldown; }
-	virtual void  setAttackCooldown(float cooldown) { mAttackCooldown = cooldown; }
+	float getAttackRate() { return mAttackRate; }
+	void  setAttackRate(float rate) { mAttackRate = rate; }
 
-	virtual float getAttackedByCooldown() { return mAttackedByCooldown; }
-	virtual void  setAttackedByCooldown(float cooldown) { mAttackedByCooldown = cooldown; }
+	float getAttackCooldown() { return mAttackCooldown; }
+	void  setAttackCooldown(float cooldown) { mAttackCooldown = cooldown; }
 
-	virtual float getHungerDamageCooldown() { return mHungerDamageCooldown; }
-	virtual void  setHungerDamageCooldown(float cooldown) { mHungerDamageCooldown = cooldown; }
+	float getAttackedByCooldown() { return mAttackedByCooldown; }
+	void  setAttackedByCooldown(float cooldown) { mAttackedByCooldown = cooldown; }
 
-	virtual void  receiveDamage(float damage, GameEntity *from = NULL);
+	float getHungerDamageCooldown() { return mHungerDamageCooldown; }
+	void  setHungerDamageCooldown(float cooldown) { mHungerDamageCooldown = cooldown; }
 
-	virtual void  killAnimal();
-	virtual bool  isDead() { return mHealth <= 0.0f; }
+	void  receiveDamage(float damage, GameEntity *from = NULL);
 
-	virtual float getSpeciesAlignment(GameEntity *entity);
-	virtual float getSpeciesAlignment(const string &species);
+	void  killAnimal();
+	bool  isDead() { return mHealth <= 0.0f; }
 
-	virtual void  setSpeciesAlignment(GameEntity *entity, const float &alignment);
-	virtual void  setSpeciesAlignment(const string &species, const float &alignment);
+	float getSpeciesAlignment(GameEntity *entity);
+	float getSpeciesAlignment(const string &species);
 
-	virtual void  changeSpeciesAlignment(GameEntity *entity, const float &alignment);
-	virtual void  changeSpeciesAlignment(const string &species, const float &alignment);
+	void  setSpeciesAlignment(GameEntity *entity, const float &alignment);
+	void  setSpeciesAlignment(const string &species, const float &alignment);
 
-	virtual float getEntityThreat(Animal *entity);
-	virtual float getEntityThreat(GameEntity *entity);
+	void  changeSpeciesAlignment(GameEntity *entity, const float &alignment);
+	void  changeSpeciesAlignment(const string &species, const float &alignment);
 
-	virtual float getMutationRate() { return mMutationRate; }
-	virtual void  setMutationRate(float rate) { mMutationRate = rate; }
+	float getEntityThreat(Animal *entity);
+	float getEntityThreat(GameEntity *entity);
 
-	virtual float getMutationAmount() { return mMutationAmount; }
-	virtual void  setMutationAmount(float amount) { mMutationAmount = amount; }
+	float getMutationRate() { return mMutationRate; }
+	void  setMutationRate(float rate) { mMutationRate = rate; }
 
-	virtual float getAccumulatedEnergy() { return mAccumulatedEnergy; }
-	virtual void  setAccumulatedEnergy(float energy) { mAccumulatedEnergy = energy; }
+	float getMutationAmount() { return mMutationAmount; }
+	void  setMutationAmount(float amount) { mMutationAmount = amount; }
 
-	virtual float getAttackRange();
+	float getAccumulatedEnergy() { return mAccumulatedEnergy; }
+	void  setAccumulatedEnergy(float energy) { mAccumulatedEnergy = energy; }
 
-	static AnimalChildren breed(Animal *parent1, Animal *parent2);
+	float getAttackRange();
 
-	virtual float getFitness();
+	float getAge() { return mAge; }
+	void  setAge(float age) { mAge = age; }
+
+	float getAgeInDays();
+	void  setAgeInDays(float days);
+
+	float getLifeExpectancy() { return mLifeExpectancy; }
+	void  setLifeExpectancy(float life) { mLifeExpectancy = life; }
+
+	float getBreedingAge() { return mBreedingAge; }
+	void  setBreedingAge(float age) { mBreedingAge = age; }
+
+	float getBreedingRate() { return mBreedingRate; }
+	void  setBreedingRate(float rate) { mBreedingRate = rate; }
+
+	float getBreedingCount() { return mBreedingCount; }
+	void  setBreedingCount(float count) { mBreedingCount = count; }
+
+	float getFertility() { return mFertility; }
+	void  setFertility(float fertility) { mFertility = fertility; }
+
+	float getMateFindCooldown() { return mMateFindCooldown; }
+	void  setMateFindCooldown(float cooldown) { mMateFindCooldown = cooldown; }
+
+	string getBirthdate() { return mBirthdate; }
+	void setBirthdate(string date) { mBirthdate = date; }
+
+	static void breed(vector<Animal *> &children, Animal *parent1, Animal *parent2);
+
+	bool wantsToBreed();
+
+	float getFitness();
+
+	void breedWith(Animal *other);
 
 	AnimalRef &getParent1() { return mParent1; }
 	AnimalRef &getParent2() { return mParent2; }
@@ -199,6 +218,7 @@ protected:
 	float mHunger;
 	float mHungerLowerLimit;
 	float mHungerUpperLimit;
+	float mHungerBreedLimit;
 	float mHungerDamageCooldown;
 
 	float mStrength;
@@ -226,9 +246,21 @@ protected:
 	float mMutationAmount;
 
 	float mAccumulatedEnergy;
+
+	float mAge;
+	float mLifeExpectancy;
+
+	float mBreedingAge;
+	float mBreedingRate;
+	float mBreedingCount;
+	float mFertility;
+
+	float mMateFindCooldown;
+
+	string mBirthdate;
 	
 	virtual float calculateKcalPerDay();
-	virtual bool isHungry(bool useUpperLimit = false);
+	virtual bool isHungry(int limitLevel = 0);
 	
 	virtual void eatEntity(GameEntity *entity);
 	virtual bool eatTile(TileData *data, float dt);
@@ -244,10 +276,15 @@ protected:
 	virtual void doActionEat(float dt);
 	virtual void doActionFlee(float dt) {}
 	virtual void doActionAttack(float dt);
+	virtual void doActionBreed(float dt);
 
 	virtual void saveProperties(FormattedFile &file);
 	virtual void saveProperty(const EntityProperty &propertyId, FormattedFile &file);
 	virtual void loadProperties(FormattedFileIterator &iter);
+
+	virtual void getNearbyAnimals(const float &radius, vector<Animal *> &result);
+	virtual void getNearbyAnimals(const float &radius, vector<Animal *> &result, string *restrictToSpecies);
+	virtual void getNearbyAnimals(const float &radius, vector<Animal *> &result, string &restrictToSpecies);
 
 	virtual TargetAction *castTargetAction(Action *action, const string &actionName, bool checkForSelfTarget = true);
 

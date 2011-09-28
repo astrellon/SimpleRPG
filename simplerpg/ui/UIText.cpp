@@ -93,27 +93,6 @@ int UIText::getMeasuredWidth()
 
 void UIText::renderRaw(bool nullRender, bool overrideFormat)
 {
-	/*string sss = mText.str();
-	const char *line = sss.c_str();
-	bool inMarkup = false;
-	bool inColour = false;
-
-	boost::sregex_token_iterator iter(sss.begin(), sss.end(), lineBreakup, 0), end;
-	while(iter != end)
-	{
-		string token = *iter++;
-
-		if(token[0] == '<')
-		{
-			inMarkup = true;
-		}
-		if(inMarkup && token[1] == '/')
-		{
-			inMarkup = false;
-		}
-		renderChar(0, 0, 'a');
-	}*/
-
 	int y = 0;
 	bool inColour = false;
 	bool escaped = false;

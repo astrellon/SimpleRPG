@@ -32,7 +32,8 @@ enum EntityProperty { ID, FACING, POSITION, DESTINATION, NAME, GRAPHIC, HEALTH,
 	ACTION_HISTORY, ATTACK_RATE, ATTACK_COOLDOWN, ENERGY, REST_ENERGY_PER_DAY, 
 	SPECIES, SPECIES_ALIGNMENT, SIGHT_RADIUS, ATTACKED_BY, ATTACKED_BY_COOLDOWN,
 	HUNGER_LIMITS, HUNGER_DAMAGE_COOLDOWN, PARENTS, MUTATION_RATE, MUTATION_AMOUNT,
-	ACCUMULATED_ENERGY};
+	ACCUMULATED_ENERGY, AGE, LIFE_EXPECTANCY, BREEDING_AGE, BREEDING_RATE, BIRTHDATE,
+	MATE_FIND_COOLDOWN, FERTILITY, BREEDING_COUNT };
 
 const char *EntityPropertyNames[];
 
@@ -119,6 +120,8 @@ public:
 	virtual string getSpecies() { return mSpecies; }
 	virtual void setSpecies(string species) { mSpecies = species; }
 
+	virtual string getSpeciesName() { return getSpecies(); }
+
 	virtual float getSize() { return mSize; }
 	virtual void  setSize(float size) { mSize = size; }
 
@@ -145,7 +148,7 @@ public:
 	virtual bool canSeeEntity(GameEntity *entity);
 
 	virtual void getNearbyEntities(const float &radius, vector<GameEntity *> &result);
-	virtual void getNearbyEntities(const float &radius, vector<GameEntity *> &result, const string &restrictToSpecies);
+	virtual void getNearbyEntities(const float &radius, vector<GameEntity *> &result, string &restrictToSpecies);
 
 protected:
 	unsigned int mId;
@@ -188,7 +191,7 @@ protected:
 	// Call when the entity is added into a Game.
 	virtual void onAddedToGame() {}
 
-	virtual void getNearbyEntities(const float &radius, vector<GameEntity *> &result, const string *restrictToSpecies);
+	virtual void getNearbyEntities(const float &radius, vector<GameEntity *> &result, string *restrictToSpecies);
 
 	static const float GRAPHIC_FLASH_COOLDOWN;
 

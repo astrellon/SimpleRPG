@@ -38,7 +38,7 @@ bool compare(AStarNode *n1, AStarNode *n2)
 bool listContains(vector<AStarNode *> *list, AStarNode *node)
 {
 	bool found = false;
-	for(vector<AStarNode *>::iterator iter = list->begin(); iter != list->end(); iter++)
+	for(vector<AStarNode *>::iterator iter = list->begin(); iter != list->end(); ++iter)
 	{
 		if((*iter) == node)
 		{
@@ -136,7 +136,7 @@ vector<Vector2f> *Map::search(const Vector2i &start, const Vector2i &end)
 			closedList.push_back(node);
 
 			vector<AStarNode *> *neighbors = getNeighbors(node->position);
-			for(vector<AStarNode *>::iterator iter = neighbors->begin(); iter != neighbors->end(); iter++)
+			for(vector<AStarNode *>::iterator iter = neighbors->begin(); iter != neighbors->end(); ++iter)
 			{
 				AStarNode *n = *iter;
 				if (!listContains(&openList, n) &&

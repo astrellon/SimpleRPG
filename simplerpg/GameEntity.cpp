@@ -12,7 +12,8 @@ extern const char *EntityPropertyNames[] = { "id", "facing", "position", "destin
 	"entity_size", "entity_mass", "diet", "damage_base", "amount_eaten", "current_action", "action_history",
 	"attack_rate", "attack_cooldown", "energy", "rest_energy_per_day", "species", "species_alignment",
 	"sight_radius", "attacked_by", "attacked_by_cooldown", "hunger_limits", "hunger_damage_cooldown",
-	"parents", "mutation_rate", "mutation_amount", "accumulated_energy" };
+	"parents", "mutation_rate", "mutation_amount", "accumulated_energy", "age", "life_expectancy", 
+	"breeding_age", "breeding_rate", "birthdate", "mate_find_cooldown", "fertility", "breeding_count" };
 
 GameEntity::GameEntity(Game *game)
 {
@@ -231,7 +232,7 @@ void GameEntity::saveProperty(const EntityProperty &propertyId, FormattedFile &f
 	case ACTION_HISTORY:
 		file << EntityPropertyNames[ACTION_HISTORY] << '\n';
 		file.changeTabLevel(1);
-		for(vector<Action *>::iterator iter = getPastActions()->begin(); iter != getPastActions()->end(); iter++)
+		for(vector<Action *>::iterator iter = getPastActions()->begin(); iter != getPastActions()->end(); ++iter)
 		{
 			(*iter)->saveToFile(file);
 		}
@@ -385,7 +386,7 @@ void GameEntity::displayActions(UIContainer &hud)
 	text.clearText();
 
 	text << "<15>Entity</>:\t" << getEntityName() << '\n';
-	text << "<15>Species</>: " << getSpecies() << '\n';
+	text << "<15>Species</>: " << getSpeciesName() << '\n';
 
 	if(mMaxMenuLevel > 1)
 	{
@@ -421,10 +422,10 @@ void GameEntity::displayActions(UIContainer &hud)
 		text << "<15>Radius</>:\t" << radius << '\n';
 
 		vector<GameEntity *> result;
-		getNearbyEntities(radius, result, "no");
+		getNearbyEntities(radius, result);
 
 		text << "<15>Found</>:\t" << result.size() << '\n';
-		for(vector<GameEntity *>::iterator iter = result.begin(); iter != result.end(); iter++)
+		for(vector<GameEntity *>::iterator iter = result.begin(); iter != result.end(); ++iter)
 		{
 			text << (*iter)->getEntityName() << " (" << (*iter)->getSpecies() << ")\n";
 		}
@@ -505,16 +506,16 @@ void GameEntity::getNearbyEntities(const float &radius, vector<GameEntity *> &re
 	getNearbyEntities(radius, result, NULL);
 }
 
-void GameEntity::getNearbyEntities(const float &radius, vector<GameEntity *> &result, const string &restrictToSpecies)
+void GameEntity::getNearbyEntities(const float &radius, vector<GameEntity *> &result, string &restrictToSpecies)
 {
 	getNearbyEntities(radius, result, &restrictToSpecies);
 }
 
-void GameEntity::getNearbyEntities(const float &radius, vector<GameEntity *> &result, const string *restrictToSpecies)
+void GameEntity::getNearbyEntities(const float &radius, vector<GameEntity *> &result, string *restrictToSpecies)
 {
 	// Quick and easy way fof iterating through all entities.
-	mGame->findNearby(getPosition(), radius, result);
-	for(vector<GameEntity *>::iterator iter = result.begin(); iter != result.end(); iter++)
+	mGame->findNearby(getPosition(), radius, result, restrictToSpecies);
+	for(vector<GameEntity *>::iterator iter = result.begin(); iter != result.end(); ++iter)
 	{
 		if(*iter == this)
 		{

@@ -129,7 +129,7 @@ public:
 	}
 	Vector2i getCursorPosition() { return mCursor; }
 	void setCursorPosition(int xPos, int yPos);
-	void displayUnderCursor(/*UIContainer &hud*/);
+	void displayUnderCursor();
 
 	virtual void keyActions(const int key);
 	virtual void displayActions();
@@ -140,6 +140,11 @@ public:
 
 	FindEntityResult findClosestEntity(Vector2f startPosition, const string &entityType);
 	FindEntityResult findClosestEntity(Vector2f startPosition, const string &entityType, const GameEntity *ignore);
+	FindEntityResult findClosestEntity(Vector2f startPosition, const string &entityType, const GameEntity *ignore, const string &species);
+	FindEntityResult findClosestEntity(Vector2f startPosition, const string &entityType, const GameEntity *ignore, const string *species);
+
+	FindEntityResult findBreedingPartner(Animal *origin);
+
 	vector<Vector2f> *findPath(Vector2i startPosition, Vector2i endPosition);
 
 	Vector2i findClosestTileWithFood(Vector2i position);
@@ -175,11 +180,16 @@ public:
 
 	virtual RayResult fireRay(const Vector2f &point, const Vector2f &direction, const float &length);
 	virtual RayResult fireRay(const Vector2f &point, const float &direction, const float &length);
-	virtual void findNearby(Vector2f origin, const float &radius, vector<GameEntity *> &results);
+	virtual void findNearby(Vector2f origin, const float &radius, vector<GameEntity *> &results, string &restrictToSpecies);
+	virtual void findNearby(Vector2f origin, const float &radius, vector<GameEntity *> &results, string *restrictToSpecies);
 	virtual void drawLine(WINDOW *wnd, const char &c, const Vector2f &point, const Vector2f &direction, const float &length);
 	virtual void drawLine(WINDOW *wnd, const char &c, const Vector2f &point, const float &direction, const float &length);
 	virtual void drawLine(WINDOW *wnd, const int &x1, const int &y1, const int &x2, const int &y2, const char &c);
 	virtual void drawLine(WINDOW *wnd, float x1, float y1, float x2, float y2, const char &c);
+
+	void loadNameList(string filename);
+
+	string getRandomName();
 
 protected:
 	bool mRedisplay;
@@ -199,7 +209,10 @@ protected:
 	TileData **mTileData;
 
 	Rect mScreenSize;
+	bool mUpdating;
 	EntityList mEntities;
+	EntityList mNewEntities;
+	EntityList mRemoveEntities;
 	EntityList mUnderCursor;
 	bool mUnderCursorDirty;
 
@@ -231,6 +244,8 @@ protected:
 	Vector2i mDebugPosition;
 
 	Rect mSelection;
+
+	vector<string> mListOfNames;
 
 	// Used to display the "(Saved)" text in the menu when the game has been saved.
 	// Counts down to zero when the graphic will disappear.

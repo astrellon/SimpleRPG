@@ -17,10 +17,12 @@ Animal::Animal(Game *game) : GameEntity(game)
 	mHunger = 0.0f;
 	mHungerLowerLimit = 0.4f;
 	mHungerUpperLimit = 0.8f;
+	mHungerBreedLimit = 1.2f;
 	mHungerDamageCooldown = 0.0f;
 
 	mEnergyNeededPerDay = 1.0f;
 	mEnergy = 1.0f;
+	mAccumulatedEnergy = 0.0f;
 	mOldEnergyMultiplier = 1.0f;
 
 	mDiet = 0.5f;
@@ -38,6 +40,17 @@ Animal::Animal(Game *game) : GameEntity(game)
 
 	mMutationRate = 0.1f;
 	mMutationAmount = 0.1f;
+
+	mAge = 0.0f;
+	mLifeExpectancy = 100.0f;
+	mBreedingAge = 30.0f;
+	mBreedingRate = 20.0f;
+	mBreedingCount = 0.0f;
+	mFertility = 1.0f;
+
+	mBirthdate = "0 0";
+
+	mMateFindCooldown = 0.0f;
 }
 
 Animal::~Animal(void)
@@ -54,6 +67,47 @@ Destination *Animal::getDestination()
 	return &mDestination;
 }
 
+string Animal::getSpeciesName()
+{
+	float age = getAgeInDays();
+	if(age < getBreedingAge())
+	{
+		return getSpecies() + " (Young)";
+	}
+	else if(age > getLifeExpectancy() * 1.1f)
+	{
+		return getSpecies() + " (Ancient)";
+	}
+	else if(age > getLifeExpectancy() * 0.8f)
+	{
+		return getSpecies() + " (Elderly)";
+	}
+	else if(age > getLifeExpectancy() * 0.6f)
+	{
+		return getSpecies() + " (Senior)";
+	}
+	
+	return getSpecies();
+}
+
+float Animal::getAgeInDays()
+{
+	if(mGame != NULL)
+	{
+		return getAge() / mGame->getDayLength();
+	}
+	return getAge();
+}
+
+void Animal::setAgeInDays(float days)
+{
+	if(mGame != NULL)
+	{
+		setAge(days / mGame->getDayLength());
+	}
+	setAge(days);
+}
+
 void Animal::displayActions(UIContainer &hud)
 {
 	if(!mRedisplay && mGame->getGamePaused())
@@ -67,10 +121,10 @@ void Animal::displayActions(UIContainer &hud)
 	{
 		Vector2f dest = getDestination()->getLocation();
 
-		format fmt("%.1f, %.1f\n");
-		fmt % dest.x % dest.y;
+		format fmtDestination("%.1f, %.1f\n");
+		fmtDestination % dest.x % dest.y;
+		text << "<15>Dest</>:\t" << fmtDestination.str();
 
-		text << "<15>Dest</>:\t" << fmt.str();
 		GameEntity *target = getDestination()->getEntity();
 		text << "<15>Target</>:\t";
 		if(target != NULL)
@@ -84,9 +138,9 @@ void Animal::displayActions(UIContainer &hud)
 			text << "No target\n";
 		}
 	
-		fmt = format("<12>%.1f</>/<12>%.1f</> ");
-		fmt % getHealth() % getMaxHealth();
-		text << "<15>Health</>:\t" << fmt.str();
+		format fmtHealth = format("<12>%.1f</>/<12>%.1f</> ");
+		fmtHealth % getHealth() % getMaxHealth();
+		text << "<15>Health</>:\t" << fmtHealth.str();
 		if(isDead())
 		{
 			int ma = text.getMaxWidth();
@@ -101,18 +155,28 @@ void Animal::displayActions(UIContainer &hud)
 		text << "<15>Dex</>:\t" << getDexterity() << '\n';
 		text << "<15>Int</>:\t" << getIntelligence() << '\n';
 		text << "<15>Diet</>:\t" << getDiet() << '\n';
-		format fmt2("%.5f (%.0f) [%.1f]\n");
-		fmt2 % getEnergy() % getEnergyNeededPerDay() % mOldEnergyMultiplier;
-
-		text << "<15>Energy</>:\t" << fmt2.str();
-		//text << "\n<15>Cooldown</>: " << getAttackCooldown() << '\n';
-		text << "<15>Fitness</>:\t" << getFitness() << '\n';
 		
+		format fmtEnergy("%.5f (%.0f) [%.1f]\n");
+		fmtEnergy % getEnergy() % getEnergyNeededPerDay() % mOldEnergyMultiplier;
+		text << "<15>Energy</>:\t" << fmtEnergy.str();
+
+		format fmtAgeBreed("%.1f (%.0f)\n");
+		fmtAgeBreed % getAgeInDays() % getLifeExpectancy();
+		text << "<15>Age</>:\t" << fmtAgeBreed.str();
+		text << "<15>Birth</>:\t" << getBirthdate() << '\n';
+		text << "<15>BreedAge</>:\t" << getBreedingAge() << '\n';
+		
+		fmtAgeBreed.clear();
+		fmtAgeBreed % getBreedingRate() % (getBreedingCount() / mGame->getDayLength());
+		text << "<15>BreedRate</>:\t" << fmtAgeBreed.str();
+		text << "<15>Fitness</>:\t" << getFitness() << '\n';
+
+		text << "<15>WantsBreed</>:\t" << (wantsToBreed() ? "Yes\n" : "No\n");
 	}
 	else if(mMenuLevel == 2)
 	{
 		text << "<15>Alignments</>:\n\n<15>";
-		for(SpeciesAlignment::iterator iter = mSpeciesAlignment.begin(); iter != mSpeciesAlignment.end(); iter++)
+		for(SpeciesAlignment::iterator iter = mSpeciesAlignment.begin(); iter != mSpeciesAlignment.end(); ++iter)
 		{
 			text << iter->first << " <12>" << iter->second << "</>\n";
 		}
@@ -121,6 +185,7 @@ void Animal::displayActions(UIContainer &hud)
 
 Pixel Animal::getGraphic()
 {
+	Pixel graphic = GameEntity::getGraphic();
 	if(mGraphicFlashCooldown < GRAPHIC_FLASH_COOLDOWN * 0.5f)
 	{
 		if(isDead())
@@ -131,7 +196,9 @@ Pixel Animal::getGraphic()
 		{
 			double angle = mTransform.getAngle() * 180 / M_PI;
 			Pixel facingGraphic;
-			facingGraphic.setColour(7);
+			facingGraphic.setColour(graphic.getColour());
+			facingGraphic.bold = graphic.bold;
+
 			if (angle >= -45 && angle < 45)
 				facingGraphic.graphic = 'V';
 			else if(angle >= 45 && angle < 135)
@@ -144,7 +211,7 @@ Pixel Animal::getGraphic()
 			return facingGraphic;
 		}
 	}
-	return GameEntity::getGraphic();
+	return graphic;
 }
 
 void Animal::loadProperties(FormattedFileIterator &iter)
@@ -183,12 +250,45 @@ void Animal::loadProperties(FormattedFileIterator &iter)
 	else loadProp(MUTATION_RATE, setMutationRate, float)
 	else loadProp(MUTATION_AMOUNT, setMutationAmount, float)
 	else loadProp(ACCUMULATED_ENERGY, setAccumulatedEnergy, float)
+	else loadProp(LIFE_EXPECTANCY, setLifeExpectancy, float)
+	else loadProp(BREEDING_AGE, setBreedingAge, float)
+	else loadProp(MATE_FIND_COOLDOWN, setMateFindCooldown, float)
+	else loadProp(FERTILITY, setFertility, float)
 
+	else if(iequals(propertyName, EntityPropertyNames[AGE]))
+	{
+		++iter;
+		float age = lexical_cast<float>(*iter);		++iter;
+		if(mGame != NULL)
+		{
+			age *= mGame->getDayLength();
+		}
+		setAge(age);
+	}
+
+	else if(iequals(propertyName, EntityPropertyNames[BREEDING_RATE]))
+	{
+		++iter;
+		setBreedingRate(lexical_cast<float>(*iter));	++iter;
+		setBreedingCount(lexical_cast<float>(*iter));	++iter;
+	}
+	else if(iequals(propertyName, EntityPropertyNames[BIRTHDATE]))
+	{
+		string birthdate;
+		++iter;
+		birthdate = *iter;
+		if(birthdate[0] == '"')
+		{
+			birthdate = birthdate.substr(1, birthdate.size() - 2);
+		}
+		setBirthdate(birthdate);	++iter;
+	}
 	else if(iequals(propertyName, EntityPropertyNames[HUNGER_LIMITS]))
 	{
 		++iter;
 		setHungerLowerLimit(lexical_cast<float>(*iter));	++iter;
 		setHungerUpperLimit(lexical_cast<float>(*iter));	++iter;
+		setHungerBreedLimit(lexical_cast<float>(*iter));	++iter;
 	}
 	else if(iequals(propertyName, EntityPropertyNames[ATTACKED_BY]))
 	{
@@ -252,6 +352,13 @@ void Animal::saveProperties(FormattedFile &file)
 	saveProperty(ENERGY, file);
 	saveProperty(REST_ENERGY_PER_DAY, file);
 	saveProperty(ACCUMULATED_ENERGY, file);
+	saveProperty(AGE, file);
+	saveProperty(BIRTHDATE, file);
+	saveProperty(LIFE_EXPECTANCY, file);
+	saveProperty(BREEDING_AGE, file);
+	saveProperty(BREEDING_RATE, file);
+	saveProperty(MATE_FIND_COOLDOWN, file);
+	saveProperty(FERTILITY, file);
 	saveProperty(PARENTS, file);
 	saveProperty(HUNGER_LIMITS, file);
 	saveProperty(HUNGER_DAMAGE_COOLDOWN, file);
@@ -287,13 +394,26 @@ void Animal::saveProperty(const EntityProperty &propertyId, FormattedFile &file)
 	saveProp(HUNGER_DAMAGE_COOLDOWN, getHungerDamageCooldown)
 	saveProp(MUTATION_RATE, getMutationRate)
 	saveProp(MUTATION_AMOUNT, getMutationAmount)
-	saveProp(ACCUMULATED_ENERGY, getAccumulatedEnergy);
-	
+	saveProp(ACCUMULATED_ENERGY, getAccumulatedEnergy)
+	saveProp(LIFE_EXPECTANCY, getLifeExpectancy)
+	saveProp(BREEDING_AGE, getBreedingAge)
+	saveProp(MATE_FIND_COOLDOWN, getBreedingRate)
+	saveProp(FERTILITY, getFertility)
+
+	case AGE:
+		file << EntityPropertyNames[AGE] << ' ' << (getAge() / mGame->getDayLength()) << '\n';
+		break;
+	case BREEDING_RATE:
+		file << EntityPropertyNames[BREEDING_RATE] << ' ' << getBreedingRate() << ' ' << getBreedingCount() << '\n';
+		break;
+	case BIRTHDATE:
+		file << EntityPropertyNames[BIRTHDATE] << " \"" << getBirthdate() << "\"\n";
+		break;
 	case PARENTS:
 		file << EntityPropertyNames[PARENTS] << ' ' << getParent1().getEntityId() << ' ' << getParent2().getEntityId() << '\n';
 		break;
 	case HUNGER_LIMITS:
-		file << EntityPropertyNames[HUNGER_LIMITS] << ' ' << getHungerLowerLimit() << ' ' << getHungerUpperLimit() << '\n';
+		file << EntityPropertyNames[HUNGER_LIMITS] << ' ' << getHungerLowerLimit() << ' ' << getHungerUpperLimit() << ' ' << getHungerBreedLimit() << '\n';
 		break;
 	case ATTACKED_BY:
 		file << EntityPropertyNames[ATTACKED_BY] << ' ' << mAttackedBy.getEntityId() << '\n';
@@ -302,7 +422,7 @@ void Animal::saveProperty(const EntityProperty &propertyId, FormattedFile &file)
 	case SPECIES_ALIGNMENT:
 		file << EntityPropertyNames[SPECIES_ALIGNMENT] << '\n';
 		file.changeTabLevel(1);
-		for(SpeciesAlignment::iterator iter = mSpeciesAlignment.begin(); iter != mSpeciesAlignment.end(); iter++)
+		for(SpeciesAlignment::iterator iter = mSpeciesAlignment.begin(); iter != mSpeciesAlignment.end(); ++iter)
 		{
 			file << '"' << iter->first << "\" " << iter->second << '\n';
 		}
@@ -319,12 +439,12 @@ void Animal::saveProperty(const EntityProperty &propertyId, FormattedFile &file)
 void Animal::update(float dt)
 {
 	mGraphicFlashCooldown -= dt;
-	if(mGraphicFlashCooldown < 0.0f)
+	while(mGraphicFlashCooldown < 0.0f)
 	{
 		mGraphicFlashCooldown += GRAPHIC_FLASH_COOLDOWN;
 	}
 
-	if(isDead())
+	if (isDead())
 	{
 		return;
 	}
@@ -346,21 +466,37 @@ void Animal::update(float dt)
 
 	mEnergyUsage.clear();
 
-	mAttackedByCooldown -= dt;
-	if(mAttackedByCooldown < 0.0f)
+	setAge(getAge() + dt);
+	if (getAgeInDays() > getBreedingAge())
 	{
-		mAttackedByCooldown = 0.0f;
+		setBreedingCount(getBreedingCount() + dt);
+		if (getMateFindCooldown() > 0.0f)
+		{
+			setMateFindCooldown(getMateFindCooldown() - dt);
+		}
+	}
+
+	float chanceOfDeath = 0.0f;
+	if (getAgeInDays() > getLifeExpectancy * 0.8f)
+	{
+		chanceOfDeath = getAgeInDays() / getLifeExpectancy();
+	}
+
+	setAttackedByCooldown(getAttackCooldown() - dt);
+	if (getAttackCooldown() < 0.0f)
+	{
+		setAttackedByCooldown(0.0f);
 		mAttackedBy.setEntity(NULL);
 	}
 
-	if(getHungerDamageCooldown() > 0.0f)
+	if (getHungerDamageCooldown() > 0.0f)
 	{
 		setHungerDamageCooldown(getHungerDamageCooldown() - dt);
 	}
 
-	if(getEnergy() < 0.1f)
+	if (getEnergy() < 0.1f)
 	{
-		if(getHungerDamageCooldown() <= 0.0f)
+		if (getHungerDamageCooldown() <= 0.0f)
 		{
 			receiveDamage(getMaxHealth() / 20.0f, NULL);
 			setHungerDamageCooldown(20.0f);
@@ -380,9 +516,14 @@ void Animal::update(float dt)
 	default:
 	case IDLE:
 		// Do nothing!
-		if(isHungry())
+
+		if (isHungry() || (wantsToBreed() && isHungry(2)))
 		{
 			setCurrentAction(new TargetAction(EAT));
+		}
+		else if(getMateFindCooldown() <= 0.0f && wantsToBreed())
+		{
+			setCurrentAction(new TargetAction(BREED));
 		}
 		break;
 	case EAT:
@@ -390,15 +531,20 @@ void Animal::update(float dt)
 		break;
 	case FLEE:
 		doActionFlee(dt);
+		break;
 	case ATTACK:
 		// Do some more nothing.
 		doActionAttack(dt);
+		break;
+	case BREED:
+		doActionBreed(dt);
+		break;
 	}
 
 	moveAnimal(dt);
 
 	float usageMultiplier = 1.0f;
-	for(vector<float>::iterator iter = mEnergyUsage.begin(); iter != mEnergyUsage.end(); iter++)
+	for(vector<float>::iterator iter = mEnergyUsage.begin(); iter != mEnergyUsage.end(); ++iter)
 	{
 		usageMultiplier *= *iter;
 	}
@@ -434,7 +580,7 @@ GameEntity *Animal::findGreatestThreat()
 	GameEntity *greatest = NULL;
 	float greatestThreat = -100.0f;
 	for(vector<GameEntity *>::iterator iter = mSurroundingEntities.begin();
-		iter != mSurroundingEntities.end(); iter++)
+		iter != mSurroundingEntities.end(); ++iter)
 	{
 		float threat = getEntityThreat(*iter);
 		if (threat > greatestThreat)
@@ -781,7 +927,12 @@ void Animal::doActionEat(float dt)
 			return;
 		}
 		bool tilePlentiful = eatTile(data, dt);
-		if(!isHungry(true))
+		int limit = 1;
+		if(wantsToBreed())
+		{
+			limit = 2;
+		}
+		if(!isHungry(limit))
 		{
 			action->setCompleted(true, mGame->getCurrentTimeString(true));
 			setCurrentAction(new Action(IDLE));
@@ -791,6 +942,89 @@ void Animal::doActionEat(float dt)
 			action->setStep(0);
 		}
 	}
+}
+
+void Animal::doActionBreed(float dt)
+{
+	TargetAction *action = castTargetAction(getCurrentAction(), "Attack");
+	if(action == NULL)
+	{
+		return;
+	}
+
+	if(action->getStep() == 0)
+	{
+		vector<Animal *> mates;
+		getNearbyAnimals(getLineOfSightRadius() * 1.5f, mates, getSpecies());
+		bool mateFound = false;
+		if(mates.empty())
+		{
+			FindEntityResult closest = mGame->findBreedingPartner(this);
+			if(closest.entity != NULL)
+			{
+				action->getTarget()->setEntity(closest.entity);
+				mateFound = true;
+			}
+		}
+		else
+		{
+			vector<float> fitness;
+			fitness.reserve(mates.size());
+			for(int i = 0; i < mates.size(); i++)
+			{
+				if(!mates[i]->wantsToBreed())
+				{
+					mates.erase(mates.begin() + i);
+					continue;
+				}
+				fitness.push_back(mates[i]->getFitness());
+			}
+
+			int mateIndex = math::nextRoulette(fitness);
+			action->getTarget()->setEntity(mates[mateIndex]);
+			mateFound = true;
+		}
+		
+		if(!mateFound)
+		{
+			setMateFindCooldown(mGame->getDayLength() * 0.5f);
+			setCurrentAction(new TargetAction(IDLE));
+		}
+		else
+		{
+			action->nextStep();
+		}
+	}
+	else if(action->getStep() == 1)
+	{
+		// Direct distance between this animal and the target.
+		setWalking(true);
+		double simpleDist = distanceToEntity(action->getTarget()->getEntity());
+		if(simpleDist <= 1.0f)
+		{
+			action->nextStep();
+		}
+	}
+	else if(action->getStep() == 2)
+	{
+		vector<Animal *> children;
+		Animal *other = dynamic_cast<Animal *>(action->getTarget()->getEntity());
+		breed(children, this, other);
+		other->breedWith(this);
+		breedWith(other);
+		setCurrentAction(new TargetAction(IDLE));
+
+		for(vector<Animal *>::iterator iter = children.begin(); iter != children.end(); ++iter)
+		{
+			mGame->addEntity(*iter);
+		}
+	}
+}
+
+void Animal::breedWith(Animal *other)
+{
+	setBreedingCount(0.0f);
+	setMateFindCooldown(mGame->getDayLength() * 0.5f);
 }
 
 void Animal::eatEntity(GameEntity *entity)
@@ -839,9 +1073,17 @@ float Animal::calculateKcalPerDay()
 	return energy;*/
 }
 
-bool Animal::isHungry(bool useUpperLimit)
+bool Animal::isHungry(int limitLevel)
 {
-	float limit = useUpperLimit ? getHungerUpperLimit() : getHungerLowerLimit();
+	float limit = getHungerLowerLimit();
+	if (limitLevel == 1)
+	{
+		limit = getHungerUpperLimit();
+	}
+	else if(limitLevel == 2)
+	{
+		limit = getHungerBreedLimit() * getFertility();
+	}
 	return getEnergy() < calculateKcalPerDay() * limit;
 }
 
@@ -949,33 +1191,51 @@ float Animal::getAttackRange()
 	return getSize() * 0.6f;
 }
 
-AnimalChildren Animal::breed(Animal *p1, Animal *p2)
+void Animal::breed(vector<Animal *> &children, Animal *p1, Animal *p2)
 {
-	Animal *child1 = new Animal(p1->mGame);
-	Animal *child2 = new Animal(p2->mGame);
-
 	float r = (p1->getMutationRate() + p2->getMutationRate()) * 0.5f;
 	float a = (p1->getMutationAmount() + p2->getMutationAmount()) * 0.5f;
 
-	for(int i = 0; i <= 1; i++)
-	{
-		Animal *c = child1;
-		if(i == 1)
-		{
-			c = child2;
-		}
+	int numChildren = round(breedProperty(p1->getFertility(), p2->getFertility(), a, r));
 
-		if(iequals(p1->getSpecies(), p2->getSpecies()))
+	p1->changeEnergy(p1->getEnergyNeededPerDay() * numChildren * -0.2f);
+	p2->changeEnergy(p2->getEnergyNeededPerDay() * numChildren * -0.2f);
+
+	string birthdate = "0 0";
+	if(p1->mGame != NULL)
+	{
+		birthdate = p1->mGame->getCurrentTimeString(true);		
+	}
+
+	string species;
+	if(iequals(p1->getSpecies(), p2->getSpecies()))
+	{
+		species = p1->getSpecies();
+	}
+	else
+	{
+		species = p1->getSpecies() + '_' + p2->getSpecies();
+	}
+
+	for(int i = 0; i < numChildren; i++)
+	{
+		Animal *c = new Animal(p1->mGame);
+		children.push_back(c);
+
+		c->setSpecies(species);
+		if (p1->mGame != NULL)
 		{
-			c->setSpecies(p1->getSpecies());
+			c->move(p1->getPosition(), false);
+			c->setEntityName(p1->mGame->getRandomName());
 		}
-		else
-		{
-			c->setSpecies(p1->getSpecies() + '_' + p2->getSpecies());
-		}
+		c->setFacing(p1->getFacing());
 
 		c->getParent1().setEntity(p1);
 		c->getParent2().setEntity(p2);
+
+		c->setBirthdate(birthdate);
+
+		c->mGraphic = p1->mGraphic;
 
 		c->setDiet(breedProperty(p1->getDiet(), p2->getDiet(), r, a, 2.0f, 0.0f, 1.0f));
 		
@@ -990,6 +1250,7 @@ AnimalChildren Animal::breed(Animal *p1, Animal *p2)
 		c->setEnergyNeededPerDay(breedProperty(p1->getEnergyNeededPerDay(), p2->getEnergyNeededPerDay(), a, r));
 		c->setHungerLowerLimit(breedProperty(p1->getHungerLowerLimit(), p2->getHungerLowerLimit(), a, r));
 		c->setHungerUpperLimit(breedProperty(p1->getHungerUpperLimit(), p2->getHungerUpperLimit(), a, r));
+		c->setHungerBreedLimit(breedProperty(p1->getHungerBreedLimit(), p2->getHungerBreedLimit(), a, r));
 		c->setMaxHealth(breedProperty(p1->getMaxHealth(), p2->getMaxHealth(), a, r));
 		c->setHealth(c->getMaxHealth());
 		c->setMass(breedProperty(p1->getMass(), p2->getMass(), a, r));
@@ -999,9 +1260,12 @@ AnimalChildren Animal::breed(Animal *p1, Animal *p2)
 
 		c->setMutationAmount(breedProperty(p1->getMutationAmount(), p2->getMutationAmount(), a, r));
 		c->setMutationRate(breedProperty(p1->getMutationRate(), p2->getMutationRate(), a, r));
-	}
 
-	return AnimalChildren(child1, child2);
+		c->setBreedingAge(breedProperty(p1->getBreedingAge(), p2->getBreedingAge(), a, r));
+		c->setBreedingRate(breedProperty(p1->getBreedingRate(), p2->getBreedingRate(), a, r));
+		c->setLifeExpectancy(breedProperty(p1->getLifeExpectancy(), p2->getLifeExpectancy(), a, r));
+		c->setFertility(breedProperty(p1->getFertility(), p2->getFertility(), a, r));
+	}
 }
 
 float Animal::breedProperty(const float &parent1Value, const float &parent2Value, const float &mutationAmount, const float &mutationRate, float diff, float minClamp, float maxClamp)
@@ -1037,5 +1301,36 @@ float Animal::breedProperty(const float &parent1Value, const float &parent2Value
 
 float Animal::getFitness()
 {
-	return mAccumulatedEnergy / mEnergyNeededPerDay;
+	float foodAccumulated = mAccumulatedEnergy / mEnergyNeededPerDay;
+	return foodAccumulated;
+}
+
+bool Animal::wantsToBreed()
+{
+	return (mBreedingCount / mGame->getDayLength()) > getBreedingRate();
+}
+
+void Animal::getNearbyAnimals(const float &radius, vector<Animal *> &result)
+{
+	getNearbyAnimals(radius, result, NULL);
+}
+
+void Animal::getNearbyAnimals(const float &radius, vector<Animal *> &result, string &restrictToSpecies)
+{
+	getNearbyAnimals(radius, result, &restrictToSpecies);
+}
+
+void Animal::getNearbyAnimals(const float &radius, vector<Animal *> &result, string *restrictToSpecies)
+{
+	vector<GameEntity *> temporaryResults;
+	getNearbyEntities(radius, temporaryResults, restrictToSpecies);
+
+	for(vector<GameEntity *>::iterator iter = temporaryResults.begin(); iter != temporaryResults.end(); ++iter)
+	{
+		Animal *ani = dynamic_cast<Animal *>(*iter);
+		if(ani != NULL)
+		{
+			result.push_back(ani);
+		}
+	}
 }

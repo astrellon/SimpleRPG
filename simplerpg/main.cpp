@@ -63,6 +63,8 @@ Game *startGame(string filename)
 		return NULL;
 	}
 
+	game->loadNameList("names.txt");
+
 	// Start game timer.
 	QueryPerformanceCounter(&updateTime);
 
@@ -164,18 +166,18 @@ void breedTest(UIText &breedTester)
 
 	int n = 100;
 
-	for(int i = 0; i < n; i += 2)
+	int k = 0;
+	for(int i = 0; i < n; i++)
 	{
-		AnimalChildren children = Animal::breed(&parent1, &parent2);
+		vector<Animal *> children;
+		Animal::breed(children, &parent1, &parent2);
 
-		file << "// Child " << i << '\n';
-		children.child1->saveToFile(file);
-
-		file << "// Child " << (i + 1) << '\n';
-		children.child2->saveToFile(file);
-
-		delete children.child1;
-		delete children.child2;
+		for(vector<Animal *>::iterator iter = children.begin(); iter != children.end(); ++iter)
+		{
+			file << "// Child " << k++ << '\n';
+			(*iter)->saveToFile(file);
+			delete *iter;
+		}
 	}
 
 	file.closeFile();
@@ -604,7 +606,7 @@ int main(int argc, char **argv)
 
 					sort(folderEntries.begin() + 1, folderEntries.end(), sortFolders);
 
-					for(vector<folder_entry>::iterator iter = folderEntries.begin(); iter != folderEntries.end(); iter++)
+					for(vector<folder_entry>::iterator iter = folderEntries.begin(); iter != folderEntries.end(); ++iter)
 					{
 						UIText *entry = new UIText();
 						*entry << (*iter).formattedName;

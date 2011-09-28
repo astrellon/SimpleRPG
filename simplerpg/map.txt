@@ -111,8 +111,49 @@ Animal
 	entity_size 0.3
 	entity_mass 0.8
 	rest_energy_per_day 200
-	hunger_limits 0.4 0.8
+	hunger_limits 0.4 0.8 1.2
+	life_expectancy 7
+	breeding_age 2
+	age 2
+	breeding_rate 1 0
 	diet 0.1
+	damage_base 1
+	attack_rate 1.2
+end
+
+Animal
+	id 4
+	species "Rabbit"
+	position 10.93701 4.02985
+	facing 1.60264
+	name "Jill"
+	graphic yellow 1 r
+	amount_eaten 0
+	current_action
+	Action
+		action Idle
+		completed 0
+		step 2
+	end
+	action_history
+	end
+	destination -1 -1
+	health 8.34 12.78
+	strength 4
+	dexterity 18
+	intelligence 5
+	running_speed 15
+	walking_speed 1.1
+	turning_speed 2.6
+	entity_size 0.3
+	entity_mass 0.8
+	rest_energy_per_day 200
+	hunger_limits 0.4 0.8 1.2
+	life_expectancy 7
+	breeding_age 2
+	breeding_rate 1 0
+	diet 0.1
+	age 2
 	damage_base 1
 	attack_rate 1.2
 end

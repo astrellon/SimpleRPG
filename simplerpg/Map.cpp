@@ -51,46 +51,41 @@ bool listContains(vector<AStarNode *> *list, AStarNode *node)
 	return found;
 }
 
-inline bool Map::checkNeighbor(vector<AStarNode *> *nodes, const int &x, const int &y)
+inline bool Map::checkNeighbor(const int &x, const int &y)
 {
 	if(x >= 0 && x < mWidth && y >= 0 && y < mHeight)
 	{
 		AStarNode *node = &mMapData[x][y];
 		if(node->tile->getPassable())
 		{
-			nodes->push_back(node);
+			mNeighbors.push_back(node);
 			return true;
 		}
 	}
 	return false;
 }
 
-
-vector<AStarNode *> *Map::getNeighbors(Vector2f position)
+void Map::getNeighbors(Vector2f position)
 {
-	vector<AStarNode *> *nodes = new vector<AStarNode *>();
-
 	int posX = (int)position.x;
 	int posY = (int)position.y;
 
-	bool left =		checkNeighbor(nodes, posX - 1,	posY);
-	bool top =		checkNeighbor(nodes, posX,		posY - 1);
-	bool right =	checkNeighbor(nodes, posX + 1,	posY);
-	bool bottom =	checkNeighbor(nodes, posX,		posY + 1);
+	bool left =		checkNeighbor(posX - 1,	posY);
+	bool top =		checkNeighbor(posX,		posY - 1);
+	bool right =	checkNeighbor(posX + 1,	posY);
+	bool bottom =	checkNeighbor(posX,		posY + 1);
 
 	if (left && top)
-		checkNeighbor(nodes, posX - 1, posY - 1);
+		checkNeighbor(posX - 1, posY - 1);
 	
 	if (top && right)
-		checkNeighbor(nodes, posX + 1, posY - 1);
+		checkNeighbor(posX + 1, posY - 1);
 
 	if (bottom && left)
-		checkNeighbor(nodes, posX - 1, posY + 1);
+		checkNeighbor(posX - 1, posY + 1);
 
 	if (bottom && right)
-		checkNeighbor(nodes, posX + 1, posY + 1);
-
-	return nodes;
+		checkNeighbor(posX + 1, posY + 1);
 }
 
 double manhattanDistance(const Vector2f &p1, const Vector2f &p2)
@@ -100,26 +95,25 @@ double manhattanDistance(const Vector2f &p1, const Vector2f &p2)
 
 vector<Vector2f> *Map::search(const Vector2i &start, const Vector2i &end)
 {
-	vector<AStarNode *> openList;
-
 	if (start.x < 0 || start.x >= mWidth ||
 		start.y < 0 || start.y >= mHeight)
 	{
 		return NULL;
 	}
 
+	mOpenList.clear();
+	mClosedList.clear();
+
 	mNodeUseCounter++;
 
-	openList.push_back(&mMapData[start.x][start.y]);
+	mOpenList.push_back(&mMapData[start.x][start.y]);
 
 	AStarNode *endNode = &mMapData[end.x][end.y];
 	endNode->parent = NULL;
 
-	vector<AStarNode *> closedList;
-
-	while(!openList.empty())
+	while(!mOpenList.empty())
 	{
-		AStarNode *node = openList.front();
+		AStarNode *node = mOpenList.front();
 		if(node->useCounter < mNodeUseCounter)
 		{
 			node->g = 0;
@@ -134,15 +128,15 @@ vector<Vector2f> *Map::search(const Vector2i &start, const Vector2i &end)
 		}
 		else
 		{
-			openList.erase(openList.begin());
-			closedList.push_back(node);
+			mOpenList.erase(mOpenList.begin());
+			mClosedList.push_back(node);
 
-			vector<AStarNode *> *neighbors = getNeighbors(node->position);
-			for(vector<AStarNode *>::iterator iter = neighbors->begin(); iter != neighbors->end(); ++iter)
+			getNeighbors(node->position);
+			for(vector<AStarNode *>::iterator iter = mNeighbors.begin(); iter != mNeighbors.end(); ++iter)
 			{
 				AStarNode *n = *iter;
-				if (!listContains(&openList, n) &&
-					!listContains(&closedList, n))
+				if (!listContains(&mOpenList, n) &&
+					!listContains(&mClosedList, n))
 				{
 					if(n->useCounter < mNodeUseCounter)
 					{
@@ -154,12 +148,12 @@ vector<Vector2f> *Map::search(const Vector2i &start, const Vector2i &end)
 					n->f = n->g + manhattanDistance(n->position, endNode->position);
 
 					n->parent = node;
-					openList.push_back(n);
+					mOpenList.push_back(n);
 				}
 			}
 
-			delete neighbors;
-			sort(openList.begin(), openList.end(), compare);
+			mNeighbors.clear();
+			sort(mOpenList.begin(), mOpenList.end(), compare);
 		}
 	}
 	// NO PATH! D:
@@ -211,11 +205,15 @@ void Map::renderMap(Rect &rect, WINDOW *wnd)
 		ystart - rect.getY() < 0)
 		return;
 
+	int offX = rect.getX();
+	int offY = rect.getY();
+
 	for(int x = xstart; x < xfinish; x++)
 	{
+		int xx = x - offX;
 		for(int y = ystart; y < yfinish; y++)
 		{
-			getTile(x, y)->pixel.render(wnd, x - rect.getX(), y - rect.getY());
+			mMapData[x][y].tile->pixel.render(wnd, xx, y - offY);
 		}
 	}
 }

@@ -685,6 +685,8 @@ int main(int argc, char **argv)
 			if (sleepTime < 10.0f)
 				sleepTime = 10.0f;
 
+			skipRenders = false;
+
 			if(!skipRenders)
 			{
 				wrefresh(gameWnd);

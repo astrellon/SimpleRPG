@@ -70,8 +70,12 @@ protected:
 	int mWidth;
 	int mHeight;
 
-	vector<AStarNode *> *getNeighbors(Vector2f position);
-	bool checkNeighbor(vector<AStarNode *> *nodes, const int &x, const int &y);
+	void getNeighbors(Vector2f position);
+	bool checkNeighbor(const int &x, const int &y);
+
+	vector<AStarNode *> mOpenList;
+	vector<AStarNode *> mClosedList;
+	vector<AStarNode *> mNeighbors;
 
 	map<char, Tile *> mMappedTiles;
 

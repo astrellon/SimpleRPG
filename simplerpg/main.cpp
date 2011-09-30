@@ -412,6 +412,9 @@ int main(int argc, char **argv)
 	pausedText.setX(1);
 	pausedText.setWindow(gameWnd);
 
+	bool skipRenders = false;
+	int skipCounter = 0;
+
 	if(loadFile.size() > 1)
 	{
 		inMainMenu = false;
@@ -653,6 +656,7 @@ int main(int argc, char **argv)
 			{
 				if(game->getTimeScale() > 1)
 				{
+					skipRenders = true;
 					for(int i = 0; i < game->getTimeScale(); i++)
 					{
 						game->update(0.04f);
@@ -660,6 +664,7 @@ int main(int argc, char **argv)
 				}
 				else
 				{
+					skipRenders = false;
 					game->update(dt);
 				}
 			}
@@ -680,8 +685,20 @@ int main(int argc, char **argv)
 			if (sleepTime < 10.0f)
 				sleepTime = 10.0f;
 
-			wrefresh(gameWnd);
-			msleep((int)round(sleepTime));
+			if(!skipRenders)
+			{
+				wrefresh(gameWnd);
+				msleep((int)round(sleepTime));
+			}
+			else
+			{
+				skipCounter--;
+				if (skipCounter < 0)
+				{
+					wrefresh(gameWnd);
+					skipCounter = 4;
+				}
+			}
 		}
 	}
 

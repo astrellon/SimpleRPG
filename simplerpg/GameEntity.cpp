@@ -13,7 +13,8 @@ extern const char *EntityPropertyNames[] = { "id", "facing", "position", "destin
 	"attack_rate", "attack_cooldown", "energy", "rest_energy_per_day", "species", "species_alignment",
 	"sight_radius", "attacked_by", "attacked_by_cooldown", "hunger_limits", "hunger_damage_cooldown",
 	"parents", "mutation_rate", "mutation_amount", "accumulated_energy", "age", "life_expectancy", 
-	"breeding_age", "breeding_rate", "birthdate", "mate_find_cooldown", "fertility", "breeding_count" };
+	"breeding_age", "breeding_rate", "birthdate", "mate_find_cooldown", "fertility", "breeding_count",
+	"deathdate", "deathtime" };
 
 GameEntity::GameEntity(Game *game)
 {
@@ -52,6 +53,10 @@ void GameEntity::setCurrentAction(Action *action)
 	if(mCurrentAction->getAction() != MAX_ID)
 	{
 		mPastActions.push_back(mCurrentAction);
+		if(mPastActions.size() > 10)
+		{
+			mPastActions.erase(mPastActions.begin());
+		}
 	}
 	mCurrentAction = action;
 }

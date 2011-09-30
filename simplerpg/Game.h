@@ -78,10 +78,14 @@ public:
 		mMap = map;
 		if(map != NULL)
 		{
-			mCheckedTiles = new bool*[map->getWidth()];
+			mCheckedTiles = new long*[map->getWidth()];
 			for(int x = 0; x < map->getWidth(); x++)
 			{
-				mCheckedTiles[x] = new bool[map->getHeight()];
+				mCheckedTiles[x] = new long[map->getHeight()];
+				for(int y = 0; y < map->getHeight(); y++)
+				{
+					mCheckedTiles[x][y] = 0;
+				}
 			}
 		}
 	}
@@ -148,6 +152,7 @@ public:
 	vector<Vector2f> *findPath(Vector2i startPosition, Vector2i endPosition);
 
 	Vector2i findClosestTileWithFood(Vector2i position);
+	Vector2i findClosestTileWithFood(Animal *entity);
 
 	virtual bool getGameRunning() { return mGameRunning; }
 	virtual bool getGamePaused() { return mGamePaused; }
@@ -207,12 +212,17 @@ protected:
 
 	Map *mMap;
 	TileData **mTileData;
+	int **mTileDataUpdate;
+
+	int mTileDataStride;
+	int *mStrideUpdateOrder;
 
 	Rect mScreenSize;
 	bool mUpdating;
 	EntityList mEntities;
 	EntityList mNewEntities;
 	EntityList mRemoveEntities;
+	EntityList mRemovedEntities;
 	EntityList mUnderCursor;
 	bool mUnderCursorDirty;
 
@@ -226,7 +236,14 @@ protected:
 	UIList mHud;
 	UIText mHudText;
 
-	bool **mCheckedTiles;
+	long **mCheckedTiles;
+	long mCheckedTilesCounter;
+
+	clock_t mTileTime;
+	clock_t mEntityTime;
+	float mTileTimeFinal;
+	float mEntityTimeFinal;
+	int mTimeCounter;
 
 	MenuLevel mMenuLevel;
 	Vector2i mCursor;

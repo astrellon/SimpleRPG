@@ -100,7 +100,29 @@ Game::Game(int width, int height)
 
 	mTimeScale = 1;
 
+	mTileDataStride = 32;
+
+	vector<int> tempValues;
+	mStrideUpdateOrder = new int[mTileDataStride];
+	for(int i = 0; i < mTileDataStride; i++)
+	{
+		tempValues.push_back(i);
+	}
+
+	for(int i = 0; i < mTileDataStride; i++)
+	{
+		int index = (int)floor(math::nextFloat() * tempValues.size());
+		mStrideUpdateOrder[i] = tempValues[index];
+		tempValues.erase(tempValues.begin() + index);
+	}
+
 	mUpdating = false;
+
+	mTileTime = mEntityTime = 0;
+	mTileTimeFinal = mEntityTimeFinal = 0.0f;
+	mTimeCounter = 0;
+
+	mCheckedTilesCounter = 0;
 }
 
 Game::~Game(void)
@@ -619,6 +641,8 @@ void Game::displayActions()
 	TileData *closestFood = NULL;
 	string species = "Rabbit";
 
+	mHudText << "<15>Time</>:\t<12>" << mTileTimeFinal << ", " << mEntityTimeFinal << "</>\n\n";
+
 	switch (mMenuLevel)
 	{
 	default:
@@ -868,6 +892,7 @@ void Game::removeEntity(GameEntity *entity)
 		{
 			if((*iter) == entity)
 			{
+				mRemovedEntities.push_back(*iter);
 				mEntities.erase(iter);
 				break;
 			}
@@ -879,16 +904,33 @@ void Game::update(float dt)
 {
 	advanceTime(dt);
 
+	float tileDt = mTileDataStride * dt;
+
+	clock_t start = clock();
+
+	static int strideCounter = 0;
+
 	for(int y = 0; y < mMap->getHeight(); y++)
 	{
-		for(int x = 0; x < mMap->getWidth(); x++)
+		for(int x = mStrideUpdateOrder[strideCounter]; x < mMap->getWidth(); x += mTileDataStride)
 		{
 			TileData *data = getTileData(x, y);
 			if(data != NULL)
 			{
-				data->update(dt);
+				data->update(tileDt);
 			}
 		}
+	}
+
+	clock_t end = clock();
+	mTileTime += (end - start);
+
+	start = clock();
+
+	strideCounter++;
+	if(strideCounter >= mTileDataStride)
+	{
+		strideCounter = 0;
 	}
 
 	for(EntityList::iterator iter = mNewEntities.begin(); iter != mNewEntities.end(); ++iter)
@@ -910,6 +952,18 @@ void Game::update(float dt)
 		removeEntity(*iter);
 	}
 	mRemoveEntities.clear();
+
+	end = clock();
+	mEntityTime += (end - start);
+
+	mTimeCounter++;
+	if(mTimeCounter > mTimeScale)
+	{
+		mTileTimeFinal = (float)(mTileTime);// / mTimeCounter;
+		mEntityTimeFinal = (float)(mEntityTime);// / mTimeCounter;
+		mTileTime = mEntityTime = 0;
+		mTimeCounter = 0;
+	}
 }
 
 void Game::displayUnderCursor()
@@ -1055,12 +1109,12 @@ inline void Game::checkAdjacentTile(const int &x, const int &y, queue<Vector2i> 
 {
 	if (x >= 0 && x < mMap->getWidth() && 
 		y >= 0 && y < mMap->getHeight() &&
-		!mCheckedTiles[x][y])
+		mCheckedTiles[x][y] < mCheckedTilesCounter)
 	{
 		Tile *tile = mMap->getTile(x, y);
 		if(tile != NULL && tile->getPassable())
 		{
-			mCheckedTiles[x][y] = true;
+			mCheckedTiles[x][y] = mCheckedTilesCounter;
 			openList.push(Vector2i(x, y));
 		}
 	}
@@ -1073,18 +1127,11 @@ Vector2i Game::findClosestTileWithFood(Vector2i position)
 	{
 		return Vector2i(-1, -1);
 	}
-	
-	for(int x = 0; x < mMap->getWidth(); x++)
-	{
-		for(int y = 0; y < mMap->getHeight(); y++)
-		{
-			mCheckedTiles[x][y] = false;
-		}
-	}
-	
+	mCheckedTilesCounter++;
+
 	queue<Vector2i> openList;
 	openList.push(position);
-	mCheckedTiles[position.x][position.y] = true;
+	mCheckedTiles[position.x][position.y] = mCheckedTilesCounter;
 	Vector2i result(-1, -1);
 	
 	while(!openList.empty())
@@ -1110,6 +1157,90 @@ Vector2i Game::findClosestTileWithFood(Vector2i position)
 			checkAdjacentTile(current.x - 1, current.y, openList);
 			// Up
 			checkAdjacentTile(current.x, current.y - 1, openList);
+		}
+	}
+
+	return result;
+}
+
+Vector2i Game::findClosestTileWithFood(Animal *entity)
+{
+	Vector2i position = entity->getPosition();
+
+	if (position.x < 0 || position.y < 0 || 
+		position.x >= mMap->getWidth() || position.y >= mMap->getHeight())
+	{
+		return Vector2i(-1, -1);
+	}
+	
+	mCheckedTilesCounter++;
+
+	queue<Vector2i> openList;
+	openList.push(position);
+	mCheckedTiles[position.x][position.y] = mCheckedTilesCounter;
+	Vector2i result(-1, -1);
+
+	Vector2i average;
+	EntityList &list = entity->getSurroundingEntities();
+	if(list.size() > 0)
+	{
+		for(int i = 0; i < list.size(); i++)
+		{
+			average = average.add(list[i]->getPosition());
+		}
+		average = average.scale(1.0f / (float)list.size());
+	}
+	else
+	{
+		average = position;
+		average.x++;
+	}
+
+	float facingX = entity->getTransform()->xx;
+	float facingY = entity->getTransform()->yx;
+	
+	while(!openList.empty())
+	{
+		Vector2i current = openList.front();
+		openList.pop();
+
+		TileData *data = getTileData(current);
+
+		float minValue = max(5, data->getMaxFoodValue() * 0.1f);
+		if(data->getFoodValue() > 0 && data->getFoodValue() > minValue)
+		{
+			result = current;
+			break;
+		}
+		else
+		{
+			Vector2f toAverage = ((Vector2f)(current).sub(average));
+			double len = toAverage.length();
+			if(len < entity->getLineOfSightRadius() * 0.7f)
+			{
+				toAverage.x = facingX;
+				toAverage.y = facingY;
+			}
+			else
+			{
+ 				toAverage.normalise();
+			}
+			if(toAverage.x == 0 && toAverage.y == 0)
+			{
+				toAverage.x = 1;
+			}
+			// Right
+			checkAdjacentTile(current.x + toAverage.x, current.y + toAverage.y, openList);
+			//checkAdjacentTile(current.x + toAverage.x, current.y - toAverage.y, openList);
+			// Down
+			checkAdjacentTile(current.x + toAverage.y, current.y - toAverage.x, openList);
+			//checkAdjacentTile(current.x - toAverage.y, current.y - toAverage.x, openList);
+			// Left
+			checkAdjacentTile(current.x - toAverage.x, current.y - toAverage.y, openList);
+			//checkAdjacentTile(current.x - toAverage.x, current.y + toAverage.y, openList);
+			// Up
+			checkAdjacentTile(current.x - toAverage.y, current.y + toAverage.x, openList);
+			//checkAdjacentTile(current.x + toAverage.y, current.y + toAverage.x, openList);
 		}
 	}
 
@@ -1156,7 +1287,7 @@ void Game::saveMap(string filename)
 
 	file << "\n-- Entities\n";
 
-	for(vector<GameEntity *>::iterator iter = mEntities.begin(); iter != mEntities.end(); ++iter)
+	for(EntityList::iterator iter = mEntities.begin(); iter != mEntities.end(); ++iter)
 	{
 		(*iter)->saveToFile(file);
 	}
@@ -1174,6 +1305,13 @@ void Game::saveMap(string filename)
 			}
 		}
 		file << '\n';
+	}
+
+	file << "\n-- RemovedEntities\n";
+
+	for(EntityList::iterator iter = mRemovedEntities.begin(); iter != mRemovedEntities.end(); ++iter)
+	{
+		(*iter)->saveToFile(file);
 	}
 
 	file << "\n-- End";
@@ -1199,6 +1337,7 @@ void Game::loadMap(string filename)
 	static const int STATE_OPTIONS = 5;
 	static const int STATE_MAP_DATA = 6;
 	static const int STATE_TILE_DATA = 7;
+	static const int STATE_REMOVED_ENTITIES = 8;
 
 	vector<TileData> tileData;
 	TileData data;
@@ -1275,6 +1414,11 @@ void Game::loadMap(string filename)
 			{
 				state = STATE_TILE_DATA;
 				clog << "Switch to reading tile data." << endl;
+			}
+			else if(iequals(line, "RemovedEntities"))
+			{
+				state = STATE_REMOVED_ENTITIES;
+				clog << "Switch to reading removed entities." << endl;
 			}
 			else
 			{
@@ -1408,6 +1552,27 @@ void Game::loadMap(string filename)
 			data.loadFromFile(line, iter);
 			tileData.push_back(data);
 
+			break;
+		
+		case STATE_REMOVED_ENTITIES:
+
+			if(endState)
+			{
+				clog << "End state for removed entities." << endl;
+				break;
+			}
+
+			entity = GameEntityFactory::create(this, line);
+			if(entity == NULL)
+			{
+				clog << "Error parsing removed entity " << line << endl;
+			}
+			else
+			{
+				entity->loadFromFile(iter);
+				mRemovedEntities.push_back(entity);
+			}
+			
 			break;
 		}
 		endState = false;

@@ -20,6 +20,8 @@ Map::Map(int width, int height)
 			mMapData[x][y].position.y = (float)y;
 		}
 	}
+
+	mNodeUseCounter = 0;
 }
 
 Map::~Map(void)
@@ -106,13 +108,7 @@ vector<Vector2f> *Map::search(const Vector2i &start, const Vector2i &end)
 		return NULL;
 	}
 
-	for(int x = 0; x < mWidth; x++)
-	{
-		for(int y = 0; y < mHeight; y++)
-		{
-			mMapData[x][y].reset();
-		}
-	}
+	mNodeUseCounter++;
 
 	openList.push_back(&mMapData[start.x][start.y]);
 
@@ -124,6 +120,12 @@ vector<Vector2f> *Map::search(const Vector2i &start, const Vector2i &end)
 	while(!openList.empty())
 	{
 		AStarNode *node = openList.front();
+		if(node->useCounter < mNodeUseCounter)
+		{
+			node->g = 0;
+			node->useCounter = mNodeUseCounter;
+			node->parent = NULL;
+		}
 		
 		if(node == endNode)
 		{
@@ -142,6 +144,11 @@ vector<Vector2f> *Map::search(const Vector2i &start, const Vector2i &end)
 				if (!listContains(&openList, n) &&
 					!listContains(&closedList, n))
 				{
+					if(n->useCounter < mNodeUseCounter)
+					{
+						n->g = 0;
+						n->useCounter = mNodeUseCounter;
+					}
 					n->g += node->g;
 
 					n->f = n->g + manhattanDistance(n->position, endNode->position);
@@ -165,7 +172,6 @@ vector<Vector2f> *Map::getPath(AStarNode *node)
 
 	while(node != NULL)
 	{
-		//path->insert(path->begin(), node->position);
 		path->push_back(node->position);
 		node = node->parent;
 	}

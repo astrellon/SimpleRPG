@@ -49,6 +49,8 @@ Animal::Animal(Game *game) : GameEntity(game)
 	mFertility = 1.0f;
 
 	mBirthdate = "0 0";
+	mDeathdate = "0 0";
+	mDeathtime = -1.0f;
 
 	mMateFindCooldown = 0.0f;
 }
@@ -172,6 +174,7 @@ void Animal::displayActions(UIContainer &hud)
 		text << "<15>Fitness</>:\t" << getFitness() << '\n';
 
 		text << "<15>WantsBreed</>:\t" << (wantsToBreed() ? "Yes\n" : "No\n");
+		text << "<15>Death</>:\t" << getChanceOfDeath() << '\n';
 	}
 	else if(mMenuLevel == 2)
 	{
@@ -252,6 +255,7 @@ void Animal::loadProperties(FormattedFileIterator &iter)
 	else loadProp(ACCUMULATED_ENERGY, setAccumulatedEnergy, float)
 	else loadProp(LIFE_EXPECTANCY, setLifeExpectancy, float)
 	else loadProp(BREEDING_AGE, setBreedingAge, float)
+	else loadProp(DEATHTIME, setDeathtime, float)
 	else loadProp(MATE_FIND_COOLDOWN, setMateFindCooldown, float)
 	else loadProp(FERTILITY, setFertility, float)
 
@@ -282,6 +286,17 @@ void Animal::loadProperties(FormattedFileIterator &iter)
 			birthdate = birthdate.substr(1, birthdate.size() - 2);
 		}
 		setBirthdate(birthdate);	++iter;
+	}
+	else if(iequals(propertyName, EntityPropertyNames[DEATHDATE]))
+	{
+		string deathdate;
+		++iter;
+		deathdate = *iter;
+		if(deathdate[0] == '"')
+		{
+			deathdate = deathdate.substr(1, deathdate.size() - 2);
+		}
+		setDeathdate(deathdate);	++iter;
 	}
 	else if(iequals(propertyName, EntityPropertyNames[HUNGER_LIMITS]))
 	{
@@ -354,6 +369,8 @@ void Animal::saveProperties(FormattedFile &file)
 	saveProperty(ACCUMULATED_ENERGY, file);
 	saveProperty(AGE, file);
 	saveProperty(BIRTHDATE, file);
+	saveProperty(DEATHDATE, file);
+	saveProperty(DEATHTIME, file);
 	saveProperty(LIFE_EXPECTANCY, file);
 	saveProperty(BREEDING_AGE, file);
 	saveProperty(BREEDING_RATE, file);
@@ -399,6 +416,7 @@ void Animal::saveProperty(const EntityProperty &propertyId, FormattedFile &file)
 	saveProp(BREEDING_AGE, getBreedingAge)
 	saveProp(MATE_FIND_COOLDOWN, getBreedingRate)
 	saveProp(FERTILITY, getFertility)
+	saveProp(DEATHTIME, getDeathtime)
 
 	case AGE:
 		file << EntityPropertyNames[AGE] << ' ' << (getAge() / mGame->getDayLength()) << '\n';
@@ -408,6 +426,9 @@ void Animal::saveProperty(const EntityProperty &propertyId, FormattedFile &file)
 		break;
 	case BIRTHDATE:
 		file << EntityPropertyNames[BIRTHDATE] << " \"" << getBirthdate() << "\"\n";
+		break;
+	case DEATHDATE:
+		file << EntityPropertyNames[DEATHDATE] << " \"" << getDeathdate() << "\"\n";
 		break;
 	case PARENTS:
 		file << EntityPropertyNames[PARENTS] << ' ' << getParent1().getEntityId() << ' ' << getParent2().getEntityId() << '\n';
@@ -446,6 +467,11 @@ void Animal::update(float dt)
 
 	if (isDead())
 	{
+		setDeathtime(getDeathtime() + dt);
+		if(getDeathtime() / mGame->getDayLength() > 10.0f)
+		{
+			mGame->removeEntity(this);
+		}
 		return;
 	}
 
@@ -476,10 +502,13 @@ void Animal::update(float dt)
 		}
 	}
 
-	float chanceOfDeath = 0.0f;
-	if (getAgeInDays() > getLifeExpectancy * 0.8f)
+	float chanceOfDeath = getChanceOfDeath();
+	if (chanceOfDeath > 0.0f)
 	{
-		chanceOfDeath = getAgeInDays() / getLifeExpectancy();
+		if(math::nextFloat() < chanceOfDeath)
+		{
+			killAnimal();
+		}
 	}
 
 	setAttackedByCooldown(getAttackCooldown() - dt);
@@ -509,7 +538,7 @@ void Animal::update(float dt)
 	mSurroundingEntities.clear();
 	getNearbyEntities(getLineOfSightRadius(), mSurroundingEntities);
 
-	dealWithThreats(dt);
+	//dealWithThreats(dt);
 
 	switch(action->getAction())
 	{
@@ -821,7 +850,7 @@ void Animal::doActionEat(float dt)
 	{
 		if(getDiet() < 0.5f)
 		{
-			Vector2i foodLocation = mGame->findClosestTileWithFood(getPosition());
+			Vector2i foodLocation = mGame->findClosestTileWithFood(this);
 			if(foodLocation.x >= 0 && foodLocation.y >= 0)
 			{
 				action->getTarget()->setLocation(foodLocation);
@@ -981,8 +1010,11 @@ void Animal::doActionBreed(float dt)
 			}
 
 			int mateIndex = math::nextRoulette(fitness);
-			action->getTarget()->setEntity(mates[mateIndex]);
-			mateFound = true;
+			if (mateIndex >= 0)
+			{
+				action->getTarget()->setEntity(mates[mateIndex]);
+				mateFound = true;
+			}
 		}
 		
 		if(!mateFound)
@@ -1107,6 +1139,7 @@ void Animal::killAnimal()
 {
 	if(getHealth() > 0)
 	{
+		setDeathdate(mGame->getCurrentTimeString(true));
 		setHealth(0);
 		return;
 	}

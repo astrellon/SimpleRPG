@@ -22,6 +22,14 @@ float math::nextDist(const float &min, const float &max, const float &mid)
 
 int math::nextRoulette(const vector<float> &probabilities)
 {
+	if(probabilities.size() == 0)
+	{
+		return -1;
+	}
+	if(probabilities.size() == 1)
+	{
+		return 0;
+	}
 	float maxProb = -1.0f;
 	for(int i = 0; i < probabilities.size(); i++)
 	{

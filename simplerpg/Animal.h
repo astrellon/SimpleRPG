@@ -190,13 +190,23 @@ public:
 	string getBirthdate() { return mBirthdate; }
 	void setBirthdate(string date) { mBirthdate = date; }
 
+	string getDeathdate() { return mDeathdate; }
+	void setDeathdate(string date) { mDeathdate = date; }
+
+	float getDeathtime() { return mDeathtime ; }
+	void  setDeathtime(float time) { mDeathtime = time; }
+
 	static void breed(vector<Animal *> &children, Animal *parent1, Animal *parent2);
 
 	bool wantsToBreed();
 
+	float getChanceOfDeath() { return ((2.5f / getLifeExpectancy() * getAgeInDays()) - 2.0f) / 10000.0f; }
+
 	float getFitness();
 
 	void breedWith(Animal *other);
+
+	EntityList &getSurroundingEntities() { return mSurroundingEntities; }
 
 	AnimalRef &getParent1() { return mParent1; }
 	AnimalRef &getParent2() { return mParent2; }
@@ -238,7 +248,7 @@ protected:
 	AnimalRef mParent1;
 	AnimalRef mParent2;
 
-	vector<GameEntity *> mSurroundingEntities;
+	EntityList mSurroundingEntities;
 	Destination mAttackedBy;
 	float mAttackedByCooldown;
 
@@ -258,6 +268,9 @@ protected:
 	float mMateFindCooldown;
 
 	string mBirthdate;
+	string mDeathdate;
+
+	float mDeathtime;
 	
 	virtual float calculateKcalPerDay();
 	virtual bool isHungry(int limitLevel = 0);

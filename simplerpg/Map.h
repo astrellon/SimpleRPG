@@ -65,6 +65,8 @@ public:
 protected:
 	AStarNode **mMapData;
 
+	long mNodeUseCounter;
+
 	int mWidth;
 	int mHeight;
 
@@ -75,4 +77,3 @@ protected:
 
 	vector<Vector2f> *getPath(AStarNode *node);
 };
-

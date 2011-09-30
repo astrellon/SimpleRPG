@@ -10,6 +10,8 @@ public:
 	{
 		reset();
 		this->tile = tile;
+		useCounter = 0;
+		parent = NULL;
 	}
 	~AStarNode(void)
 	{
@@ -26,6 +28,8 @@ public:
 	double f;
 	double g;
 	double h;
+
+	long useCounter;
 
 	// Should be float instead of int because as it's more
 	// flexible.

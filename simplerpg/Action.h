@@ -18,7 +18,7 @@ using namespace std;
 using boost::algorithm::iequals;
 using boost::lexical_cast;
 
-enum EntityAction { IDLE, EAT, FLEE, ATTACK, SLEEP, BREED, MAX_ID };
+enum EntityAction { IDLE, EAT, FLEE, ATTACK, SLEEP, BREED, MOVE, MAX_ID };
 enum ActionProperty { ACTION, COMPLETED, STEP, TARGET, COMPLETED_TIME };
 
 class Action

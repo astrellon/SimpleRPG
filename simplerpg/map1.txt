@@ -303,7 +303,7 @@ Animal
 	damage_base 1
 	attack_rate 1.2
 end
-
+/*
 Animal
 	id 1
 	species "Rabbit"
@@ -340,5 +340,5 @@ Animal
 	damage_base 1
 	attack_rate 1.2
 end
-
+*/
 -- End

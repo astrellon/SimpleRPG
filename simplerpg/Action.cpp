@@ -1,9 +1,9 @@
 #include "Action.h"
 
 map<string, EntityAction> Action::EntityActionLookup;
-const char *Action::EntityActionNames[] = { "Idle", "Eat", "Flee", "Attack", "Sleep", "Breed", "Invalid_action" };
+const char *Action::EntityActionNames[] = { "Idle", "Eat", "Flee", "Attack", "Sleep", "Breed", "Move", "Invalid_action" };
 const char *Action::ActionPropertyNames[] = { "action", "completed", "step", "target", "completed_time" };
-const float Action::EntityActionPriority[] = { 0.0f, 0.8f, 1.0f, 0.5f, 0.7f, 0.4f, 0.0f };
+const float Action::EntityActionPriority[] = { 0.0f, 0.8f, 1.0f, 0.5f, 0.7f, 0.4f, 0.0f, 0.0f };
 
 bool Action::initLookupMap = false;
 
@@ -36,6 +36,7 @@ void Action::init()
 		EntityActionLookup[EntityActionNames[ATTACK]] = ATTACK;
 		EntityActionLookup[EntityActionNames[SLEEP]] = SLEEP;
 		EntityActionLookup[EntityActionNames[BREED]] = BREED;
+		EntityActionLookup[EntityActionNames[MOVE]] = MOVE;
 		EntityActionLookup[EntityActionNames[MAX_ID]] = MAX_ID;
 		initLookupMap = true;
 	}

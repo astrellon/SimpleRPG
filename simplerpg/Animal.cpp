@@ -59,14 +59,14 @@ Animal::~Animal(void)
 {
 }
 
-Destination *Animal::getDestination()
+Destination &Animal::getDestination()
 {
 	TargetAction *action = dynamic_cast<TargetAction *>(getCurrentAction());
 	if(action != NULL)
 	{
 		return action->getTarget();
 	}
-	return &mDestination;
+	return mDestination;
 }
 
 string Animal::getSpeciesName()
@@ -121,13 +121,13 @@ void Animal::displayActions(UIContainer &hud)
 
 	if(mMenuLevel == 0)
 	{
-		Vector2f dest = getDestination()->getLocation();
+		Vector2f dest = getDestination().getLocation();
 
 		format fmtDestination("%.1f, %.1f\n");
 		fmtDestination % dest.x % dest.y;
 		text << "<15>Dest</>:\t" << fmtDestination.str();
 
-		GameEntity *target = getDestination()->getEntity();
+		GameEntity *target = getDestination().getEntity();
 		text << "<15>Target</>:\t";
 		if(target != NULL)
 		{
@@ -389,7 +389,7 @@ void Animal::saveProperty(const EntityProperty &propertyId, FormattedFile &file)
 	switch(propertyId)
 	{
 	case DESTINATION:
-		 getDestination()->saveDestination(EntityPropertyNames[DESTINATION], file);
+		 getDestination().saveDestination(EntityPropertyNames[DESTINATION], file);
 		break;
 	case HEALTH:
 		file << EntityPropertyNames[HEALTH] << ' ' << getHealth() << ' ' << getMaxHealth() << '\n';
@@ -543,6 +543,9 @@ void Animal::update(float dt)
 	switch(action->getAction())
 	{
 	default:
+	case MOVE:
+		doActionMove(dt);
+		break;
 	case IDLE:
 		// Do nothing!
 
@@ -594,13 +597,13 @@ void Animal::dealWithThreats(float dt)
 	TargetAction *target = dynamic_cast<TargetAction *>(action);
 	if(target != NULL)
 	{
-		if(target->getTarget()->getEntity() == threat && target->getAction() == FLEE)
+		if(target->getTarget().getEntity() == threat && target->getAction() == FLEE)
 		{
 			return;
 		}
 	}
 	target = new TargetAction(FLEE);
-	target->getTarget()->setEntity(threat);
+	target->getTarget().setEntity(threat);
 	setCurrentAction(target);
 }
 
@@ -624,7 +627,7 @@ GameEntity *Animal::findGreatestThreat()
 void Animal::moveAnimal(float dt)
 {
 	Vector2f pos = getPosition();
-	vector<Vector2f> path = getDestination()->getPath(pos);
+	vector<Vector2f> path = getDestination().getPath(pos);
 	if(path.empty())
 	{
 		return;
@@ -771,13 +774,37 @@ TargetAction *Animal::castTargetAction(Action *action, const string &actionName,
 		return NULL;
 	}
 
-	if(checkForSelfTarget && target->getTarget()->getEntity() == this)
+	if(checkForSelfTarget && target->getTarget().getEntity() == this)
 	{
 		clog << "Error! Current action (" << actionName << ") is targetting self (" << getEntityName() << ')' << endl;
 		setCurrentAction(new TargetAction(IDLE));
 		return NULL;
 	}
 	return target;
+}
+
+void Animal::doActionMove(float dt)
+{
+	TargetAction *action = castTargetAction(getCurrentAction(), "Move");
+	if(action == NULL)
+	{
+		return;
+	}
+
+	if(action->getStep() == 0)
+	{
+		// Direct distance between this animal and the target.
+		setWalking(false);
+		double simpleDist = distanceToEntity(action->getTarget().getEntity());
+		if(simpleDist <= getAttackRange())
+		{
+			action->nextStep();
+		}
+	}
+	else
+	{
+		setCurrentAction(new TargetAction(IDLE));
+	}
 }
 
 void Animal::doActionAttack(float dt)
@@ -792,7 +819,7 @@ void Animal::doActionAttack(float dt)
 	{
 		// Direct distance between this animal and the target.
 		setWalking(false);
-		double simpleDist = distanceToEntity(action->getTarget()->getEntity());
+		double simpleDist = distanceToEntity(action->getTarget().getEntity());
 		if(simpleDist <= getAttackRange())
 		{
 			action->nextStep();
@@ -800,14 +827,14 @@ void Animal::doActionAttack(float dt)
 	}
 	else if(action->getStep() == 1)
 	{
-		double simpleDist = distanceToEntity(action->getTarget()->getEntity());
+		double simpleDist = distanceToEntity(action->getTarget().getEntity());
 		if(simpleDist > getAttackRange())
 		{
 			action->prevStep();
 		}
 		setWalking(true);
-		Animal *animal = dynamic_cast<Animal *>(action->getTarget()->getEntity());
-		Plant *plant = dynamic_cast<Plant *>(action->getTarget()->getEntity());
+		Animal *animal = dynamic_cast<Animal *>(action->getTarget().getEntity());
+		Plant *plant = dynamic_cast<Plant *>(action->getTarget().getEntity());
 		if(animal != NULL)
 		{
 			if(!animal->isDead())
@@ -830,7 +857,7 @@ void Animal::doActionAttack(float dt)
 		}
 		else
 		{
-			clog << getEntityName() << " cannot attack " << action->getTarget()->getEntity()->getEntityType() << endl;
+			clog << getEntityName() << " cannot attack " << action->getTarget().getEntity()->getEntityType() << endl;
 			action->setCompleted(true, mGame->getCurrentTimeString(true));
 			setCurrentAction(new TargetAction(IDLE));
 			return;
@@ -853,7 +880,7 @@ void Animal::doActionEat(float dt)
 			Vector2i foodLocation = mGame->findClosestTileWithFood(this);
 			if(foodLocation.x >= 0 && foodLocation.y >= 0)
 			{
-				action->getTarget()->setLocation(foodLocation);
+				action->getTarget().setLocation(foodLocation);
 				action->setStep(4);
 			}
 		}
@@ -864,7 +891,7 @@ void Animal::doActionEat(float dt)
 
 			if(result.entity != NULL && result.path != NULL)
 			{
-				action->getTarget()->setEntity(result.entity);
+				action->getTarget().setEntity(result.entity);
 				result.clear();
 				action->nextStep();
 			}
@@ -873,7 +900,7 @@ void Animal::doActionEat(float dt)
 	else if(action->getStep() == 1)
 	{
 		// Direct distance between this animal and the target.
-		double simpleDist = distanceToEntity(action->getTarget()->getEntity());
+		double simpleDist = distanceToEntity(action->getTarget().getEntity());
 		setWalking(false);
 		if(simpleDist <= getAttackRange())
 		{
@@ -882,14 +909,14 @@ void Animal::doActionEat(float dt)
 	}
 	else if(action->getStep() == 2)
 	{
-		double simpleDist = distanceToEntity(action->getTarget()->getEntity());
+		double simpleDist = distanceToEntity(action->getTarget().getEntity());
 		if(simpleDist >	getAttackRange())
 		{
 			action->prevStep();
 		}
 		setWalking(true);
-		Animal *animal = dynamic_cast<Animal *>(action->getTarget()->getEntity());
-		Plant *plant = dynamic_cast<Plant *>(action->getTarget()->getEntity());
+		Animal *animal = dynamic_cast<Animal *>(action->getTarget().getEntity());
+		Plant *plant = dynamic_cast<Plant *>(action->getTarget().getEntity());
 		if(animal != NULL)
 		{
 			if(!animal->isDead())
@@ -908,7 +935,7 @@ void Animal::doActionEat(float dt)
 		}
 		else
 		{
-			clog << getEntityName() << " cannot eat " << action->getTarget()->getEntity()->getEntityType() << endl;
+			clog << getEntityName() << " cannot eat " << action->getTarget().getEntity()->getEntityType() << endl;
 			action->setCompleted(true, mGame->getCurrentTimeString(true));
 			setCurrentAction(new Action(IDLE));
 			return;
@@ -916,13 +943,13 @@ void Animal::doActionEat(float dt)
 	}
 	else if(action->getStep() == 3)
 	{
-		double simpleDist = distanceToEntity(action->getTarget()->getEntity());
+		double simpleDist = distanceToEntity(action->getTarget().getEntity());
 		if(simpleDist <= 1.0f)
 		{
 			action->setStep(1);
 			return;
 		}
-		eatEntity(action->getTarget()->getEntity());
+		eatEntity(action->getTarget().getEntity());
 		if(!isHungry(true))
 		{
 			action->setCompleted(true, mGame->getCurrentTimeString(true));
@@ -933,7 +960,7 @@ void Animal::doActionEat(float dt)
 	else if(action->getStep() == 4)
 	{
 		// Direct distance between this animal and the target.
-		double simpleDist = action->getTarget()->getLocation().sub(getPosition()).length();
+		double simpleDist = action->getTarget().getLocation().sub(getPosition()).length();
 		setWalking(true);
 		if(simpleDist <= 1.0f)
 		{
@@ -942,7 +969,7 @@ void Animal::doActionEat(float dt)
 	}
 	else if(action->getStep() == 5)
 	{
-		Vector2i pos = action->getTarget()->getLocation();
+		Vector2i pos = action->getTarget().getLocation();
 		double simpleDist = pos.sub(getPosition()).length();
 		if(simpleDist >	getAttackRange())
 		{
@@ -991,7 +1018,7 @@ void Animal::doActionBreed(float dt)
 			FindEntityResult closest = mGame->findBreedingPartner(this);
 			if(closest.entity != NULL)
 			{
-				action->getTarget()->setEntity(closest.entity);
+				action->getTarget().setEntity(closest.entity);
 				mateFound = true;
 			}
 		}
@@ -1012,7 +1039,7 @@ void Animal::doActionBreed(float dt)
 			int mateIndex = math::nextRoulette(fitness);
 			if (mateIndex >= 0)
 			{
-				action->getTarget()->setEntity(mates[mateIndex]);
+				action->getTarget().setEntity(mates[mateIndex]);
 				mateFound = true;
 			}
 		}
@@ -1031,7 +1058,7 @@ void Animal::doActionBreed(float dt)
 	{
 		// Direct distance between this animal and the target.
 		setWalking(true);
-		double simpleDist = distanceToEntity(action->getTarget()->getEntity());
+		double simpleDist = distanceToEntity(action->getTarget().getEntity());
 		if(simpleDist <= 1.0f)
 		{
 			action->nextStep();
@@ -1040,7 +1067,7 @@ void Animal::doActionBreed(float dt)
 	else if(action->getStep() == 2)
 	{
 		vector<Animal *> children;
-		Animal *other = dynamic_cast<Animal *>(action->getTarget()->getEntity());
+		Animal *other = dynamic_cast<Animal *>(action->getTarget().getEntity());
 		breed(children, this, other);
 		other->breedWith(this);
 		breedWith(other);

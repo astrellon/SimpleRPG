@@ -5,6 +5,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleRPG", "SimpleRPG\Simp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleRPGMapEditor", "SimpleRPGMapEditor\SimpleRPGMapEditor.csproj", "{461A96BA-3A24-4663-B87E-4B8F735A226A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleRPGAnalyser", "SimpleRPGAnalyser\SimpleRPGAnalyser.csproj", "{ECE31ACA-1B64-43E3-A006-0E1D6C573CD7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -48,6 +50,21 @@ Global
 		{461A96BA-3A24-4663-B87E-4B8F735A226A}.Release|Win32.ActiveCfg = Release|x86
 		{461A96BA-3A24-4663-B87E-4B8F735A226A}.Release|x86.ActiveCfg = Release|x86
 		{461A96BA-3A24-4663-B87E-4B8F735A226A}.Release|x86.Build.0 = Release|x86
+		{ECE31ACA-1B64-43E3-A006-0E1D6C573CD7}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{ECE31ACA-1B64-43E3-A006-0E1D6C573CD7}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{ECE31ACA-1B64-43E3-A006-0E1D6C573CD7}.Debug|Win32.ActiveCfg = Debug|x86
+		{ECE31ACA-1B64-43E3-A006-0E1D6C573CD7}.Debug|x86.ActiveCfg = Debug|x86
+		{ECE31ACA-1B64-43E3-A006-0E1D6C573CD7}.Debug|x86.Build.0 = Debug|x86
+		{ECE31ACA-1B64-43E3-A006-0E1D6C573CD7}.DebugBroken|Mixed Platforms.ActiveCfg = Debug|x86
+		{ECE31ACA-1B64-43E3-A006-0E1D6C573CD7}.DebugBroken|Mixed Platforms.Build.0 = Debug|x86
+		{ECE31ACA-1B64-43E3-A006-0E1D6C573CD7}.DebugBroken|Win32.ActiveCfg = Debug|x86
+		{ECE31ACA-1B64-43E3-A006-0E1D6C573CD7}.DebugBroken|x86.ActiveCfg = Debug|x86
+		{ECE31ACA-1B64-43E3-A006-0E1D6C573CD7}.DebugBroken|x86.Build.0 = Debug|x86
+		{ECE31ACA-1B64-43E3-A006-0E1D6C573CD7}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{ECE31ACA-1B64-43E3-A006-0E1D6C573CD7}.Release|Mixed Platforms.Build.0 = Release|x86
+		{ECE31ACA-1B64-43E3-A006-0E1D6C573CD7}.Release|Win32.ActiveCfg = Release|x86
+		{ECE31ACA-1B64-43E3-A006-0E1D6C573CD7}.Release|x86.ActiveCfg = Release|x86
+		{ECE31ACA-1B64-43E3-A006-0E1D6C573CD7}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

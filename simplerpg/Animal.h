@@ -41,7 +41,7 @@ public:
 	Pixel virtual getGraphic();
 	void virtual update(float dt);
 
-	Destination *getDestination();
+	Destination &getDestination();
 
 	void displayActions(UIContainer &hud);
 
@@ -287,6 +287,7 @@ protected:
 	
 	virtual void attackAnimal(Animal *target, float dt);
 	virtual void doActionEat(float dt);
+	virtual void doActionMove(float dt);
 	virtual void doActionFlee(float dt) {}
 	virtual void doActionAttack(float dt);
 	virtual void doActionBreed(float dt);

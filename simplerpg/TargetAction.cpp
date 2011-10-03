@@ -8,9 +8,9 @@ TargetAction::TargetAction(EntityAction action) : Action(action)
 {
 }
 
-Destination *TargetAction::getTarget()
+Destination &TargetAction::getTarget()
 {
-	return &mTarget;
+	return mTarget;
 }
 
 void TargetAction::loadProperties(FormattedFileIterator &iter)
@@ -32,7 +32,7 @@ void TargetAction::saveProperty(const ActionProperty &propertyId, FormattedFile 
 	switch(propertyId)
 	{
 	case TARGET:
-		getTarget()->saveDestination(ActionPropertyNames[TARGET], file);
+		getTarget().saveDestination(ActionPropertyNames[TARGET], file);
 		break;
 	default:
 		Action::saveProperty(propertyId, file);

@@ -227,6 +227,7 @@ protected:
 	bool mUnderCursorDirty;
 
 	GameEntity *mDebugEntity;
+	bool mInstantMove;
 	FindEntityResult mFoundEntity;
 	IKeyActions *mSelectedItem;
 

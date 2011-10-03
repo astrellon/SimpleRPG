@@ -31,7 +31,6 @@ namespace SimpleRPGMapEditor
         public MainView()
         {
             InitializeComponent();
-            //mUsedColors = (Color[])mColors.Clone();
         }
 
         private void btnLoad_Click(object sender, EventArgs e)

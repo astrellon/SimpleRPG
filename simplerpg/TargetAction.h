@@ -12,7 +12,7 @@ public:
 	TargetAction(EntityAction action);
 	~TargetAction();
 
-	Destination *getTarget();
+	Destination &getTarget();
 
 	virtual string getActionType() { return "TargetAction"; }
 

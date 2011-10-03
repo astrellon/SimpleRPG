@@ -86,6 +86,7 @@ Game::Game(int width, int height)
 	mGamePaused = false;
 
 	mDebugEntity = NULL;
+	mInstantMove  = true;
 	mDebugPosition = Vector2i(-1, -1);
 
 	mCurrentTime = 0.0f;
@@ -538,6 +539,11 @@ void Game::keyActions(const int key)
 			mDebugEntity = NULL;
 		}
 
+		if (key == 'x')
+		{
+			mInstantMove = !mInstantMove;
+		}
+
 		if(mDebugEntity == NULL && key >= '1' && key <= '9')
 		{
 			EntityList list = getUnderCursor();
@@ -553,7 +559,16 @@ void Game::keyActions(const int key)
 			Tile *tile = mMap->getTile(mCursor);
 			if (tile != NULL && tile->getPassable())
 			{
-				mDebugEntity->move(mCursor.sub(mDebugEntity->getPosition()), false);
+				if(mInstantMove)
+				{
+					mDebugEntity->move(mCursor.sub(mDebugEntity->getPosition()), false);
+				}
+				else
+				{
+					TargetAction *action = new TargetAction(MOVE);
+					action->getTarget().setLocation(mCursor);
+					mDebugEntity->setCurrentAction(action);
+				}
 			}
 		}
 		break;
@@ -768,6 +783,15 @@ void Game::displayActions()
 	case MENU_MOVE:
 
 		mHudText << "<15>Move entity menu:</>\n\n";
+		mHudText << "<12>x</>: ";
+		if(mInstantMove)
+		{
+			mHudText << "Instant move.\n";
+		}
+		else
+		{
+			mHudText << "Tell to move.\n";
+		}
 		if(mDebugEntity == NULL)
 		{
 			mHudText << "No entity selected.\n\n";
@@ -1162,7 +1186,7 @@ Vector2i Game::findClosestTileWithFood(Vector2i position)
 
 	return result;
 }
-
+/*
 Vector2i Game::findClosestTileWithFood(Animal *entity)
 {
 	Vector2i position = entity->getPosition();
@@ -1195,6 +1219,91 @@ Vector2i Game::findClosestTileWithFood(Animal *entity)
 		average = position;
 		average.x++;
 	}
+
+	//float facingX = entity->getTransform()->xx;
+	//float facingY = entity->getTransform()->yx;
+	
+	while(!openList.empty())
+	{
+		Vector2i current = openList.front();
+		openList.pop();
+
+		TileData *data = getTileData(current);
+
+		float minValue = max(5, data->getMaxFoodValue() * 0.1f);
+		if(data->getFoodValue() > 0 && data->getFoodValue() > minValue)
+		{
+			result = current;
+			break;
+		}
+		else
+		{
+			Vector2f toAverage = ((Vector2f)(current).sub(average));
+			double len = toAverage.length();
+			if(len < entity->getLineOfSightRadius() * 0.7f)
+			{
+				toAverage.x = facingX;
+				toAverage.y = facingY;
+			}
+			else
+			{
+ 				toAverage.normalise();
+			}
+			if(toAverage.x == 0 && toAverage.y == 0)
+			{
+				toAverage.x = 1;
+			}
+			// Right
+			checkAdjacentTile(current.x + toAverage.x, current.y + toAverage.y, openList);
+			//checkAdjacentTile(current.x + toAverage.x, current.y - toAverage.y, openList);
+			// Down
+			checkAdjacentTile(current.x + toAverage.y, current.y - toAverage.x, openList);
+			//checkAdjacentTile(current.x - toAverage.y, current.y - toAverage.x, openList);
+			// Left
+			checkAdjacentTile(current.x - toAverage.x, current.y - toAverage.y, openList);
+			//checkAdjacentTile(current.x - toAverage.x, current.y + toAverage.y, openList);
+			// Up
+			checkAdjacentTile(current.x - toAverage.y, current.y + toAverage.x, openList);
+			//checkAdjacentTile(current.x + toAverage.y, current.y + toAverage.x, openList);
+		}
+	}
+
+	return result;
+}
+*/
+Vector2i Game::findClosestTileWithFood(Animal *entity)
+{
+	Vector2i position = entity->getPosition();
+
+	if (position.x < 0 || position.y < 0 || 
+		position.x >= mMap->getWidth() || position.y >= mMap->getHeight())
+	{
+		return Vector2i(-1, -1);
+	}
+	
+	mCheckedTilesCounter++;
+
+	queue<Vector2i> openList;
+	openList.push(position);
+	mCheckedTiles[position.x][position.y] = mCheckedTilesCounter;
+	Vector2i result(-1, -1);
+
+	Vector2i average;
+	EntityList &list = entity->getSurroundingEntities();
+	if(list.size() > 0)
+	{
+		for(int i = 0; i < list.size(); i++)
+		{
+			average = average.add(list[i]->getPosition());
+		}
+		average = average.scale(1.0f / (float)list.size());
+	}
+	else
+	{
+		average = position;
+		average.x++;
+	}
+
 
 	float facingX = entity->getTransform()->xx;
 	float facingY = entity->getTransform()->yx;

@@ -13,29 +13,6 @@ using System.IO;
 
 namespace SimpleRPGAnalyser
 {
-    public class KeyPair
-    {
-        public string name;
-        public float value;
-        public float max = -1;
-
-        public KeyPair()
-        {
-
-        }
-        public KeyPair(string name, float value)
-        {
-            this.name = name;
-            this.value = value;
-        }
-        public KeyPair(string name, float value, float max)
-        {
-            this.name = name;
-            this.value = value;
-            this.max = max;
-        }
-    }
-
     public partial class Analyser : Form
     {
         private char[] mTiles = { '.', '^', ',', ';', '#', 'S', '~', '*', 'R', 'r', 'T', 'd', 'w' };
@@ -219,6 +196,8 @@ namespace SimpleRPGAnalyser
                                     else
                                     {
                                         if (line.Equals("Action") ||
+                                            line.Equals("TargetAction") || 
+                                            line.Equals("action_history", StringComparison.CurrentCultureIgnoreCase) ||
                                             line.Equals("action_history", StringComparison.CurrentCultureIgnoreCase))
                                         {
                                             endSkip++;
@@ -267,7 +246,10 @@ namespace SimpleRPGAnalyser
                             mValues.Add(p);
                         }
                     }
+
+                    tabPage1.Invalidate();
                 }
+
             }
         }
 
@@ -327,10 +309,12 @@ namespace SimpleRPGAnalyser
 
             float width = (e.ClipRectangle.Width - 5) / (mValues.Count);
 
-            StringFormat format = new StringFormat(StringFormatFlags.DirectionRightToLeft);
-            Font font = new Font(FontFamily.GenericSansSerif, 10);
+            Font font = new Font(FontFamily.GenericSansSerif, 10, FontStyle.Bold);
             Brush textBrush = Brushes.Black;
             Brush textBrushShadow = Brushes.White;
+
+            List<KeyPair> sorted = mValues.ToList();
+            sorted.Sort();
 
             float i = 0;
             Matrix mx = new Matrix(1, 0, 0, 1, 0, 0);
@@ -341,7 +325,7 @@ namespace SimpleRPGAnalyser
             Pen p = new Pen(line, 4);
             Brush fill = Brushes.LightSkyBlue;
 
-            foreach (KeyPair pair in mValues)
+            foreach (KeyPair pair in sorted)
             {
                 float height = 0.0f;
                 float m = maxValue;
@@ -352,13 +336,14 @@ namespace SimpleRPGAnalyser
                 height = pair.value / m * maxHeight;
 
                 Rectangle rect = new Rectangle((int)(maxHeight - height), (int)(-(i + 1) * width), (int)height, (int)width);
-                //continue;
-                //LinearGradientBrush fill = new LinearGradientBrush(rect, Color.Blue, Color.LightBlue, 0.0f);
+               
+                string txt = pair.value.ToString() + " " + pair.name;
 
+                SizeF txtSize = g.MeasureString(txt, font);
                 g.FillRectangle(fill, rect);
                 g.DrawRectangle(p, rect);
-                g.DrawString(pair.name, font, textBrushShadow, maxHeight - 4, -(i + 0.5f) * width + 1, format);
-                g.DrawString(pair.name, font, textBrush, maxHeight - 5, -(i + 0.5f) * width, format);
+                g.DrawString(txt, font, textBrushShadow, maxHeight - 4 - txtSize.Width, -(i + 0.5f) * width + 1);//, format);
+                g.DrawString(txt, font, textBrush, maxHeight - 5 - txtSize.Width, -(i + 0.5f) * width);//, format);
                 
                 i++;
             }

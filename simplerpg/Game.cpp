@@ -1229,10 +1229,16 @@ Vector2i Game::findClosestTileWithFood(Animal *entity)
 	}
 
 	// Gives a biased random number around 0.0 and between -0.5 and 0.5.
-	float offset = ((math::nextFloat() + math::nextFloat()) * 0.5f - 0.5f) * M_PI;
+	//float offset = ((math::nextFloat() + math::nextFloat()) * 0.5f - 0.5f) * M_PI * 2;
 	
-	float facingX = cos(entity->getFacing() + M_PIF * 0.5f + offset); 
-	float facingY = sin(entity->getFacing() + M_PIF * 0.5f + offset);
+	//float facingX = cos(entity->getFacing() + M_PIF * 0.5f + offset); 
+	//float facingY = sin(entity->getFacing() + M_PIF * 0.5f + offset);
+
+	float angle = math::nextFloat() * M_PI;
+	float facingX = cos(angle);
+	float facingY = sin(angle);
+
+	//clog << entity->getEntityName() << " now going to face " << facingX << ", " << facingY << endl;
 	
 	while(!openList.empty())
 	{

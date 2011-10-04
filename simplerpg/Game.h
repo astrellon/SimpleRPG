@@ -285,5 +285,5 @@ protected:
 
 private:
 
-	void checkAdjacentTile(const int &x, const int &y, queue<Vector2i> &openList);
+	void checkAdjacentTile(const int &x, const int &y, const int &group, queue<Vector2i> &openList);
 };

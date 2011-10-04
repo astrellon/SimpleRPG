@@ -700,7 +700,7 @@ void Game::displayActions()
 		break;
 	case MENU_FIND:
 		mHudText << "<15>Find closest</>\n";
-		mHudText << "Pos (" << mCursor.toString(12) << ")\n\n";
+		//mHudText << "Pos (" << mCursor.toString(12) << ")\n\n";
 		mHudText << "<11>x</>: Toggle P/A (" << LOOK_FOR_TABLE[mLookFor][0] << ")\n";
 		mHudText << "<11>f</>: Find.\n";
 		
@@ -728,7 +728,7 @@ void Game::displayActions()
 
 	case MENU_RAY:
 		mHudText << "<15>Ray Test Menu:</>\n\n";
-		mHudText << "<15>Pos</>:\t(" << mCursor.toString(12) << ")\n";
+		//mHudText << "<15>Pos</>:\t(" << mCursor.toString(12) << ")\n";
 		mHudText << "<15>Angle</>:\t<12>" << mCursorAngle << "</>\n";
 		mHudText << "<15>Len</>:\t<12>" << mCursorLength << "</>\n";
 
@@ -737,7 +737,7 @@ void Game::displayActions()
 	case MENU_NEAR:
 
 		mHudText << "<15>Nearby Test Menu:</>\n\n";
-		mHudText << "<15>Position</>:\t(" << mCursor.toString(12) << ")\n";
+		//mHudText << "<15>Position</>:\t(" << mCursor.toString(12) << ")\n";
 		mHudText << "<15>Radius</>:\t\t<12>" << mCursorLength << "</>\n";
 
 		findNearby(mCursor, (float)mCursorLength, results, NULL);
@@ -764,7 +764,7 @@ void Game::displayActions()
 	case MENU_FOOD:
 
 		mHudText << "<15>Closest tile with food:</>\n\n";
-		mHudText << "<15>Position</>:\t(" << mCursor.toString(12) << ")\n\n";
+		//mHudText << "<15>Position</>:\t(" << mCursor.toString(12) << ")\n\n";
 
 		mDebugPosition = findClosestTileWithFood(mCursor);
 		closestFood = getTileData(mDebugPosition);
@@ -1081,6 +1081,11 @@ void Game::render(WINDOW *wnd)
 	mWholeHudText << "<15>Current Day: </>" << getCurrentDay() << '\n';
 	mWholeHudText << "<15>Current Time: </>" << getCurrentTimeString() << " (<12>x" << getTimeScale() << "</>)\n";
 
+	if(getCursorMode())
+	{
+		mWholeHudText << "<15>Cursor: </>" << mCursor.toString(12) << '\n';
+	}
+
 	mWholeHud.setWindow(wnd);
 	displayActions();
 	mWholeHud.render();
@@ -1129,14 +1134,15 @@ vector<Vector2f> *Game::findPath(Vector2i startPosition, Vector2i endPosition)
 	return getMap()->search(startPosition, endPosition);
 }
 
-inline void Game::checkAdjacentTile(const int &x, const int &y, queue<Vector2i> &openList)
+inline void Game::checkAdjacentTile(const int &x, const int &y, const int &group, queue<Vector2i> &openList)
 {
 	if (x >= 0 && x < mMap->getWidth() && 
 		y >= 0 && y < mMap->getHeight() &&
 		mCheckedTiles[x][y] < mCheckedTilesCounter)
 	{
 		Tile *tile = mMap->getTile(x, y);
-		if(tile != NULL && tile->getPassable())
+		int g = mMap->getGroup(x, y);
+		if(g == group && tile != NULL && tile->getPassable())
 		{
 			mCheckedTiles[x][y] = mCheckedTilesCounter;
 			openList.push(Vector2i(x, y));
@@ -1157,6 +1163,7 @@ Vector2i Game::findClosestTileWithFood(Vector2i position)
 	openList.push(position);
 	mCheckedTiles[position.x][position.y] = mCheckedTilesCounter;
 	Vector2i result(-1, -1);
+	int group = mMap->getGroup(position);
 	
 	while(!openList.empty())
 	{
@@ -1174,19 +1181,19 @@ Vector2i Game::findClosestTileWithFood(Vector2i position)
 		else
 		{
 			// Right
-			checkAdjacentTile(current.x + 1, current.y, openList);
+			checkAdjacentTile(current.x + 1, current.y, group, openList);
 			// Down
-			checkAdjacentTile(current.x, current.y + 1, openList);
+			checkAdjacentTile(current.x, current.y + 1, group, openList);
 			// Left
-			checkAdjacentTile(current.x - 1, current.y, openList);
+			checkAdjacentTile(current.x - 1, current.y, group, openList);
 			// Up
-			checkAdjacentTile(current.x, current.y - 1, openList);
+			checkAdjacentTile(current.x, current.y - 1, group, openList);
 		}
 	}
 
 	return result;
 }
-/*
+
 Vector2i Game::findClosestTileWithFood(Animal *entity)
 {
 	Vector2i position = entity->getPosition();
@@ -1203,6 +1210,7 @@ Vector2i Game::findClosestTileWithFood(Animal *entity)
 	openList.push(position);
 	mCheckedTiles[position.x][position.y] = mCheckedTilesCounter;
 	Vector2i result(-1, -1);
+	int group = mMap->getGroup(position);
 
 	Vector2i average;
 	EntityList &list = entity->getSurroundingEntities();
@@ -1220,8 +1228,11 @@ Vector2i Game::findClosestTileWithFood(Animal *entity)
 		average.x++;
 	}
 
-	//float facingX = entity->getTransform()->xx;
-	//float facingY = entity->getTransform()->yx;
+	// Gives a biased random number around 0.0 and between -0.5 and 0.5.
+	float offset = ((math::nextFloat() + math::nextFloat()) * 0.5f - 0.5f) * M_PI;
+	
+	float facingX = cos(entity->getFacing() + M_PIF * 0.5f + offset); 
+	float facingY = sin(entity->getFacing() + M_PIF * 0.5f + offset);
 	
 	while(!openList.empty())
 	{
@@ -1254,101 +1265,16 @@ Vector2i Game::findClosestTileWithFood(Animal *entity)
 				toAverage.x = 1;
 			}
 			// Right
-			checkAdjacentTile(current.x + toAverage.x, current.y + toAverage.y, openList);
+			checkAdjacentTile(current.x + toAverage.x, current.y + toAverage.y, group, openList);
 			//checkAdjacentTile(current.x + toAverage.x, current.y - toAverage.y, openList);
 			// Down
-			checkAdjacentTile(current.x + toAverage.y, current.y - toAverage.x, openList);
+			checkAdjacentTile(current.x + toAverage.y, current.y - toAverage.x, group, openList);
 			//checkAdjacentTile(current.x - toAverage.y, current.y - toAverage.x, openList);
 			// Left
-			checkAdjacentTile(current.x - toAverage.x, current.y - toAverage.y, openList);
+			checkAdjacentTile(current.x - toAverage.x, current.y - toAverage.y, group, openList);
 			//checkAdjacentTile(current.x - toAverage.x, current.y + toAverage.y, openList);
 			// Up
-			checkAdjacentTile(current.x - toAverage.y, current.y + toAverage.x, openList);
-			//checkAdjacentTile(current.x + toAverage.y, current.y + toAverage.x, openList);
-		}
-	}
-
-	return result;
-}
-*/
-Vector2i Game::findClosestTileWithFood(Animal *entity)
-{
-	Vector2i position = entity->getPosition();
-
-	if (position.x < 0 || position.y < 0 || 
-		position.x >= mMap->getWidth() || position.y >= mMap->getHeight())
-	{
-		return Vector2i(-1, -1);
-	}
-	
-	mCheckedTilesCounter++;
-
-	queue<Vector2i> openList;
-	openList.push(position);
-	mCheckedTiles[position.x][position.y] = mCheckedTilesCounter;
-	Vector2i result(-1, -1);
-
-	Vector2i average;
-	EntityList &list = entity->getSurroundingEntities();
-	if(list.size() > 0)
-	{
-		for(int i = 0; i < list.size(); i++)
-		{
-			average = average.add(list[i]->getPosition());
-		}
-		average = average.scale(1.0f / (float)list.size());
-	}
-	else
-	{
-		average = position;
-		average.x++;
-	}
-
-
-	float facingX = entity->getTransform()->xx;
-	float facingY = entity->getTransform()->yx;
-	
-	while(!openList.empty())
-	{
-		Vector2i current = openList.front();
-		openList.pop();
-
-		TileData *data = getTileData(current);
-
-		float minValue = max(5, data->getMaxFoodValue() * 0.1f);
-		if(data->getFoodValue() > 0 && data->getFoodValue() > minValue)
-		{
-			result = current;
-			break;
-		}
-		else
-		{
-			Vector2f toAverage = ((Vector2f)(current).sub(average));
-			double len = toAverage.length();
-			if(len < entity->getLineOfSightRadius() * 0.7f)
-			{
-				toAverage.x = facingX;
-				toAverage.y = facingY;
-			}
-			else
-			{
- 				toAverage.normalise();
-			}
-			if(toAverage.x == 0 && toAverage.y == 0)
-			{
-				toAverage.x = 1;
-			}
-			// Right
-			checkAdjacentTile(current.x + toAverage.x, current.y + toAverage.y, openList);
-			//checkAdjacentTile(current.x + toAverage.x, current.y - toAverage.y, openList);
-			// Down
-			checkAdjacentTile(current.x + toAverage.y, current.y - toAverage.x, openList);
-			//checkAdjacentTile(current.x - toAverage.y, current.y - toAverage.x, openList);
-			// Left
-			checkAdjacentTile(current.x - toAverage.x, current.y - toAverage.y, openList);
-			//checkAdjacentTile(current.x - toAverage.x, current.y + toAverage.y, openList);
-			// Up
-			checkAdjacentTile(current.x - toAverage.y, current.y + toAverage.x, openList);
+			checkAdjacentTile(current.x - toAverage.y, current.y + toAverage.x, group, openList);
 			//checkAdjacentTile(current.x + toAverage.y, current.y + toAverage.x, openList);
 		}
 	}
@@ -1609,7 +1535,9 @@ void Game::loadMap(string filename)
 					}
 				}
 
+				map->analyseMapForGroups();
 				setMap(map);
+				//map->logGroups();
 				break;
 			}
 

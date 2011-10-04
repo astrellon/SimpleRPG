@@ -241,11 +241,8 @@ namespace SimpleRPGAnalyser
                                                 values[prop] = values[prop] + value;
                                             }
                                         }
-                                        //Console.WriteLine("Line>{0}< {1}", line, endSkip);
                                     }
                                 }
-                                
-                                //Console.WriteLine("Line >{0}<", line);
                             }
                             else
                             {

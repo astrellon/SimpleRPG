@@ -55,12 +55,31 @@ public:
 		return mMapData[pos.x][pos.y].tile; 
 	}
 
+	inline int getGroup(const int &x, const int &y) 
+	{ 
+		if(x < 0 || x >= mWidth || y < 0 || y >= mHeight)
+			return -1;
+
+		return mMapData[x][y].group;
+	}
+
+	inline int getGroup(const Vector2i &pos)
+	{
+		if(pos.x < 0 || pos.x >= mWidth || pos.y < 0 || pos.y >= mHeight)
+			return -1;
+
+		return mMapData[pos.x][pos.y].group;
+	}
+
+	void analyseMapForGroups();
+
 	vector<Vector2f> *search(const Vector2i &start, const Vector2i &end);
 
 	void renderMap(Rect &rect, WINDOW *wnd);
 
 	void setMappedTiles(map<char, Tile *> tiles) { mMappedTiles = tiles; }
 	map<char, Tile *> *getMappedTiles() { return &mMappedTiles; }
+	void logGroups();
 
 protected:
 	AStarNode **mMapData;
@@ -72,6 +91,8 @@ protected:
 
 	void getNeighbors(Vector2f position);
 	bool checkNeighbor(const int &x, const int &y);
+
+	bool floodCheck(const int &x, const int &y, const int &groupNum);
 
 	vector<AStarNode *> mOpenList;
 	vector<AStarNode *> mClosedList;

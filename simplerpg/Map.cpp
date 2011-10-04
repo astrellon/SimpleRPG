@@ -12,10 +12,7 @@ Map::Map(int width, int height)
 		mMapData[x] = new AStarNode[height];
 		for(int y = 0; y < height; y++)
 		{
-			int tile = 2;
-			if(y == 0)
-				tile = 1;
-			mMapData[x][y].tile = Tile::getTile(tile);
+			mMapData[x][y].tile = Tile::getTile(0);
 			mMapData[x][y].position.x = (float)x;
 			mMapData[x][y].position.y = (float)y;
 		}
@@ -93,10 +90,84 @@ double manhattanDistance(const Vector2f &p1, const Vector2f &p2)
 	return abs(p1.x - p2.x) + abs(p1.y - p2.y);
 }
 
+void Map::analyseMapForGroups()
+{
+	int groupNum = 0;
+	for(int x = 0; x < mWidth; x++)
+	{
+		for(int y = 0; y < mHeight; y++)
+		{
+			if(floodCheck(x, y, groupNum))
+			{
+				groupNum++;
+			}
+		}
+	}
+}
+
+bool Map::floodCheck(const int &x, const int &y, const int &groupNum)
+{
+	vector<Vector2i> q;
+	q.push_back(Vector2i(x, y));
+	bool result = false;
+	while(!q.empty())
+	{
+		Vector2i p = q.back();
+		q.pop_back();
+		if(p.x < 0 || p.y < 0 || p.x >= mWidth || p.y >= mHeight)
+		{
+			continue;
+		}
+		AStarNode &node = mMapData[p.x][p.y];
+		if(!node.tile->getPassable())
+		{
+			continue;
+		}
+
+		if(node.group < 0)
+		{
+			node.group = groupNum;
+			q.push_back(Vector2i(p.x - 1, p.y));
+			q.push_back(Vector2i(p.x + 1, p.y));
+			q.push_back(Vector2i(p.x, p.y - 1));
+			q.push_back(Vector2i(p.x, p.y + 1));
+			result = true;
+		}
+	}
+	return result;
+}
+
+void Map::logGroups()
+{
+	for(int y = 0; y < mHeight; y++)
+	{
+		for(int x = 0; x < mWidth; x++)
+		{
+			int group = mMapData[x][y].group;
+			if(group < 0)
+			{
+				clog << '#';
+			}
+			else
+			{
+				clog << (char)('a' + group);
+			}
+		}
+		clog << endl;
+	}
+}
+
 vector<Vector2f> *Map::search(const Vector2i &start, const Vector2i &end)
 {
 	if (start.x < 0 || start.x >= mWidth ||
 		start.y < 0 || start.y >= mHeight)
+	{
+		return NULL;
+	}
+
+	int startGroup = mMapData[start.x][start.y].group;
+	int endGroup = mMapData[end.x][end.y].group;
+	if(startGroup != endGroup)
 	{
 		return NULL;
 	}
@@ -131,6 +202,7 @@ vector<Vector2f> *Map::search(const Vector2i &start, const Vector2i &end)
 			mOpenList.erase(mOpenList.begin());
 			mClosedList.push_back(node);
 
+			mNeighbors.clear();
 			getNeighbors(node->position);
 			for(vector<AStarNode *>::iterator iter = mNeighbors.begin(); iter != mNeighbors.end(); ++iter)
 			{

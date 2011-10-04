@@ -795,7 +795,8 @@ void Animal::doActionMove(float dt)
 	{
 		// Direct distance between this animal and the target.
 		setWalking(false);
-		double simpleDist = distanceToEntity(action->getTarget().getEntity());
+		//double simpleDist = distanceToEntity(action->getTarget().getEntity());
+		double simpleDist = getPosition().sub(action->getTarget().getLocation()).length();
 		if(simpleDist <= getAttackRange())
 		{
 			action->nextStep();

@@ -12,6 +12,7 @@ public:
 		this->tile = tile;
 		useCounter = 0;
 		parent = NULL;
+		group = -1;
 	}
 	~AStarNode(void)
 	{
@@ -28,6 +29,8 @@ public:
 	double f;
 	double g;
 	double h;
+
+	int group;
 
 	long useCounter;
 

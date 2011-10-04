@@ -65,6 +65,8 @@ Game *startGame(string filename)
 
 	game->loadNameList("names.txt");
 
+	//vector<Vector2f> *path = game->getMap()->search(Vector2i(97, 36), Vector2i(98, 35));
+
 	// Start game timer.
 	QueryPerformanceCounter(&updateTime);
 

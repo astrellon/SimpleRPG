@@ -74,6 +74,7 @@
       <DependentUpon>Analyser.cs</DependentUpon>
     </Compile>
     <Compile Include="Animal.cs" />
+    <Compile Include="AnimalSorter.cs" />
     <Compile Include="Destination.cs" />
     <Compile Include="ILoadable.cs" />
     <Compile Include="KeyPair.cs" />

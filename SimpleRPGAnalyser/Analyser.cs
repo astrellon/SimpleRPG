@@ -29,6 +29,10 @@ namespace SimpleRPGAnalyser
         private int mCharCount = 0;
         private AboutBox mAbout = null;
 
+        private int mCurrentDay = 0;
+        private float mCurrentTime = 0;
+        private float mDayLength = 600;
+
         private List<KeyPair> mValues = null;
 
         private enum MapState { UNKNOWN, TILES, MAP, ENTITIES, OPTIONS, TILEDATA, REMOVEDENTITIES, END };
@@ -162,6 +166,23 @@ namespace SimpleRPGAnalyser
                                     }
                                 }
                             }
+                            else if (state.Equals("options", StringComparison.CurrentCultureIgnoreCase))
+                            {
+                                switch (line)
+                                {
+                                    case "current_time":
+                                        mCurrentTime = float.Parse(cc[++i]);
+                                        break;
+                                    case "current_day":
+                                        mCurrentDay = int.Parse(cc[++i]);
+                                        break;
+                                    case "day_length":
+                                        mDayLength = float.Parse(cc[++i]);
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
                             else if (state.Equals("map", StringComparison.CurrentCultureIgnoreCase))
                             {
                                 if (endState != null)
@@ -186,8 +207,11 @@ namespace SimpleRPGAnalyser
                                     i++;
                                     Animal a = new Animal();
                                     a.load(ref cc, ref i);
+                                    lstAnimals.Items.Add(a);
+                                    string[] subItems = new string[] { a.id.ToString(), a.name, a.species, a.age.ToString(), a.birthdate, a.deathdate };
+                                    viewAnimals.Items.Add(new ListViewItem(subItems));
                                 }
-                                
+
                                 /*if (!readingAnimal && line == "Animal")
                                 {
                                     readingAnimal = true;
@@ -297,8 +321,14 @@ namespace SimpleRPGAnalyser
             {
                 mAbout = new AboutBox();
             }
-            
+            redrawGraph();
             mAbout.Show();
+        }
+
+        private void redrawGraph()
+        {
+            Graphics g = picGraph.CreateGraphics();
+            g.FillRectangle(Brushes.Aqua, picGraph.Bounds);
         }
 
         private void tabPage1_Paint(object sender, PaintEventArgs e)
@@ -361,6 +391,35 @@ namespace SimpleRPGAnalyser
                 
                 i++;
             }
+        }
+
+        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void viewAnimals_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            AnimalSorter Sorter = new AnimalSorter();
+            viewAnimals.ListViewItemSorter = Sorter;
+            if (!(viewAnimals.ListViewItemSorter is AnimalSorter))
+                return;
+            Sorter = (AnimalSorter)viewAnimals.ListViewItemSorter;
+
+            if (Sorter.LastSort == e.Column)
+            {
+                if (viewAnimals.Sorting == SortOrder.Ascending)
+                    viewAnimals.Sorting = SortOrder.Descending;
+                else
+                    viewAnimals.Sorting = SortOrder.Ascending;
+            }
+            else
+            {
+                viewAnimals.Sorting = SortOrder.Descending;
+            }
+            Sorter.ByColumn = e.Column;
+
+            viewAnimals.Sort();
         }
     }
 }

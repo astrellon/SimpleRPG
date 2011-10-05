@@ -9,8 +9,8 @@ namespace SimpleRPGAnalyser
     public class Animal : ILoadable
     {
         public int id;
-        public string name;
-        public string species;
+        public string name = "Johnny Noname";
+        public string species = "Nullis";
         public Vector2f position = new Vector2f(-1, -1);
         public float facing;
         public float amount_eaten;
@@ -49,8 +49,8 @@ namespace SimpleRPGAnalyser
         public float attacked_by_cooldown;
         public float energy;
         public float accumulated_energy;
-        public string birthdate;
-        public string deathdate;
+        public string birthdate = "0 0";
+        public string deathdate = "0 0";
         public float deathtime;
         public float mate_find_cooldown;
         public float fertility;
@@ -58,7 +58,12 @@ namespace SimpleRPGAnalyser
         public int parent2;
         public float hunger_damage_cooldown;
         public float mutation_rate;
-        public float mutation_amount;
+        private float mutation_amount;
+
+        public string LongName
+        {
+            get { return name + " (" + species + ")"; }
+        }
         
         public Animal()
         {
@@ -81,9 +86,17 @@ namespace SimpleRPGAnalyser
                         break;
                     case "name":
                         name = iter[index++];
+                        if (name[0] == '"')
+                        {
+                            name = name.Substring(1, name.Length - 2);
+                        }
                         break;
                     case "species":
                         species = iter[index++];
+                        if (species[0] == '"')
+                        {
+                            species = species.Substring(1, species.Length - 2);
+                        }
                         break;
                     case "position":
                         position.x = float.Parse(iter[index++]);

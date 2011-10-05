@@ -404,7 +404,6 @@ namespace SimpleRPGAnalyser
             viewAnimals.ListViewItemSorter = Sorter;
             if (!(viewAnimals.ListViewItemSorter is AnimalSorter))
                 return;
-            Sorter = (AnimalSorter)viewAnimals.ListViewItemSorter;
 
             if (Sorter.LastSort == e.Column)
             {
@@ -417,7 +416,10 @@ namespace SimpleRPGAnalyser
             {
                 viewAnimals.Sorting = SortOrder.Descending;
             }
+
+            Sorter.order = viewAnimals.Sorting;
             Sorter.ByColumn = e.Column;
+            Console.WriteLine("Sort by Column: " + e.Column);
 
             viewAnimals.Sort();
         }

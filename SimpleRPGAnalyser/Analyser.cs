@@ -101,6 +101,8 @@ namespace SimpleRPGAnalyser
                         int mapWidth = -1;
 
                         string[] results = fileParse.Split(fileText);
+                        List<string> cleanedUp = new List<string>();
+
                         for (int i = 0; i < results.Length; i++)
                         {
                             string line = results[i].Trim();
@@ -114,7 +116,13 @@ namespace SimpleRPGAnalyser
                             {
                                 continue;
                             }
+                            cleanedUp.Add(line);
+                        }
 
+                        string [] cc = cleanedUp.ToArray();
+                        for (int i = 0; i < cc.Length; i++)
+                        {
+                            string line = cc[i];
                             if (line == "--")
                             {
                                 findState = true;
@@ -173,7 +181,14 @@ namespace SimpleRPGAnalyser
                             else if (state.Equals("entities", StringComparison.CurrentCultureIgnoreCase) ||
                                      state.Equals("RemovedEntities", StringComparison.CurrentCultureIgnoreCase))
                             {
-                                if (!readingAnimal && line == "Animal")
+                                if (line == "Animal")
+                                {
+                                    i++;
+                                    Animal a = new Animal();
+                                    a.load(ref cc, ref i);
+                                }
+                                
+                                /*if (!readingAnimal && line == "Animal")
                                 {
                                     readingAnimal = true;
                                     Console.WriteLine("New Animal");
@@ -221,7 +236,7 @@ namespace SimpleRPGAnalyser
                                             }
                                         }
                                     }
-                                }
+                                }*/
                             }
                             else
                             {
@@ -289,7 +304,6 @@ namespace SimpleRPGAnalyser
         private void tabPage1_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
-            //g.Clear(Color.White);
             
             if (mValues == null || mValues.Count == 0)
             {

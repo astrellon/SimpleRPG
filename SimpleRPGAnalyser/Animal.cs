@@ -115,7 +115,7 @@ namespace SimpleRPGAnalyser
                         current_action.load(ref iter, ref index);
                         break;
                     case "action_history":
-                        string actionName = iter[index++];
+                        string actionName = iter[index];
                         while (actionName != "end")
                         {
                             if (actionName == "Action" || actionName == "TargetAction")
@@ -126,7 +126,7 @@ namespace SimpleRPGAnalyser
                             }
                             actionName = iter[index];
                         }
-                            
+                        index++;
                         break;
                     case "health":
                         health = float.Parse(iter[index++]);
@@ -209,9 +209,17 @@ namespace SimpleRPGAnalyser
                         break;
                     case "birthdate":
                         birthdate = iter[index++];
+                        if (birthdate[0] == '"')
+                        {
+                            birthdate = birthdate.Substring(1, birthdate.Length - 2);
+                        }
                         break;
                     case "deathdate":
                         deathdate = iter[index++];
+                        if (deathdate[0] == '"')
+                        {
+                            deathdate = deathdate.Substring(1, deathdate.Length - 2);
+                        }
                         break;
                     case "deathtime":
                         deathtime = float.Parse(iter[index++]);
@@ -235,7 +243,15 @@ namespace SimpleRPGAnalyser
                     case "mutation_amount":
                         mutation_amount = float.Parse(iter[index++]);
                         break;
+                    case "species_alignment":
+                        while (line != "end")
+                        {
+                            line = iter[index++];
+                        }
+                        index++;
+                        break;
                     case "end":
+                        index--;
                         break;
                     default:
                         Console.WriteLine("Unknown property: " + line);

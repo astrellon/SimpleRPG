@@ -37,7 +37,7 @@ RRRRRRRRRRRRRRRRRRRRRRRRRR
 
 
 -- Entities
-/*
+
 Animal
 	id 0
 	species "Wolf"
@@ -77,13 +77,14 @@ Animal
 	entity_mass 48
 	diet 0.8
 	damage_base 4
+	birthdate "0 35"
 	attack_rate 1.6
-	species_alignment
+	/*species_alignment
 		"Rabbit" 0.3
 		"Shrubbery" 0.1
-	end
+	end*/
 end
-*/
+
 Animal
 	id 1
 	species "Rabbit"
@@ -113,6 +114,7 @@ Animal
 	rest_energy_per_day 200
 	hunger_limits 0.4 0.8 1.2
 	life_expectancy 7
+	birthdate "1 1"
 	breeding_age 2
 	age 2
 	breeding_rate 1 0
@@ -157,7 +159,7 @@ Animal
 	damage_base 1
 	attack_rate 1.2
 end
-
+/*
 Plant
 	id 2
 	species "Shrubbery"
@@ -193,7 +195,7 @@ Plant
 	end
 	graphic 2 1 *
 end
-
+*/
 -- TileData
 | | | | | | | | | | | | | | | | | | | | | | | | | | 
 fv 0 | fv 0  | fv 0  | fv 0  | fv 0  | fv 0  | fv 0 | fv 0 | fv 0 | fv 0 | fv 0 | fv 0 | fv 0 | fv 0 | fv 0 | fv 0 | fv 0 | fv 0 | fv 0 | fv 0 | | | | | | | 

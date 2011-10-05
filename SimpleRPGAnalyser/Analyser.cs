@@ -31,7 +31,7 @@ namespace SimpleRPGAnalyser
 
         private int mCurrentDay = 0;
         private float mCurrentTime = 0;
-        private float mDayLength = 600;
+        public static float mDayLength = 600;
 
         private List<KeyPair> mValues = null;
 
@@ -207,9 +207,11 @@ namespace SimpleRPGAnalyser
                                     i++;
                                     Animal a = new Animal();
                                     a.load(ref cc, ref i);
-                                    lstAnimals.Items.Add(a);
+                                    //lstAnimals.Items.Add(a);
                                     string[] subItems = new string[] { a.id.ToString(), a.name, a.species, a.age.ToString(), a.birthdate, a.deathdate };
-                                    viewAnimals.Items.Add(new ListViewItem(subItems));
+                                    ListViewItem item = new ListViewItem(subItems);
+                                    item.Tag = a;
+                                    viewAnimals.Items.Add(item);
                                 }
 
                                 /*if (!readingAnimal && line == "Animal")
@@ -400,12 +402,13 @@ namespace SimpleRPGAnalyser
 
         private void viewAnimals_ColumnClick(object sender, ColumnClickEventArgs e)
         {
-            AnimalSorter Sorter = new AnimalSorter();
-            viewAnimals.ListViewItemSorter = Sorter;
             if (!(viewAnimals.ListViewItemSorter is AnimalSorter))
-                return;
+            {
+                viewAnimals.ListViewItemSorter = new AnimalSorter();
+            }
+            AnimalSorter sorter = (AnimalSorter)viewAnimals.ListViewItemSorter;
 
-            if (Sorter.LastSort == e.Column)
+            if (sorter.LastSort == e.Column)
             {
                 if (viewAnimals.Sorting == SortOrder.Ascending)
                     viewAnimals.Sorting = SortOrder.Descending;
@@ -417,11 +420,23 @@ namespace SimpleRPGAnalyser
                 viewAnimals.Sorting = SortOrder.Descending;
             }
 
-            Sorter.order = viewAnimals.Sorting;
-            Sorter.ByColumn = e.Column;
-            Console.WriteLine("Sort by Column: " + e.Column);
+            sorter.ByColumn = e.Column;
 
             viewAnimals.Sort();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            ListView.SelectedIndexCollection indicies = viewAnimals.SelectedIndices;
+            ListView.SelectedListViewItemCollection selected = viewAnimals.SelectedItems;
+            
+            Console.Write("Selected: ");
+            foreach (ListViewItem item in selected)
+            {
+                Animal a = (Animal)item.Tag;
+                Console.Write(a.LongName + ' ');
+            }
+            Console.WriteLine();
         }
     }
 }

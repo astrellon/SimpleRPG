@@ -8,7 +8,12 @@ namespace SimpleRPGAnalyser
 {
     public class AnimalSorter : System.Collections.IComparer
     {
-        public SortOrder order = SortOrder.Ascending;
+        private string convertDate(string date)
+        {
+            string[] split = date.Split(new char[] { ' ' });
+            float num = float.Parse(split[0]) * Analyser.mDayLength + float.Parse(split[1]);
+            return num.ToString();
+        }
 
         public int Compare(object o1, object o2)
         {
@@ -18,15 +23,21 @@ namespace SimpleRPGAnalyser
             ListViewItem lvi2 = (ListViewItem)o1;
             string str2 = lvi2.SubItems[ByColumn].Text;
 
-            int result;
-            if (order == SortOrder.Ascending)
+            if (Column == 4 || Column == 5)
             {
-                Console.WriteLine("Ascending >" + str1 + "< >" + str2 + "<");
+                str1 = convertDate(str1);
+                str2 = convertDate(str2);
+            }
+
+            int result;
+            if (lvi1.ListView.Sorting == SortOrder.Ascending)
+            {
+                //Console.WriteLine("Ascending >" + str1 + "< >" + str2 + "<");
                 result = String.Compare(str1, str2);
             }
             else
             {
-                Console.WriteLine("Descending >" + str1 + "< >" + str2 + "<");
+                //Console.WriteLine("Descending >" + str1 + "< >" + str2 + "<");
                 result = String.Compare(str2, str1);
             }
 

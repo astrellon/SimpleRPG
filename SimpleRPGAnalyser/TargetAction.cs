@@ -29,6 +29,14 @@ namespace SimpleRPGAnalyser
                         break;
                     case "completed_time":
                         completed_time = iter[index++];
+                        if (completed_time[0] != '"')
+                        {
+                            completed_time += iter[index++];
+                        }
+                        else
+                        {
+                            completed_time = completed_time.Substring(1, completed_time.Length - 2);
+                        }
                         break;
                     case "step":
                         step = int.Parse(iter[index++]);

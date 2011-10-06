@@ -58,7 +58,7 @@ namespace SimpleRPGAnalyser
         public int parent2;
         public float hunger_damage_cooldown;
         public float mutation_rate;
-        private float mutation_amount;
+        public float mutation_amount;
 
         public string LongName
         {
@@ -68,6 +68,87 @@ namespace SimpleRPGAnalyser
         public Animal()
         {
 
+        }
+
+        public static float convertDate(string date)
+        {
+            string[] split = date.Split(new char[] { ' ', ':' });
+            float num = float.Parse(split[0]) * Analyser.mDayLength;
+            if (split.Length == 2)
+            {
+                num += float.Parse(split[1]);
+            }
+            else if (split.Length == 3)
+            {
+                num += float.Parse(split[1]) * Analyser.mDayLength / 24 + float.Parse(split[2]);
+            }
+            return num;
+        }
+
+        public static string convertDate(float date)
+        {
+            float day = (float)Math.Floor(date / Analyser.mDayLength);
+            float time = date - day * Analyser.mDayLength;
+            return day.ToString() + ' ' + time.ToString();
+        }
+
+        public static Animal averageAnimals(List<Animal> animals)
+        {
+            Animal average = new Animal();
+            float b = 0;
+            float d = 0;
+
+            foreach (Animal a in animals)
+            {
+                average.accumulated_energy += a.accumulated_energy / animals.Count;
+                average.age += a.age / animals.Count;
+                average.amount_eaten += a.amount_eaten / animals.Count;
+                average.attack_cooldown += a.attack_cooldown / animals.Count;
+                average.attack_rate += a.attack_rate / animals.Count;
+                average.attacked_by_cooldown += a.attacked_by_cooldown / animals.Count;
+                average.breeding_age += a.breeding_age / animals.Count;
+                average.breeding_count += a.breeding_count / animals.Count;
+                average.breeding_rate += a.breeding_rate / animals.Count;
+                average.damage_base += a.damage_base / animals.Count;
+                average.deathtime += a.deathtime / animals.Count;
+                average.dexterity += a.dexterity / animals.Count;
+                average.diet += a.diet / animals.Count;
+                average.energy += a.energy / animals.Count;
+                average.entity_mass += a.entity_mass / animals.Count;
+                average.entity_size += a.entity_size / animals.Count;
+                average.facing += a.facing / animals.Count;
+                average.fertility += a.fertility / animals.Count;
+                average.health += a.health / animals.Count;
+                average.hunger_damage_cooldown += a.hunger_damage_cooldown / animals.Count;
+                average.hunger_limits_breed += a.hunger_limits_breed / animals.Count;
+                average.hunger_limits_lower += a.hunger_limits_lower / animals.Count;
+                average.hunger_limits_upper += a.hunger_limits_upper / animals.Count;
+                average.intelligence += a.intelligence / animals.Count;
+                average.life_expectancy += a.life_expectancy / animals.Count;
+                average.mate_find_cooldown += a.mate_find_cooldown / animals.Count;
+                average.maxHealth += a.maxHealth / animals.Count;
+                average.mutation_amount += a.mutation_amount / animals.Count;
+                average.mutation_rate += a.mutation_rate / animals.Count;
+                average.rest_energy_per_day += a.rest_energy_per_day / animals.Count;
+                average.running_speed += a.running_speed / animals.Count;
+                average.sight_radius += a.sight_radius / animals.Count;
+                average.strength += a.strength / animals.Count;
+                average.turning_speed += a.turning_speed / animals.Count;
+                average.walking_speed += a.walking_speed / animals.Count;
+
+                average.position.x += a.position.x / animals.Count;
+                average.position.y += a.position.y / animals.Count;
+                average.destination.location.x = a.destination.location.x / animals.Count;
+                average.destination.location.y = a.destination.location.y / animals.Count;
+
+                b += convertDate(a.birthdate);
+                d += convertDate(a.deathdate);
+            }
+
+            average.birthdate = convertDate(b);
+            average.deathdate = convertDate(d);
+
+            return average;
         }
 
         public void load(ref string[] iter, ref int index)

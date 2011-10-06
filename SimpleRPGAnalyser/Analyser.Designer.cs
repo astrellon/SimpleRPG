@@ -114,7 +114,6 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Gene Histogram";
             this.tabPage1.UseVisualStyleBackColor = true;
-            this.tabPage1.Paint += new System.Windows.Forms.PaintEventHandler(this.tabPage1_Paint);
             // 
             // viewAnimals
             // 
@@ -176,6 +175,7 @@
             this.picGraph.Size = new System.Drawing.Size(699, 240);
             this.picGraph.TabIndex = 0;
             this.picGraph.TabStop = false;
+            this.picGraph.Paint += new System.Windows.Forms.PaintEventHandler(this.picGraph_Paint);
             // 
             // tabPage2
             // 

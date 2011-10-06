@@ -41,6 +41,19 @@ namespace SimpleRPGAnalyser
         {
             InitializeComponent();
 
+            Animal a1 = new Animal();
+            a1.strength = 10;
+
+            Animal a2 = new Animal();
+            a2.strength = 20;
+
+            List<Animal> list = new List<Animal>();
+            list.Add(a1);
+            list.Add(a2);
+
+            Animal average = Animal.averageAnimals(list);
+            Console.WriteLine("Str:" + average.strength);
+
             for (int i = 0; i < _mValidProperties.Length; i++)
             {
                 mValidProperties.Add(_mValidProperties[i], true);
@@ -207,62 +220,11 @@ namespace SimpleRPGAnalyser
                                     i++;
                                     Animal a = new Animal();
                                     a.load(ref cc, ref i);
-                                    //lstAnimals.Items.Add(a);
                                     string[] subItems = new string[] { a.id.ToString(), a.name, a.species, a.age.ToString(), a.birthdate, a.deathdate };
                                     ListViewItem item = new ListViewItem(subItems);
                                     item.Tag = a;
                                     viewAnimals.Items.Add(item);
                                 }
-
-                                /*if (!readingAnimal && line == "Animal")
-                                {
-                                    readingAnimal = true;
-                                    Console.WriteLine("New Animal");
-                                    numAnimals++;
-                                }
-                                else if (readingAnimal)
-                                {
-                                    if (line == "end")
-                                    {
-                                        if (endSkip <= 0)
-                                        {
-                                            readingAnimal = false;
-                                            Console.WriteLine("End Animal");
-                                        }
-                                        else
-                                        {
-                                            endSkip--;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if (line.Equals("Action") ||
-                                            line.Equals("TargetAction") || 
-                                            line.Equals("action_history", StringComparison.CurrentCultureIgnoreCase) ||
-                                            line.Equals("action_history", StringComparison.CurrentCultureIgnoreCase))
-                                        {
-                                            endSkip++;
-                                        }
-                                        else
-                                        {
-                                            if (isValidProperty(line))
-                                            {
-                                                string prop = line;
-                                                if (!values.ContainsKey(prop))
-                                                {
-                                                    values.Add(prop, 0);
-                                                }
-                                                do
-                                                {
-                                                    line = results[++i].Trim();
-                                                } while (line.Length == 0);
-
-                                                float value = float.Parse(line);
-                                                values[prop] = values[prop] + value;
-                                            }
-                                        }
-                                    }
-                                }*/
                             }
                             else
                             {
@@ -323,81 +285,35 @@ namespace SimpleRPGAnalyser
             {
                 mAbout = new AboutBox();
             }
-            redrawGraph();
             mAbout.Show();
-        }
-
-        private void redrawGraph()
-        {
-            Graphics g = picGraph.CreateGraphics();
-            g.FillRectangle(Brushes.Aqua, picGraph.Bounds);
-        }
-
-        private void tabPage1_Paint(object sender, PaintEventArgs e)
-        {
-            Graphics g = e.Graphics;
-            
-            if (mValues == null || mValues.Count == 0)
-            {
-                return;
-            }
-            float maxHeight = e.ClipRectangle.Height - 5;
-
-            float maxValue = -1.0f;
-
-            foreach (KeyPair pair in mValues)
-            {
-                if (pair.max < 0.0f)
-                {
-                    maxValue = Math.Max(maxValue, pair.value);
-                }
-            }
-
-            float width = (e.ClipRectangle.Width - 5) / (mValues.Count);
-
-            Font font = new Font(FontFamily.GenericSansSerif, 10, FontStyle.Bold);
-            Brush textBrush = Brushes.Black;
-            Brush textBrushShadow = Brushes.White;
-
-            List<KeyPair> sorted = mValues.ToList();
-            sorted.Sort();
-
-            float i = 0;
-            Matrix mx = new Matrix(1, 0, 0, 1, 0, 0);
-            mx.Rotate(90, MatrixOrder.Append);
-            g.Transform = mx;
-
-            Brush line = Brushes.SkyBlue;
-            Pen p = new Pen(line, 4);
-            Brush fill = Brushes.LightSkyBlue;
-
-            foreach (KeyPair pair in sorted)
-            {
-                float height = 0.0f;
-                float m = maxValue;
-                if (pair.max > 0)
-                {
-                    m = pair.max;
-                }
-                height = pair.value / m * maxHeight;
-
-                Rectangle rect = new Rectangle((int)(maxHeight - height), (int)(-(i + 1) * width), (int)height, (int)width);
-               
-                string txt = pair.value.ToString() + " " + pair.name;
-
-                SizeF txtSize = g.MeasureString(txt, font);
-                g.FillRectangle(fill, rect);
-                g.DrawRectangle(p, rect);
-                g.DrawString(txt, font, textBrushShadow, maxHeight - 4 - txtSize.Width, -(i + 0.5f) * width + 1);//, format);
-                g.DrawString(txt, font, textBrush, maxHeight - 5 - txtSize.Width, -(i + 0.5f) * width);//, format);
-                
-                i++;
-            }
         }
 
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
         {
+            ListView.SelectedListViewItemCollection selected = viewAnimals.SelectedItems;
+            List<Animal> animals = new List<Animal>();
+            foreach (ListViewItem item in selected)
+            {
+                animals.Add((Animal)item.Tag);
+            }
+            Animal averaged = Animal.averageAnimals(animals);
 
+            mValues = new List<KeyPair>();
+            mValues.Add(new KeyPair("Diet", averaged.diet, 1, Color.Gray));
+            mValues.Add(new KeyPair("Strength", averaged.strength, Color.LightGray));
+            mValues.Add(new KeyPair("Dexterity", averaged.dexterity, Color.LightGray));
+            mValues.Add(new KeyPair("Intelligence", averaged.intelligence, Color.LightGray));
+            mValues.Add(new KeyPair("Life Expectancy", averaged.life_expectancy, Color.SkyBlue));
+            mValues.Add(new KeyPair("Fertility", averaged.fertility, 10, Color.SkyBlue));
+            mValues.Add(new KeyPair("Breeding Age", averaged.breeding_age, Color.SkyBlue));
+            mValues.Add(new KeyPair("Breeding Rate", averaged.breeding_rate, Color.SkyBlue));
+            mValues.Add(new KeyPair("Health", averaged.maxHealth, Color.Red));
+            mValues.Add(new KeyPair("Mass", averaged.entity_mass, Color.White));
+            mValues.Add(new KeyPair("Size", averaged.entity_size, Color.White));
+            mValues.Add(new KeyPair("Mutation Rate", averaged.mutation_rate, 1, Color.Purple));
+            mValues.Add(new KeyPair("Mutation Amount", averaged.mutation_amount, 1, Color.Purple));
+            
+            picGraph.Invalidate();
         }
 
         private void viewAnimals_ColumnClick(object sender, ColumnClickEventArgs e)
@@ -425,18 +341,90 @@ namespace SimpleRPGAnalyser
             viewAnimals.Sort();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private Color upColor(Color c)
         {
-            ListView.SelectedIndexCollection indicies = viewAnimals.SelectedIndices;
-            ListView.SelectedListViewItemCollection selected = viewAnimals.SelectedItems;
-            
-            Console.Write("Selected: ");
-            foreach (ListViewItem item in selected)
+            int r = c.R;
+            int g = c.G;
+            int b = c.B;
+
+            int s = 30;
+
+            if (r + s > 255) r = r - s; else r = r + s;
+            if (g + s > 255) g = g - s; else g = g + s;
+            if (b + s > 255) b = b - s; else b = b + s;
+
+            return Color.FromArgb(r, g, b);
+        }
+
+        private void picGraph_Paint(object sender, PaintEventArgs e)
+        {
+            Graphics g = e.Graphics;
+
+            if (mValues == null || mValues.Count == 0)
             {
-                Animal a = (Animal)item.Tag;
-                Console.Write(a.LongName + ' ');
+                return;
             }
-            Console.WriteLine();
+            float maxHeight = e.ClipRectangle.Height - 5;
+
+            float maxValue = 50.0f;
+
+            foreach (KeyPair pair in mValues)
+            {
+                if (pair.max < 0.0f)
+                {
+                    maxValue = Math.Max(maxValue, pair.value);
+                }
+            }
+
+            float width = (e.ClipRectangle.Width - 5) / (mValues.Count);
+
+            Font font = new Font(FontFamily.GenericSansSerif, 10, FontStyle.Bold);
+            Brush textBrush = Brushes.Black;
+            Brush textBrushShadow = Brushes.White;
+
+            List<KeyPair> sorted = mValues.ToList();
+            
+            float i = 0;
+            Matrix mx = new Matrix(1, 0, 0, 1, 0, 0);
+            mx.Rotate(90, MatrixOrder.Append);
+            g.Transform = mx;
+
+            SolidBrush fill = new SolidBrush(Color.SkyBlue);
+            SolidBrush line = new SolidBrush(upColor(Color.SkyBlue));
+            
+            Pen outline = new Pen(line, 4);
+            
+            foreach (KeyPair pair in sorted)
+            {
+                float height = 0.0f;
+                float m = maxValue;
+                if (pair.max > 0)
+                {
+                    m = pair.max;
+                }
+                height = pair.value / m * maxHeight;
+
+                SolidBrush f = fill;
+                SolidBrush l = line;
+                if (pair.color != Color.Transparent)
+                {
+                    f = new SolidBrush(pair.color);
+                    l = new SolidBrush(upColor(pair.color));
+                }
+                outline.Brush = l;
+
+                Rectangle rect = new Rectangle((int)(maxHeight - height), (int)(-(i + 1) * width), (int)height, (int)width);
+
+                string txt = pair.value.ToString() + " " + pair.name;
+
+                SizeF txtSize = g.MeasureString(txt, font);
+                g.FillRectangle(f, rect);
+                g.DrawRectangle(outline, rect);
+                g.DrawString(txt, font, textBrushShadow, maxHeight - 4 - txtSize.Width, -(i + 0.5f) * width + 1);//, format);
+                g.DrawString(txt, font, textBrush, maxHeight - 5 - txtSize.Width, -(i + 0.5f) * width);//, format);
+
+                i++;
+            }
         }
     }
 }

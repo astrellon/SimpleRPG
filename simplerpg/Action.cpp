@@ -84,7 +84,12 @@ void Action::loadProperties(FormattedFileIterator &iter)
 	}
 	else if(iequals(propertyName, ActionPropertyNames[COMPLETED_TIME]))
 	{
-		setCompletedTime(*iter);	++iter;
+		string completed = *iter;	++iter;
+		if(completed[0] == '"')
+		{
+			completed = completed.substr(1, completed.size() - 2);
+		}
+		setCompletedTime(completed);
 	}
 	else
 	{
@@ -106,7 +111,7 @@ void Action::saveProperty(const ActionProperty &propertyId, FormattedFile &file)
 		file << ActionPropertyNames[STEP] << ' ' << getStep() << '\n';
 		break;
 	case COMPLETED_TIME:
-		file << ActionPropertyNames[COMPLETED_TIME] << ' ' << getCompletedTime() << '\n';
+		file << ActionPropertyNames[COMPLETED_TIME] << " \"" << getCompletedTime() << "\"\n";
 		break;
 	default:
 		clog << "Unable to save unknown action property " << propertyId << endl;

@@ -196,6 +196,9 @@ public:
 
 	string getRandomName();
 
+	void addActiveTile(TileData *tile) { mActiveTiles[tile] = true; }
+	void removeActiveTile(TileData *tile) { mRemoveTiles.push_back(tile); }
+
 protected:
 	bool mRedisplay;
 	bool mGameRunning;
@@ -213,9 +216,6 @@ protected:
 	Map *mMap;
 	TileData **mTileData;
 	int **mTileDataUpdate;
-
-	int mTileDataStride;
-	int *mStrideUpdateOrder;
 
 	Rect mScreenSize;
 	bool mUpdating;
@@ -262,6 +262,11 @@ protected:
 	Vector2i mDebugPosition;
 
 	Rect mSelection;
+
+	map<TileData *, bool> mActiveTiles;
+	vector<TileData *> mRemoveTiles;
+
+	vector< vector<Vector2i> *> mLocationHistory;
 
 	vector<string> mListOfNames;
 

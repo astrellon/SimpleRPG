@@ -204,6 +204,9 @@ public:
 
 	float getFitness();
 
+	string getDeathBy() { return mDeathBy; }
+	void setDeathBy(string death) { mDeathBy = death; }
+
 	void breedWith(Animal *other);
 
 	EntityList &getSurroundingEntities() { return mSurroundingEntities; }
@@ -251,6 +254,8 @@ protected:
 	EntityList mSurroundingEntities;
 	Destination mAttackedBy;
 	float mAttackedByCooldown;
+
+	string mDeathBy;
 
 	float mMutationRate;
 	float mMutationAmount;

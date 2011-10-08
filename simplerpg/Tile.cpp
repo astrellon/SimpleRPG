@@ -54,8 +54,8 @@ void Tile::registerDefaults()
 
 	// Tree or bush
 	tile = new Tile(Pixel('^', COLOR_GREEN, true), 1, "Trees", false);
-	tile->setMaxFoodValue(500);
-	tile->setRegrowthRate(0.025f);
+	//tile->setMaxFoodValue(500);
+	//tile->setRegrowthRate(0.025f);
 	Tile::registerTile(tile);
 
 	// Grass

@@ -106,6 +106,7 @@ copy "$(ProjectDir)config.ini" "$(OutputPath)"</Command>
       <AdditionalDependencies>pdcurses.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AssemblyDebug>true</AssemblyDebug>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <Profile>true</Profile>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)pdcurses.dll" "$(OutputPath)"

@@ -52,6 +52,8 @@ Animal::Animal(Game *game) : GameEntity(game)
 	mDeathdate = "0 0";
 	mDeathtime = -1.0f;
 
+	mDeathBy = "Not Dead";
+
 	mMateFindCooldown = 0.0f;
 }
 
@@ -147,6 +149,7 @@ void Animal::displayActions(UIContainer &hud)
 		{
 			int ma = text.getMaxWidth();
 			text << "<7>(Dead)</>";
+			text << "\n<15>Death By</>:\t" << getDeathBy();
 		}
 
 		text << "\n\n";
@@ -259,6 +262,17 @@ void Animal::loadProperties(FormattedFileIterator &iter)
 	else loadProp(MATE_FIND_COOLDOWN, setMateFindCooldown, float)
 	else loadProp(FERTILITY, setFertility, float)
 
+	else if(iequals(propertyName, EntityPropertyNames[DEATHBY]))
+	{
+		string deathby;
+		++iter;
+		deathby = *iter;
+		if(deathby[0] == '"')
+		{
+			deathby = deathby.substr(1, deathby.size() - 2);
+		}
+		setDeathBy(deathby);	++iter;
+	}
 	else if(iequals(propertyName, EntityPropertyNames[AGE]))
 	{
 		++iter;
@@ -371,6 +385,7 @@ void Animal::saveProperties(FormattedFile &file)
 	saveProperty(BIRTHDATE, file);
 	saveProperty(DEATHDATE, file);
 	saveProperty(DEATHTIME, file);
+	saveProperty(DEATHBY, file);
 	saveProperty(LIFE_EXPECTANCY, file);
 	saveProperty(BREEDING_AGE, file);
 	saveProperty(BREEDING_RATE, file);
@@ -418,6 +433,9 @@ void Animal::saveProperty(const EntityProperty &propertyId, FormattedFile &file)
 	saveProp(FERTILITY, getFertility)
 	saveProp(DEATHTIME, getDeathtime)
 
+	case DEATHBY:
+		file << EntityPropertyNames[DEATHBY] << " \"" << getDeathBy() << "\"\n";
+		break;
 	case AGE:
 		file << EntityPropertyNames[AGE] << ' ' << (getAge() / mGame->getDayLength()) << '\n';
 		break;
@@ -508,6 +526,7 @@ void Animal::update(float dt)
 		if(math::nextFloat() < chanceOfDeath)
 		{
 			killAnimal();
+			setDeathBy("Old Age");
 		}
 	}
 
@@ -528,6 +547,10 @@ void Animal::update(float dt)
 		if (getHungerDamageCooldown() <= 0.0f)
 		{
 			receiveDamage(getMaxHealth() / 20.0f, NULL);
+			if(isDead())
+			{
+				setDeathBy("Starvation");
+			}
 			setHungerDamageCooldown(20.0f);
 		}
 	}
@@ -536,7 +559,7 @@ void Animal::update(float dt)
 	// If not in danger. Continue doing the same action.
 
 	mSurroundingEntities.clear();
-	getNearbyEntities(getLineOfSightRadius(), mSurroundingEntities);
+	//getNearbyEntities(getLineOfSightRadius(), mSurroundingEntities);
 
 	//dealWithThreats(dt);
 
@@ -761,6 +784,10 @@ void Animal::receiveDamage(float damage, GameEntity *from)
 		changeSpeciesAlignment(from, -0.05f);
 	}
 	changeHealth(-damage);
+	if(from != NULL && isDead())
+	{
+		setDeathBy("Killed by " + from->getLongName());
+	}
 }
 
 TargetAction *Animal::castTargetAction(Action *action, const string &actionName, bool checkForSelfTarget)
@@ -1165,9 +1192,10 @@ void Animal::setHealth(float health)
 
 void Animal::killAnimal()
 {
+	setDeathdate(mGame->getCurrentTimeString(true));
+	setDeathtime(mGame->getCurrentDay() * mGame->getDayLength() + mGame->getCurrentTime());
 	if(getHealth() > 0)
 	{
-		setDeathdate(mGame->getCurrentTimeString(true));
 		setHealth(0);
 		return;
 	}

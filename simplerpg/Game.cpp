@@ -101,22 +101,6 @@ Game::Game(int width, int height)
 
 	mTimeScale = 1;
 
-	mTileDataStride = 32;
-
-	vector<int> tempValues;
-	mStrideUpdateOrder = new int[mTileDataStride];
-	for(int i = 0; i < mTileDataStride; i++)
-	{
-		tempValues.push_back(i);
-	}
-
-	for(int i = 0; i < mTileDataStride; i++)
-	{
-		int index = (int)floor(math::nextFloat() * tempValues.size());
-		mStrideUpdateOrder[i] = tempValues[index];
-		tempValues.erase(tempValues.begin() + index);
-	}
-
 	mUpdating = false;
 
 	mTileTime = mEntityTime = 0;
@@ -746,7 +730,7 @@ void Game::displayActions()
 		for(size_t i = 0; i < results.size(); i++)
 		{
 			GameEntity *entity = results[i];
-			mHudText << "<12>" << i << "</>: " << entity->getEntityName() << " (" << entity->getSpecies() << ")\n";
+			mHudText << "<12>" << i << "</>: " << entity->getLongName() << '\n';
 		}
 
 		results.clear();
@@ -758,7 +742,7 @@ void Game::displayActions()
 		for(size_t i = 0; i < results.size(); i++)
 		{
 			GameEntity *entity = results[i];
-			mHudText << "<12>" << i << "</>: " << entity->getEntityName() << " (" << entity->getSpecies() << ")\n";
+			mHudText << "<12>" << i << "</>: " << entity->getLongName() << '\n';
 		}
 
 	case MENU_FOOD:
@@ -799,7 +783,7 @@ void Game::displayActions()
 		}
 		else
 		{
-			mHudText << "<15>Entity</>:\t" << mDebugEntity->getEntityName() << " (" << mDebugEntity->getSpecies() << ")\n";
+			mHudText << "<15>Entity</>:\t" << mDebugEntity->getLongName() << '\n';
 			mHudText << "<15>Current Position</>:\t" << ((Vector2i)mDebugEntity->getPosition()).toString(12) << '\n';
 			mHudText << "<15>New Position</>:\t\t" << mCursor.toString(12) << '\n';
 		}
@@ -926,37 +910,42 @@ void Game::removeEntity(GameEntity *entity)
 
 void Game::update(float dt)
 {
+	int previousDay = mCurrentDay;
+
 	advanceTime(dt);
 
-	float tileDt = mTileDataStride * dt;
+	if(previousDay < mCurrentDay)
+	{
+		vector<Vector2i> *list = new vector<Vector2i>();
+		for(EntityList::iterator iter = mEntities.begin(); iter != mEntities.end(); ++iter)
+		{
+			list->push_back((*iter)->getPosition());
+		}
+		mLocationHistory.push_back(list);
+	}
 
 	clock_t start = clock();
 
-	static int strideCounter = 0;
-
-	for(int y = 0; y < mMap->getHeight(); y++)
+	// Update all active tiles.
+	for(map<TileData *, bool>::iterator iter = mActiveTiles.begin(); iter != mActiveTiles.end(); ++iter)
 	{
-		for(int x = mStrideUpdateOrder[strideCounter]; x < mMap->getWidth(); x += mTileDataStride)
-		{
-			TileData *data = getTileData(x, y);
-			if(data != NULL)
-			{
-				data->update(tileDt);
-			}
-		}
+		iter->first->update(dt);
 	}
+
+	// Remove now inactive tiles.
+	for(vector<TileData *>::iterator iter = mRemoveTiles.begin(); iter != mRemoveTiles.end(); ++iter)
+	{
+		mActiveTiles.erase(*iter);
+	}
+
+	mRemoveTiles.clear();
 
 	clock_t end = clock();
 	mTileTime += (end - start);
 
 	start = clock();
 
-	strideCounter++;
-	if(strideCounter >= mTileDataStride)
-	{
-		strideCounter = 0;
-	}
-
+	// Add any new entities.
 	for(EntityList::iterator iter = mNewEntities.begin(); iter != mNewEntities.end(); ++iter)
 	{
 		addEntity(*iter);
@@ -964,6 +953,7 @@ void Game::update(float dt)
 
 	mNewEntities.clear();
 
+	// Update all current entities.
 	mUpdating = true;
 	for(EntityList::iterator iter = mEntities.begin(); iter != mEntities.end(); ++iter)
 	{
@@ -971,6 +961,7 @@ void Game::update(float dt)
 	}
 	mUpdating = false;
 
+	// Remove dead entities.
 	for(EntityList::iterator iter = mRemoveEntities.begin(); iter != mRemoveEntities.end(); ++iter)
 	{
 		removeEntity(*iter);
@@ -983,8 +974,8 @@ void Game::update(float dt)
 	mTimeCounter++;
 	if(mTimeCounter > mTimeScale)
 	{
-		mTileTimeFinal = (float)(mTileTime);// / mTimeCounter;
-		mEntityTimeFinal = (float)(mEntityTime);// / mTimeCounter;
+		mTileTimeFinal = (float)(mTileTime);
+		mEntityTimeFinal = (float)(mEntityTime);
 		mTileTime = mEntityTime = 0;
 		mTimeCounter = 0;
 	}
@@ -1008,7 +999,7 @@ void Game::displayUnderCursor()
 	int num = 1;
 	for(EntityList::iterator iter = mUnderCursor.begin(); iter != mUnderCursor.end(); ++iter)
 	{
-		mHudText << "<12>" << num++ << "</>: " << (*iter)->getEntityName() << " (" << (*iter)->getSpecies() << ") \n";
+		mHudText << "<12>" << num++ << "</>: " << (*iter)->getLongName() << '\n';
 	}
 }
 
@@ -1234,9 +1225,13 @@ Vector2i Game::findClosestTileWithFood(Animal *entity)
 	//float facingX = cos(entity->getFacing() + M_PIF * 0.5f + offset); 
 	//float facingY = sin(entity->getFacing() + M_PIF * 0.5f + offset);
 
-	float angle = math::nextFloat() * M_PI;
-	float facingX = cos(angle);
-	float facingY = sin(angle);
+	float angle = math::nextFloat() * M_PI * 2;
+	int facingX = round(cos(angle));
+	int facingY = round(sin(angle));
+
+	//Vector2i toAverage(facingX, facingY);
+	//float facingX = 0;
+	//float facingY = 1;
 
 	//clog << entity->getEntityName() << " now going to face " << facingX << ", " << facingY << endl;
 	
@@ -1265,6 +1260,8 @@ Vector2i Game::findClosestTileWithFood(Animal *entity)
 			else
 			{
  				toAverage.normalise();
+				toAverage.x = round(toAverage.x);
+				toAverage.y = round(toAverage.y);
 			}
 			if(toAverage.x == 0 && toAverage.y == 0)
 			{
@@ -1355,6 +1352,23 @@ void Game::saveMap(string filename)
 		(*iter)->saveToFile(file);
 	}
 
+	file << "\n-- LocationHistory\n";
+
+	for(vector< vector<Vector2i> *>::iterator iter = mLocationHistory.begin(); iter != mLocationHistory.end(); ++iter)
+	{
+		file << "begin\n";
+		file.changeTabLevel(1);
+		vector<Vector2i> *list = *iter;
+
+		for(vector<Vector2i>::iterator locIter = list->begin(); locIter != list->end(); ++locIter)
+		{
+			file << locIter->x << ' ' << locIter->y << "\t";
+		}
+
+		file.changeTabLevel(-1);
+		file << "\nend\n";
+	}
+
 	file << "\n-- End";
 	mSaveCounter = 20;
 
@@ -1379,6 +1393,7 @@ void Game::loadMap(string filename)
 	static const int STATE_MAP_DATA = 6;
 	static const int STATE_TILE_DATA = 7;
 	static const int STATE_REMOVED_ENTITIES = 8;
+	static const int STATE_LOCATION_HISTORY = 9;
 
 	vector<TileData> tileData;
 	TileData data;
@@ -1460,6 +1475,11 @@ void Game::loadMap(string filename)
 			{
 				state = STATE_REMOVED_ENTITIES;
 				clog << "Switch to reading removed entities." << endl;
+			}
+			else if(iequals(line, "LocationHistory"))
+			{
+				state = STATE_LOCATION_HISTORY;
+				clog << "Switch to reading location history." << endl;
 			}
 			else
 			{
@@ -1616,6 +1636,32 @@ void Game::loadMap(string filename)
 				mRemovedEntities.push_back(entity);
 			}
 			
+			break;
+
+		case STATE_LOCATION_HISTORY:
+
+			if(endState)
+			{
+				clog << "End state for location history." << endl;
+				break;
+			}
+
+			if(iequals(line, "begin"))
+			{
+				vector<Vector2i> *list = new vector<Vector2i>();
+				mLocationHistory.push_back(list);
+				line = *iter;
+				while(!iequals(line, "end"))
+				{
+					float x = lexical_cast<float>(line);	++iter;
+					line = *iter;
+					float y = lexical_cast<float>(line);	++iter;
+					line = *iter;
+					list->push_back(Vector2i(x, y));
+				}
+				++iter;
+			}
+
 			break;
 		}
 		endState = false;

@@ -1,4 +1,5 @@
 #include "TileData.h"
+#include "Game.h"
 
 extern const char *TileDataPropertyNames[] = { "fv", "rr", "mfv" };
 
@@ -10,6 +11,7 @@ TileData::TileData()
 
 	mFoodValueChanged = false;
 	mRegrowthRateChanged = false;
+	mActive = false;
 
 	mTile = NULL;
 }
@@ -19,8 +21,33 @@ TileData::TileData(Tile *tile)
 	setFromTile(tile);
 }
 
+void TileData::setFoodValue(float value)
+{
+	if (value > getMaxFoodValue())
+	{
+		value = getMaxFoodValue();
+	}
+
+	if (mFoodValue != value)
+	{
+		mFoodValue = value;
+		if(mActive == true && value >= getMaxFoodValue())
+		{
+			mActive = false;
+			Game::CURRENT_GAME->removeActiveTile(this);
+		}
+		else if(mActive == false && value < getMaxFoodValue())
+		{
+			mActive = true;
+			Game::CURRENT_GAME->addActiveTile(this);
+		}
+		mFoodValueChanged = true;
+	}
+}
+
 void TileData::setFromLoaded(TileData &data)
 {
+	mActive = true;
 	if(data.getFoodValueChanged())
 	{
 		setFoodValue(data.getFoodValue());
@@ -48,19 +75,6 @@ void TileData::setFromTile(Tile *tile)
 
 	mFoodValueChanged = false;
 	mRegrowthRateChanged = false;
-}
-
-void TileData::update(float dt)
-{
-	if (getFoodValue() < getMaxFoodValue() && getRegrowthRate() > 0.0f)
-	{
-		changeFoodValue(getRegrowthRate() * dt);
-	}
-
-	if (getFoodValue() > getMaxFoodValue())
-	{
-		setFoodValue(getMaxFoodValue());
-	}
 }
 
 void TileData::displayData(UIText &text)

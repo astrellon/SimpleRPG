@@ -300,6 +300,8 @@ Animal
 	age 2
 	breeding_rate 1 0
 	diet 0.1
+	mutation_rate 0.0
+	mutation_amount 0.0
 	damage_base 1
 	attack_rate 1.2
 end
@@ -337,8 +339,15 @@ Animal
 	breeding_rate 1 0
 	diet 0.1
 	age 2
+	mutation_rate 0.0
+	mutation_amount 0.0
 	damage_base 1
 	attack_rate 1.2
+end
+
+-- LocationHistory
+begin
+	125 58	127 58	
 end
 
 -- End

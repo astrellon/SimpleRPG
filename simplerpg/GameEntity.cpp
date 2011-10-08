@@ -14,7 +14,7 @@ extern const char *EntityPropertyNames[] = { "id", "facing", "position", "destin
 	"sight_radius", "attacked_by", "attacked_by_cooldown", "hunger_limits", "hunger_damage_cooldown",
 	"parents", "mutation_rate", "mutation_amount", "accumulated_energy", "age", "life_expectancy", 
 	"breeding_age", "breeding_rate", "birthdate", "mate_find_cooldown", "fertility", "breeding_count",
-	"deathdate", "deathtime" };
+	"deathdate", "deathtime", "deathby" };
 
 GameEntity::GameEntity(Game *game)
 {
@@ -432,7 +432,7 @@ void GameEntity::displayActions(UIContainer &hud)
 		text << "<15>Found</>:\t" << result.size() << '\n';
 		for(vector<GameEntity *>::iterator iter = result.begin(); iter != result.end(); ++iter)
 		{
-			text << (*iter)->getEntityName() << " (" << (*iter)->getSpecies() << ")\n";
+			text << (*iter)->getLongName() << '\n';
 		}
 	}
 	mRedisplay = false;

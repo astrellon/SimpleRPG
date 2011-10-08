@@ -510,6 +510,10 @@ int main(int argc, char **argv)
 							}
 						}
 					}
+					else if(c >= 'a' && c <= 'z')
+					{
+						mainItem2FileList.selectNextItem(c);
+					}
 
 					break;
 				case 2:
@@ -590,7 +594,7 @@ int main(int argc, char **argv)
 					for(directory_iterator dir_iter(currentPath); dir_iter != end_iter; ++dir_iter)
 					{
 						string ext = extension(*dir_iter);					
-						if(is_directory(*dir_iter) || iequals(ext, ".txt") || iequals(ext, ".map"))
+						if(is_directory(*dir_iter) || iequals(ext, ".txt") || iequals(ext, ".out") || iequals(ext, ".map"))
 						{
 							string filename = (*dir_iter).filename();
 

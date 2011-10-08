@@ -59,6 +59,30 @@ public:
 		return mText.str();
 	}
 
+	char getFirstUnformatted()
+	{
+		string s = getString();
+		char c = s[0];
+		if(c != '<')
+		{
+			return c;
+		}
+		int i = 1;
+		while(true)
+		{
+			if(i >= s.size())
+			{
+				return '\0';
+			}
+			c = s[i];
+			if(c == '>' && s[i + 1] != '<')
+			{
+				return s[i + 1];
+			}
+			i++;
+		}
+	}
+
 protected:
 
 	bool mWordWrap;

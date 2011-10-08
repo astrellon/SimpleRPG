@@ -15,6 +15,8 @@
 
 using boost::format;
 
+class Game;
+
 enum TileProperty { FOOD_VALUE, REGROWTH_VALUE, MAX_FOOD_VALUE };
 
 const char *TileDataPropertyNames[];
@@ -35,14 +37,8 @@ public:
 	void loadFromFile(string line, FormattedFileIterator &iter);
 
 	inline float getFoodValue() { return mFoodValue; }
-	inline void  setFoodValue(float value)
-	{
-		if (mFoodValue != value)
-		{
-			mFoodValue = value;
-			mFoodValueChanged = true;
-		}
-	}
+	void  setFoodValue(float value);
+	
 	inline void  changeFoodValue(float value) { setFoodValue(getFoodValue() + value); }
 
 	inline float getMaxFoodValue() { return mMaxFoodValue; }
@@ -65,6 +61,8 @@ public:
 		}
 	}
 
+	inline bool getActive() { return mActive; }
+
 	inline bool getFoodValueChanged() { return mFoodValueChanged; }
 	inline bool getMaxFoodValueChanged() { return mMaxFoodValueChanged; }
 	inline bool getRegrowthRateChanged() { return mRegrowthRateChanged; }
@@ -72,7 +70,18 @@ public:
 	inline Tile *getTile() { return mTile; }
 	inline void setTile(Tile *tile) { mTile = tile; }
 
-	void update(float dt);
+	inline void update(float dt)
+	{
+		if (getFoodValue() < getMaxFoodValue() && getRegrowthRate() > 0.0f)
+		{
+			changeFoodValue(getRegrowthRate() * dt);
+		}
+
+		if (getFoodValue() > getMaxFoodValue())
+		{
+			setFoodValue(getMaxFoodValue());
+		}
+	}
 
 	void displayData(UIText &text);
 
@@ -86,6 +95,7 @@ protected:
 	float mRegrowthRate;
 	float mMaxFoodValue;
 
+	bool mActive;
 	bool mFoodValueChanged;
 	bool mMaxFoodValueChanged;
 	bool mRegrowthRateChanged;

@@ -2,6 +2,9 @@
 
 #include "UIList.h"
 
+#include <boost/algorithm/string/predicate.hpp>
+using boost::algorithm::iequals;
+
 class UISelector : public UIList
 {
 public:
@@ -14,6 +17,8 @@ public:
 
 	virtual void setWrapSelection(bool wrap) { mWrapSelection = wrap; }
 	virtual bool getWrapSelection() { return mWrapSelection; }
+
+	virtual void selectNextItem(char c);
 
 	virtual UIComponent *getSelectedItem();
 

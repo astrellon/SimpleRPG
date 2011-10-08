@@ -1,4 +1,5 @@
 #include "UISelector.h"
+#include "UIText.h"
 
 UISelector::UISelector() : UIList()
 {
@@ -9,6 +10,34 @@ UISelector::UISelector() : UIList()
 UISelector::~UISelector()
 {
 
+}
+
+void UISelector::selectNextItem(char c)
+{
+	if(mChildren.empty())
+	{
+		return;
+	}
+	int i = mSelectedIndex + 1;
+	c = tolower(c);
+	while(i != mSelectedIndex)
+	{
+		if(i >= mChildren.size())
+		{
+			i = 0;
+		}
+		UIText *text = dynamic_cast<UIText *>(mChildren[i]);
+		if(text != NULL)
+		{
+			char f = tolower(text->getFirstUnformatted());
+			if(c == f)
+			{
+				mSelectedIndex = i;
+				break;
+			}
+		}
+		i++;
+	}
 }
 
 void UISelector::renderChild(UIComponent *child, int childIndex, bool overrideFormat)

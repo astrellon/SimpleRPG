@@ -196,8 +196,7 @@ public:
 
 	string getRandomName();
 
-	void addActiveTile(TileData *tile) { mActiveTiles[tile] = true; }
-	void removeActiveTile(TileData *tile) { mRemoveTiles.push_back(tile); }
+	void addActiveTile(TileData *tile) { mActiveTiles.push_back(tile); }
 
 protected:
 	bool mRedisplay;
@@ -263,9 +262,8 @@ protected:
 
 	Rect mSelection;
 
-	map<TileData *, bool> mActiveTiles;
-	vector<TileData *> mRemoveTiles;
-
+	vector<TileData *> mActiveTiles;
+	
 	vector< vector<Vector2i> *> mLocationHistory;
 
 	vector<string> mListOfNames;

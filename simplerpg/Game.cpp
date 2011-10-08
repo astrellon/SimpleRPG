@@ -926,19 +926,18 @@ void Game::update(float dt)
 
 	clock_t start = clock();
 
-	// Update all active tiles.
-	for(map<TileData *, bool>::iterator iter = mActiveTiles.begin(); iter != mActiveTiles.end(); ++iter)
+	int size = (int)mActiveTiles.size();
+	for(int i = 0; i < size; i++)
 	{
-		iter->first->update(dt);
+		TileData *tile = mActiveTiles[i];
+		tile->update(dt);
+		if(!mActiveTiles[i]->getActive())
+		{
+			mActiveTiles.erase(mActiveTiles.begin() + i);
+			size--;
+			i--;
+		}
 	}
-
-	// Remove now inactive tiles.
-	for(vector<TileData *>::iterator iter = mRemoveTiles.begin(); iter != mRemoveTiles.end(); ++iter)
-	{
-		mActiveTiles.erase(*iter);
-	}
-
-	mRemoveTiles.clear();
 
 	clock_t end = clock();
 	mTileTime += (end - start);
@@ -955,9 +954,10 @@ void Game::update(float dt)
 
 	// Update all current entities.
 	mUpdating = true;
-	for(EntityList::iterator iter = mEntities.begin(); iter != mEntities.end(); ++iter)
+	size = (int)mEntities.size();
+	for(int i = 0; i < size; i++)
 	{
-		(*iter)->update(dt);
+		mEntities[i]->update(dt);
 	}
 	mUpdating = false;
 

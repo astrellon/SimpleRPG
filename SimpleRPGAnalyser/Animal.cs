@@ -8,6 +8,57 @@ namespace SimpleRPGAnalyser
 {
     public class Animal : ILoadable
     {
+        public static Dictionary<int, Animal> Animals = new Dictionary<int, Animal>();
+        public static List<Animal> getAnimalsBornOn(int day)
+        {
+            List<Animal> list = new List<Animal>();
+
+            foreach (KeyValuePair<int, Animal> pair in Animals)
+            {
+                Animal a = pair.Value;
+                if (Math.Floor(a.birthtime / Analyser.mDayLength) == day)
+                {
+                    list.Add(a);
+                }
+            }
+
+            return list;
+        }
+
+        public static List<Animal> getAnimalsDiedOn(int day)
+        {
+            List<Animal> list = new List<Animal>();
+
+            foreach (KeyValuePair<int, Animal> pair in Animals)
+            {
+                Animal a = pair.Value;
+                if (Math.Floor(a.deathtime / Analyser.mDayLength) == day)
+                {
+                    list.Add(a);
+                }
+            }
+
+            return list;
+        }
+
+        public static List<Animal> getAnimalsAliveOn(int day)
+        {
+            List<Animal> list = new List<Animal>();
+
+            foreach (KeyValuePair<int, Animal> pair in Animals)
+            {
+                Animal a = pair.Value;
+                int birth = (int)Math.Floor(a.birthtime / Analyser.mDayLength);
+                int death = (int)Math.Floor(a.deathtime / Analyser.mDayLength);
+                if (birth <= day && death >= day)
+                {
+                    list.Add(a);
+                }
+            }
+
+            return list;
+        }
+
         public int id;
         public string name = "Johnny Noname";
         public string species = "Nullis";
@@ -52,6 +103,7 @@ namespace SimpleRPGAnalyser
         public string birthdate = "0 0";
         public string deathdate = "0 0";
         public float deathtime;
+        public float birthtime;
         public float mate_find_cooldown;
         public float fertility;
         public int parent1;
@@ -59,6 +111,20 @@ namespace SimpleRPGAnalyser
         public float hunger_damage_cooldown;
         public float mutation_rate;
         public float mutation_amount;
+
+        public Dictionary<string, int> deathbys = new Dictionary<string, int>();
+
+        public string deathby
+        {
+            get
+            {
+                foreach (KeyValuePair<string, int> s in deathbys)
+                {
+                    return s.Key;
+                }
+                return "Not Dead";
+            }
+        }
 
         public string LongName
         {
@@ -141,6 +207,18 @@ namespace SimpleRPGAnalyser
                 average.destination.location.x = a.destination.location.x / animals.Count;
                 average.destination.location.y = a.destination.location.y / animals.Count;
 
+                foreach (KeyValuePair<string, int> s in a.deathbys)
+                {
+                    if (average.deathbys.ContainsKey(s.Key))
+                    {
+                        average.deathbys[s.Key] += s.Value;
+                    }
+                    else
+                    {
+                        average.deathbys[s.Key] = s.Value;
+                    }
+                }
+
                 b += convertDate(a.birthdate);
                 d += convertDate(a.deathdate);
             }
@@ -164,6 +242,7 @@ namespace SimpleRPGAnalyser
                 {
                     case "id":
                         id = int.Parse(iter[index++]);
+                        Animals[id] = this;
                         break;
                     case "name":
                         name = iter[index++];
@@ -294,6 +373,7 @@ namespace SimpleRPGAnalyser
                         {
                             birthdate = birthdate.Substring(1, birthdate.Length - 2);
                         }
+                        birthtime = convertDate(birthdate);
                         break;
                     case "deathdate":
                         deathdate = iter[index++];
@@ -301,6 +381,14 @@ namespace SimpleRPGAnalyser
                         {
                             deathdate = deathdate.Substring(1, deathdate.Length - 2);
                         }
+                        break;
+                    case "deathby":
+                        string deathby = iter[index++];
+                        if (deathby[0] == '"')
+                        {
+                            deathby = deathby.Substring(1, deathby.Length - 2);
+                        }
+                        deathbys[deathby] = 1;
                         break;
                     case "deathtime":
                         deathtime = float.Parse(iter[index++]);

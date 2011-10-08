@@ -28,12 +28,21 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series7 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series8 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series9 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Title title7 = new System.Windows.Forms.DataVisualization.Charting.Title();
+            System.Windows.Forms.DataVisualization.Charting.Title title8 = new System.Windows.Forms.DataVisualization.Charting.Title();
+            System.Windows.Forms.DataVisualization.Charting.Title title9 = new System.Windows.Forms.DataVisualization.Charting.Title();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.viewAnimals = new System.Windows.Forms.ListView();
             this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -41,20 +50,26 @@
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.picGraph = new System.Windows.Forms.PictureBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.picMain = new System.Windows.Forms.PictureBox();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.chrtPopulation = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.trcDay = new System.Windows.Forms.TrackBar();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picGraph)).BeginInit();
-            this.tabPage2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picMain)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picGraph)).BeginInit();
+            this.tabPage2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picMain)).BeginInit();
+            this.tabPage3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chrtPopulation)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trcDay)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -98,6 +113,7 @@
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Location = new System.Drawing.Point(12, 27);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -115,6 +131,24 @@
             this.tabPage1.Text = "Gene Histogram";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(3, 3);
+            this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.viewAnimals);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.picGraph);
+            this.splitContainer1.Size = new System.Drawing.Size(705, 499);
+            this.splitContainer1.SplitterDistance = 249;
+            this.splitContainer1.TabIndex = 4;
+            // 
             // viewAnimals
             // 
             this.viewAnimals.AllowColumnReorder = true;
@@ -127,7 +161,8 @@
             this.columnHeader2,
             this.columnHeader5,
             this.columnHeader3,
-            this.columnHeader4});
+            this.columnHeader4,
+            this.columnHeader7});
             this.viewAnimals.FullRowSelect = true;
             this.viewAnimals.GridLines = true;
             this.viewAnimals.Location = new System.Drawing.Point(3, 3);
@@ -164,6 +199,10 @@
             // 
             this.columnHeader4.Text = "Death Time";
             // 
+            // columnHeader7
+            // 
+            this.columnHeader7.Text = "Death By";
+            // 
             // picGraph
             // 
             this.picGraph.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
@@ -179,6 +218,7 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.trcDay);
             this.tabPage2.Controls.Add(this.picMain);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
@@ -196,28 +236,76 @@
             this.picMain.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.picMain.Location = new System.Drawing.Point(6, 6);
             this.picMain.Name = "picMain";
-            this.picMain.Size = new System.Drawing.Size(699, 493);
+            this.picMain.Size = new System.Drawing.Size(699, 439);
             this.picMain.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.picMain.TabIndex = 2;
             this.picMain.TabStop = false;
             // 
-            // splitContainer1
+            // tabPage3
             // 
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(3, 3);
-            this.splitContainer1.Name = "splitContainer1";
-            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.tabPage3.Controls.Add(this.chrtPopulation);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(711, 505);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "Timeline";
+            this.tabPage3.UseVisualStyleBackColor = true;
             // 
-            // splitContainer1.Panel1
+            // chrtPopulation
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.viewAnimals);
+            this.chrtPopulation.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            chartArea3.Name = "ChartArea1";
+            this.chrtPopulation.ChartAreas.Add(chartArea3);
+            legend3.Name = "Legend1";
+            this.chrtPopulation.Legends.Add(legend3);
+            this.chrtPopulation.Location = new System.Drawing.Point(6, 6);
+            this.chrtPopulation.Name = "chrtPopulation";
+            series7.ChartArea = "ChartArea1";
+            series7.EmptyPointStyle.AxisLabel = "Hello";
+            series7.Legend = "Legend1";
+            series7.Name = "Population Count";
+            series8.ChartArea = "ChartArea1";
+            series8.Legend = "Legend1";
+            series8.Name = "Death By Starvation";
+            series9.ChartArea = "ChartArea1";
+            series9.Legend = "Legend1";
+            series9.Name = "Death From Old Age";
+            this.chrtPopulation.Series.Add(series7);
+            this.chrtPopulation.Series.Add(series8);
+            this.chrtPopulation.Series.Add(series9);
+            this.chrtPopulation.Size = new System.Drawing.Size(699, 493);
+            this.chrtPopulation.TabIndex = 1;
+            this.chrtPopulation.Text = "chart1";
+            title7.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            title7.Name = "Title1";
+            title7.Text = "Population Counts";
+            title8.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Left;
+            title8.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            title8.Name = "Title2";
+            title8.Text = "Animal Count";
+            title8.TextOrientation = System.Windows.Forms.DataVisualization.Charting.TextOrientation.Rotated270;
+            title9.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom;
+            title9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            title9.Name = "Title3";
+            title9.Text = "In Game Days";
+            this.chrtPopulation.Titles.Add(title7);
+            this.chrtPopulation.Titles.Add(title8);
+            this.chrtPopulation.Titles.Add(title9);
+            this.chrtPopulation.Click += new System.EventHandler(this.chart1_Click);
             // 
-            // splitContainer1.Panel2
+            // trcDay
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.picGraph);
-            this.splitContainer1.Size = new System.Drawing.Size(705, 499);
-            this.splitContainer1.SplitterDistance = 249;
-            this.splitContainer1.TabIndex = 4;
+            this.trcDay.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.trcDay.BackColor = System.Drawing.SystemColors.Window;
+            this.trcDay.Location = new System.Drawing.Point(6, 451);
+            this.trcDay.Name = "trcDay";
+            this.trcDay.Size = new System.Drawing.Size(699, 45);
+            this.trcDay.TabIndex = 3;
+            this.trcDay.Scroll += new System.EventHandler(this.trcDay_Scroll);
             // 
             // Analyser
             // 
@@ -233,13 +321,17 @@
             this.menuStrip1.PerformLayout();
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.picGraph)).EndInit();
-            this.tabPage2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.picMain)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.picGraph)).EndInit();
+            this.tabPage2.ResumeLayout(false);
+            this.tabPage2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picMain)).EndInit();
+            this.tabPage3.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.chrtPopulation)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trcDay)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -264,6 +356,10 @@
         private System.Windows.Forms.ColumnHeader columnHeader4;
         private System.Windows.Forms.ColumnHeader columnHeader6;
         private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.ColumnHeader columnHeader7;
+        private System.Windows.Forms.DataVisualization.Charting.Chart chrtPopulation;
+        private System.Windows.Forms.TrackBar trcDay;
     }
 }
 

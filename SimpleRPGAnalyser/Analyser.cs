@@ -20,11 +20,11 @@ namespace SimpleRPGAnalyser
         private List<string> mMapList;
         private Dictionary<Color, char> mTileMap = new Dictionary<Color, char>();
         private Dictionary<char, Color> mColourMap = new Dictionary<char, Color>();
-        private string[] _mValidProperties = { "strength", "dexterity", "intelligence", "running_speed", "walking_speed", "turning_speed",
-	"entity_size", "entity_mass", "diet", "damage_base", "attack_rate", "sight_radius", "mutation_rate", "mutation_amount", "life_expectancy", "breeding_age", "breeding_rate", "fertility" };
+        private List<List<Vector2f>> mLocationHistory = new List<List<Vector2f>>();
 
-        private Dictionary<string, bool> mValidProperties = new Dictionary<string, bool>();
         private Bitmap mMapImg = null;
+        private Bitmap mMapOverlay = null;
+        private Bitmap mMapTotal = null;
         private int mColourCount = 0;
         private int mCharCount = 0;
         private AboutBox mAbout = null;
@@ -40,36 +40,13 @@ namespace SimpleRPGAnalyser
         public Analyser()
         {
             InitializeComponent();
-
-            Animal a1 = new Animal();
-            a1.strength = 10;
-
-            Animal a2 = new Animal();
-            a2.strength = 20;
-
-            List<Animal> list = new List<Animal>();
-            list.Add(a1);
-            list.Add(a2);
-
-            Animal average = Animal.averageAnimals(list);
-            Console.WriteLine("Str:" + average.strength);
-
-            for (int i = 0; i < _mValidProperties.Length; i++)
-            {
-                mValidProperties.Add(_mValidProperties[i], true);
-            }
-        }
-
-        private bool isValidProperty(string property)
-        {
-            return mValidProperties.ContainsKey(property);
         }
 
         private void loadToolStripMenuItem_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
-                openFileDialog.Filter = "Map files |*.txt| All files |*.*";
+                openFileDialog.Filter = "Map files |*.txt;*.out| All files |*.*";
                 openFileDialog.FilterIndex = 1;
                 openFileDialog.RestoreDirectory = true;
 
@@ -83,7 +60,30 @@ namespace SimpleRPGAnalyser
                     }
                     string ext = openFileDialog.FileName.Substring(extIndex + 1);
 
-                    if (ext.Equals("txt", StringComparison.InvariantCultureIgnoreCase))
+                    viewAnimals.Items.Clear();
+                    Animal.Animals.Clear();
+                    if (mMapList != null)
+                    {
+                        mMapList.Clear();
+                    }
+                    if (mTileMap != null)
+                    {
+                        mTileMap.Clear();
+                    }
+                    if (mColourMap != null)
+                    {
+                        mColourMap.Clear();
+                    }
+                    if (mMapImg != null)
+                    {
+                        mMapImg.Dispose();
+                        mMapImg = null;
+                    }
+                    mColourCount = 0;
+                    mCharCount = 0;
+
+                    if (ext.Equals("txt", StringComparison.InvariantCultureIgnoreCase) ||
+                        ext.Equals("out", StringComparison.InvariantCultureIgnoreCase))
                     {
                         Regex fileParse = new Regex("" +
                             // Multi-line comments.
@@ -105,7 +105,7 @@ namespace SimpleRPGAnalyser
                         string endState = null;
                         string state = "none";
 
-                        bool readingAnimal = false;
+                        //bool readingAnimal = false;
 
                         Dictionary<string, float> values = new Dictionary<string, float>();
                         int numAnimals = 0;
@@ -200,8 +200,9 @@ namespace SimpleRPGAnalyser
                             {
                                 if (endState != null)
                                 {
-                                    mMapImg = new Bitmap(mapWidth, mMapList.Count);
+                                    //mMapImg = new Bitmap(mapWidth, mMapList.Count);
                                     renderImage();
+                                    picMain.Image = mMapTotal;
                                 }
                                 else
                                 {
@@ -220,10 +221,28 @@ namespace SimpleRPGAnalyser
                                     i++;
                                     Animal a = new Animal();
                                     a.load(ref cc, ref i);
-                                    string[] subItems = new string[] { a.id.ToString(), a.name, a.species, a.age.ToString(), a.birthdate, a.deathdate };
+                                    string[] subItems = new string[] { a.id.ToString(), a.name, a.species, a.age.ToString(), a.birthdate, a.deathdate, a.deathby };
                                     ListViewItem item = new ListViewItem(subItems);
                                     item.Tag = a;
                                     viewAnimals.Items.Add(item);
+                                }
+                            }
+                            else if (state.Equals("locationhistory", StringComparison.CurrentCultureIgnoreCase))
+                            {
+                                if (line == "begin")
+                                {
+                                    List<Vector2f> list = new List<Vector2f>();
+                                    mLocationHistory.Add(list);
+                                    i++;
+                                    line = cc[i];
+                                    while (line != "end")
+                                    {
+                                        float x = float.Parse(line); i++;
+                                        line = cc[i];
+                                        float y = float.Parse(line); i++;
+                                        line = cc[i];
+                                        list.Add(new Vector2f(x, y));
+                                    }
                                 }
                             }
                             else
@@ -250,7 +269,35 @@ namespace SimpleRPGAnalyser
                         }
                     }
 
+                    trcDay.Maximum = mLocationHistory.Count - 1;
+
                     tabPage1.Invalidate();
+
+                    chrtPopulation.Series[0].Points.Clear();
+                    chrtPopulation.Series[1].Points.Clear();
+                    chrtPopulation.Series[2].Points.Clear();
+
+                    for (int i = 0; i < mCurrentDay; i++)
+                    {
+                        chrtPopulation.Series[0].Points.AddY((double)(Animal.getAnimalsAliveOn(i).Count));
+                        List<Animal> died = Animal.getAnimalsDiedOn(i);
+                        double starvation = 0;
+                        double oldAge = 0;
+                        for (int j = 0; j < died.Count; j++)
+                        {
+                            string d = died[j].deathby;
+                            if (d[0] == 'S' || d[0] == 's')
+                            {
+                                starvation += 1;
+                            }
+                            else if (d[0] == 'O' || d[0] == 'o')
+                            {
+                                oldAge += 1;
+                            }
+                        }
+                        chrtPopulation.Series[1].Points.AddY(starvation);
+                        chrtPopulation.Series[2].Points.AddY(oldAge);
+                    }
                 }
 
             }
@@ -260,23 +307,64 @@ namespace SimpleRPGAnalyser
         {
             int width = mMapList[0].Length;
             int height = mMapList.Count;
-            for (int y = 0; y < height; y++)
+
+            if (mMapImg == null)
             {
-                for (int x = 0; x < width; x++)
+                mMapImg = new Bitmap(width, height);
+                for (int y = 0; y < height; y++)
                 {
-                    char c = mMapList[y][x];
-                    if (mColourMap.ContainsKey(c))
+                    for (int x = 0; x < width; x++)
                     {
-                        mMapImg.SetPixel(x, y, mColourMap[c]);
-                    }
-                    else
-                    {
-                        mMapImg.SetPixel(x, y, Color.Magenta);
+                        char c = mMapList[y][x];
+                        if (mColourMap.ContainsKey(c))
+                        {
+                            mMapImg.SetPixel(x, y, mColourMap[c]);
+                        }
+                        else
+                        {
+                            mMapImg.SetPixel(x, y, Color.Magenta);
+                        }
                     }
                 }
             }
 
-            picMain.Image = mMapImg;
+            if (mMapTotal != null)
+            {
+                mMapTotal.Dispose();
+            }
+            mMapTotal = new Bitmap(mMapImg);
+            Graphics g = Graphics.FromImage(mMapTotal);
+
+            if (mMapOverlay != null)
+            {
+                g.DrawImage(mMapOverlay, new Point(0, 0));
+            }
+            picMain.Image = mMapTotal;
+        }
+
+        private void renderOverlay(int day)
+        {
+            int width = mMapList[0].Length;
+            int height = mMapList.Count;
+
+            if (mMapOverlay != null)
+            {
+                mMapOverlay.Dispose();
+            }
+            mMapOverlay = new Bitmap(width, height);
+
+            List<Vector2f> list = mLocationHistory[day];
+            foreach (Vector2f p in list)
+            {
+                int x = (int)Math.Round(p.x);
+                int y = (int)Math.Round(p.y);
+                mMapOverlay.SetPixel(x, y, invertColor(mMapImg.GetPixel(x, y)));
+            }
+        }
+
+        private Color invertColor(Color c)
+        {
+            return Color.FromArgb(255 - c.R, 255 - c.G, 255 - c.B);
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -425,6 +513,17 @@ namespace SimpleRPGAnalyser
 
                 i++;
             }
+        }
+
+        private void chart1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void trcDay_Scroll(object sender, EventArgs e)
+        {
+            renderOverlay(trcDay.Value);
+            renderImage();
         }
     }
 }

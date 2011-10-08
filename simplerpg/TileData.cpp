@@ -34,7 +34,7 @@ void TileData::setFoodValue(float value)
 		if(mActive == true && value >= getMaxFoodValue())
 		{
 			mActive = false;
-			Game::CURRENT_GAME->removeActiveTile(this);
+			//Game::CURRENT_GAME->removeActiveTile(this);
 		}
 		else if(mActive == false && value < getMaxFoodValue())
 		{

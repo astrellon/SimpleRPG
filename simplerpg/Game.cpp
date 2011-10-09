@@ -2171,6 +2171,6 @@ string Game::getRandomName()
 		return "Animal";
 	}
 
-	int num = round(math::nextFloat() * mListOfNames.size());
+	int num = round(math::nextFloat() * (mListOfNames.size() - 1));
 	return mListOfNames[num];
 }

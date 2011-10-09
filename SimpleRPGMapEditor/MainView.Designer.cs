@@ -53,7 +53,7 @@
             this.picMain.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.picMain.Location = new System.Drawing.Point(3, 3);
             this.picMain.Name = "picMain";
-            this.picMain.Size = new System.Drawing.Size(632, 499);
+            this.picMain.Size = new System.Drawing.Size(607, 499);
             this.picMain.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.picMain.TabIndex = 0;
             this.picMain.TabStop = false;
@@ -65,9 +65,9 @@
             this.groupBox1.Controls.Add(this.pnlColours);
             this.groupBox1.Controls.Add(this.btnSave);
             this.groupBox1.Controls.Add(this.btnLoad);
-            this.groupBox1.Location = new System.Drawing.Point(656, 12);
+            this.groupBox1.Location = new System.Drawing.Point(631, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(83, 502);
+            this.groupBox1.Size = new System.Drawing.Size(108, 502);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Menu";
@@ -79,14 +79,14 @@
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlColours.Location = new System.Drawing.Point(1, 77);
             this.pnlColours.Name = "pnlColours";
-            this.pnlColours.Size = new System.Drawing.Size(81, 419);
+            this.pnlColours.Size = new System.Drawing.Size(106, 419);
             this.pnlColours.TabIndex = 2;
             // 
             // btnSave
             // 
             this.btnSave.Location = new System.Drawing.Point(6, 48);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(70, 23);
+            this.btnSave.Size = new System.Drawing.Size(96, 23);
             this.btnSave.TabIndex = 1;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
@@ -96,7 +96,7 @@
             // 
             this.btnLoad.Location = new System.Drawing.Point(6, 19);
             this.btnLoad.Name = "btnLoad";
-            this.btnLoad.Size = new System.Drawing.Size(70, 23);
+            this.btnLoad.Size = new System.Drawing.Size(96, 23);
             this.btnLoad.TabIndex = 0;
             this.btnLoad.Text = "Load";
             this.btnLoad.UseVisualStyleBackColor = true;
@@ -112,7 +112,7 @@
             this.pnlMain.Controls.Add(this.picMain);
             this.pnlMain.Location = new System.Drawing.Point(12, 12);
             this.pnlMain.Name = "pnlMain";
-            this.pnlMain.Size = new System.Drawing.Size(638, 505);
+            this.pnlMain.Size = new System.Drawing.Size(613, 505);
             this.pnlMain.TabIndex = 2;
             // 
             // stsMain

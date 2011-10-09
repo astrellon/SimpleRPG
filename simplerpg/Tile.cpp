@@ -49,7 +49,7 @@ void Tile::registerDefaults()
 	// Short grass
 	Tile *tile = new Tile(Pixel('.', COLOR_GREEN, true), 0, "Short grass");
 	tile->setMaxFoodValue(20);
-	tile->setRegrowthRate(0.03f);
+	tile->setRegrowthRate(0.01f);
 	Tile::registerTile(tile);
 
 	// Tree or bush
@@ -61,7 +61,7 @@ void Tile::registerDefaults()
 	// Grass
 	tile = new Tile(Pixel(',', COLOR_GREEN, false), 2, "Grass");
 	tile->setMaxFoodValue(60);
-	tile->setRegrowthRate(0.04f);
+	tile->setRegrowthRate(0.02f);
 	Tile::registerTile(tile);
 
 	// Tall grass
@@ -106,5 +106,21 @@ void Tile::registerDefaults()
 
 	// Shallow water
 	tile = new Tile(Pixel('~', COLOR_CYAN, true), 12, "Shallow water");
+	Tile::registerTile(tile);
+
+	// Sand with bush
+	tile = new Tile(Pixel(';', COLOR_YELLOW, false), 13, "Sand");
+	tile->setMaxFoodValue(30);
+	tile->setRegrowthRate(0.005f);
+	Tile::registerTile(tile);
+
+	// Cactus
+	tile = new Tile(Pixel('|', COLOR_GREEN, false), 14, "Cactus");
+	tile->setMaxFoodValue(50);
+	tile->setRegrowthRate(0.01f);
+	Tile::registerTile(tile);
+
+	// Palm Tree
+	tile = new Tile(Pixel('*', COLOR_GREEN, true), 15, "Palm Tree");
 	Tile::registerTile(tile);
 }

@@ -1,13 +1,6 @@
 #include "Pixel.h"
 
-extern const char *PixelColourNames[] = { "black", 
-#ifdef PDC_RGB
-	"red", "green", "blue",
-#else
-	"blue", "green", "red",
-#endif
-	"cyan", "magenta", "yellow", "white" };
-
+extern const char *PixelColourNames[] = { "black", "blue", "green", "cyan", "red", "magenta", "yellow", "white" };
 
 Pixel::Pixel(void)
 {

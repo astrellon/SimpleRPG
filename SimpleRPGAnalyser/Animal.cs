@@ -50,7 +50,7 @@ namespace SimpleRPGAnalyser
                 Animal a = pair.Value;
                 int birth = (int)Math.Floor(a.birthtime / Analyser.mDayLength);
                 int death = (int)Math.Floor(a.deathtime / Analyser.mDayLength);
-                if (birth <= day && death >= day)
+                if (birth <= day && (death >= day || death < 0.1))
                 {
                     list.Add(a);
                 }
@@ -109,6 +109,7 @@ namespace SimpleRPGAnalyser
         public int parent1;
         public int parent2;
         public float hunger_damage_cooldown;
+        public float hunger_heal_cooldown;
         public float mutation_rate;
         public float mutation_amount;
 
@@ -186,6 +187,7 @@ namespace SimpleRPGAnalyser
                 average.fertility += a.fertility / animals.Count;
                 average.health += a.health / animals.Count;
                 average.hunger_damage_cooldown += a.hunger_damage_cooldown / animals.Count;
+                average.hunger_heal_cooldown += a.hunger_heal_cooldown / animals.Count;
                 average.hunger_limits_breed += a.hunger_limits_breed / animals.Count;
                 average.hunger_limits_lower += a.hunger_limits_lower / animals.Count;
                 average.hunger_limits_upper += a.hunger_limits_upper / animals.Count;
@@ -381,6 +383,7 @@ namespace SimpleRPGAnalyser
                         {
                             deathdate = deathdate.Substring(1, deathdate.Length - 2);
                         }
+                        deathtime = convertDate(deathdate);
                         break;
                     case "deathby":
                         string deathby = iter[index++];
@@ -391,7 +394,7 @@ namespace SimpleRPGAnalyser
                         deathbys[deathby] = 1;
                         break;
                     case "deathtime":
-                        deathtime = float.Parse(iter[index++]);
+                        index++;
                         break;
                     case "mate_find_cooldown":
                         mate_find_cooldown = float.Parse(iter[index++]);
@@ -405,6 +408,9 @@ namespace SimpleRPGAnalyser
                         break;
                     case "hunger_damage_cooldown":
                         hunger_damage_cooldown = float.Parse(iter[index++]);
+                        break;
+                    case "hunger_heal_cooldown":
+                        hunger_heal_cooldown  = float.Parse(iter[index++]);
                         break;
                     case "mutation_rate":
                         mutation_rate = float.Parse(iter[index++]);

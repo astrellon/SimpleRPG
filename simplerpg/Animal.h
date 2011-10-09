@@ -48,21 +48,27 @@ public:
 	virtual string getSpeciesName();
 
 	float getRunningSpeed();
-	float getRunningSpeedBase() { return mRunningSpeed; }
-	void  setRunningSpeedBase(float speed) { mRunningSpeed = speed; }
+	inline float getRunningSpeedBase() { return mRunningSpeed; }
+	inline void  setRunningSpeedBase(float speed) { mRunningSpeed = speed; }
 
 	float getWalkingSpeed();
-	float getWalkingSpeedBase() { return mWalkingSpeed; }
-	void  setWalkingSpeedBase(float speed) { mWalkingSpeed = speed; }
+	inline float getWalkingSpeedBase() { return mWalkingSpeed; }
+	inline void  setWalkingSpeedBase(float speed) { mWalkingSpeed = speed; }
 
-	bool  getWalking() { return mWalking; }
-	void  setWalking(bool walking) { mWalking = walking; }
+	
 
-	float getCurrentSpeed() { return getWalking() ? getWalkingSpeed() : getRunningSpeed(); }
+	inline bool  getWalking() { return mWalking; }
+	inline void  setWalking(bool walking) { mWalking = walking; }
 
-	float getTurningSpeed();
-	float getTurningSpeedBase() { return mTurningSpeed; }
-	void  setTurningSpeedBase(float speed) { mTurningSpeed = speed; }
+	inline float getCurrentSpeed() { return getWalking() ? getWalkingSpeed() : getRunningSpeed(); }
+
+	inline float getTurningSpeed();
+	inline float getTurningSpeedBase() { return mTurningSpeed; }
+	inline void  setTurningSpeedBase(float speed) { mTurningSpeed = speed; }
+
+	inline float getWalkingDexMultiplier() { return (1 + getDexterity() / 20); }
+	inline float getRunningDexMultiplier() { return (1 + getDexterity() / 10); }
+	inline float getTurningDexMultiplier() { return (1 + getDexterity() / 10); }
 
 	float getAggression() { return mAggression; }
 	void  setAggression(float aggression) { mAggression = aggression; }
@@ -135,6 +141,9 @@ public:
 	float getHungerDamageCooldown() { return mHungerDamageCooldown; }
 	void  setHungerDamageCooldown(float cooldown) { mHungerDamageCooldown = cooldown; }
 
+	float getHungerHealCooldown() { return mHungerHealCooldown; }
+	void  setHungerHealCooldown(float cooldown) { mHungerHealCooldown = cooldown; }
+
 	void  receiveDamage(float damage, GameEntity *from = NULL);
 
 	void  killAnimal();
@@ -196,6 +205,9 @@ public:
 	float getDeathtime() { return mDeathtime ; }
 	void  setDeathtime(float time) { mDeathtime = time; }
 
+	float getLocalPopulationMax() { return mLocalPopulationMax; }
+	void  setLocalPopulationMax(float population) { mLocalPopulationMax = population; }
+
 	static void breed(vector<Animal *> &children, Animal *parent1, Animal *parent2);
 
 	bool wantsToBreed();
@@ -210,6 +222,8 @@ public:
 	void breedWith(Animal *other);
 
 	EntityList &getSurroundingEntities() { return mSurroundingEntities; }
+
+	void getNearbyAnimalsForBreeding(const float &radius, vector<Animal *> &entities);
 
 	AnimalRef &getParent1() { return mParent1; }
 	AnimalRef &getParent2() { return mParent2; }
@@ -233,6 +247,7 @@ protected:
 	float mHungerUpperLimit;
 	float mHungerBreedLimit;
 	float mHungerDamageCooldown;
+	float mHungerHealCooldown;
 
 	float mStrength;
 	float mDexterity;
@@ -259,6 +274,8 @@ protected:
 
 	float mMutationRate;
 	float mMutationAmount;
+
+	float mLocalPopulationMax;
 
 	float mAccumulatedEnergy;
 
@@ -309,7 +326,7 @@ protected:
 
 	float getTurnAmount(float facing, float dest);
 
-	static float breedProperty(const float &parent1Value, const float &parent2Value, const float &mutationAmount = -1.0f, const float &mutationRate = -1.0f, float diff = 4.0f, float minClamp = -1.0f, float maxClamp = -1.0f);
+	static float breedProperty(const float &parent1Value, const float &parent2Value, const float &mutationAmount = -1.0f, const float &mutationRate = -1.0f, float diff = 4.0f, float minClamp = 0.0f, float maxClamp = -1.0f);
 
 	static const Pixel GRAPHIC_DEAD;
 };

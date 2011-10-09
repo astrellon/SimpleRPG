@@ -7,8 +7,7 @@ namespace SimpleRPGAnalyser
 {
     public class Pixel : ILoadable
     {
-        public string[] COLOUR_NAMES = { "black", "blue", "green", "red", "cyan", "magenta",
-                                                      "yellow", "white" };
+        public string[] COLOUR_NAMES = { "black", "blue", "green", "cyan", "red", "magenta", "yellow", "white" };
 
         public int colour;
         public bool bold;

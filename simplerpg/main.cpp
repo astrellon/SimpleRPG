@@ -657,22 +657,32 @@ int main(int argc, char **argv)
 			float dt = (float)(((double)currentTime.QuadPart - (double)updateTime.QuadPart) / freq);
 			updateTime = currentTime;
 			dt *= 0.001f;
-
-			if(!paused && !game->getGamePaused())
+			bool error = false;
+			try
 			{
-				if(game->getTimeScale() > 1)
+				if(!paused && !game->getGamePaused())
 				{
-					skipRenders = true;
-					for(int i = 0; i < game->getTimeScale(); i++)
+					if(game->getTimeScale() > 1)
 					{
-						game->update(0.04f);
+						skipRenders = true;
+						for(int i = 0; i < game->getTimeScale(); i++)
+						{
+							game->update(0.04f);
+						}
+					}
+					else
+					{
+						skipRenders = false;
+						game->update(dt);
 					}
 				}
-				else
-				{
-					skipRenders = false;
-					game->update(dt);
-				}
+			}
+			catch(...)
+			{
+				error = true;
+				clog << "There was an exception running the game." << endl;
+				game->saveMap("exception.map");
+				break;
 			}
 
 			wclear(gameWnd);

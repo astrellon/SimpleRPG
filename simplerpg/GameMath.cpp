@@ -36,9 +36,13 @@ int math::nextRoulette(const vector<float> &probabilities)
 		maxProb = max(maxProb, probabilities[i]);
 	}
 
-	while(true)
+	int size = probabilities.size() - 1;
+
+	int count = 0;
+
+	while(++count < 100)
 	{
-		double x = nextDouble() * probabilities.size();
+		double x = nextDouble() * size;
 		double u = nextDouble();
         
 		if(u < probabilities[floor(x)] / (CONST_A * distG(x)))
@@ -46,6 +50,8 @@ int math::nextRoulette(const vector<float> &probabilities)
 			return x;
 		}
 	}
+
+	return round(nextDouble() * size);
 }
 
 Vector2f math::getClosetToRay(Vector2f A, Vector2f B, Vector2f P, bool segmentClamp)

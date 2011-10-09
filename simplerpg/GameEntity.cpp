@@ -14,7 +14,7 @@ extern const char *EntityPropertyNames[] = { "id", "facing", "position", "destin
 	"sight_radius", "attacked_by", "attacked_by_cooldown", "hunger_limits", "hunger_damage_cooldown",
 	"parents", "mutation_rate", "mutation_amount", "accumulated_energy", "age", "life_expectancy", 
 	"breeding_age", "breeding_rate", "birthdate", "mate_find_cooldown", "fertility", "breeding_count",
-	"deathdate", "deathtime", "deathby" };
+	"deathdate", "deathtime", "deathby", "hunger_heal_cooldown", "local_population_max" };
 
 GameEntity::GameEntity(Game *game)
 {

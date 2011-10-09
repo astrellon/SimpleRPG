@@ -15,8 +15,10 @@ namespace SimpleRPGAnalyser
 {
     public partial class Analyser : Form
     {
-        private char[] mTiles = { '.', '^', ',', ';', '#', 'S', '~', '*', 'R', 'r', 'T', 'd', 'w' };
-        private Color[] mColors = { Color.Green, Color.PaleGreen, Color.LightGreen, Color.ForestGreen, Color.BurlyWood, Color.SandyBrown, Color.LightBlue, Color.Blue, Color.Gray, Color.LightGray, Color.DarkGreen, Color.DarkRed, Color.Cyan };
+        private char[] mTiles = { '.', '^', ',', ';', '#', 'S', '~', '*', 'R', 'r', 'T', 'd', 'w', 's', 'c', 'P' };
+        private Color[] mColors = { Color.Green, Color.PaleGreen, Color.LightGreen, Color.ForestGreen, Color.BurlyWood, 
+                                    Color.SandyBrown, Color.LightBlue, Color.Blue, Color.Gray, Color.LightGray, Color.DarkGreen, Color.DarkRed,
+                                    Color.Cyan, Color.LightSeaGreen, Color.LawnGreen, Color.LimeGreen };
         private List<string> mMapList;
         private Dictionary<Color, char> mTileMap = new Dictionary<Color, char>();
         private Dictionary<char, Color> mColourMap = new Dictionary<char, Color>();
@@ -221,6 +223,8 @@ namespace SimpleRPGAnalyser
                                     i++;
                                     Animal a = new Animal();
                                     a.load(ref cc, ref i);
+                                    i--;
+                                    Console.WriteLine("Loaded Animal " + a.LongName);
                                     string[] subItems = new string[] { a.id.ToString(), a.name, a.species, a.age.ToString(), a.birthdate, a.deathdate, a.deathby };
                                     ListViewItem item = new ListViewItem(subItems);
                                     item.Tag = a;

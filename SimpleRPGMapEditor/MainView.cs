@@ -17,12 +17,16 @@ namespace SimpleRPGMapEditor
 {
     public partial class MainView : Form
     {
-        private char[] mTiles = {'.', '^', ',', ';', '#', 'S', '~', '*', 'R', 'r', 'T', 'd'};
-        private Color[] mColors = { Color.Green, Color.PaleGreen, Color.LightGreen, Color.ForestGreen, Color.BurlyWood, Color.SandyBrown, Color.LightBlue, Color.Blue, Color.Gray, Color.LightGray, Color.DarkGreen, Color.DarkRed };
+        private char[] mTiles = {'.', '^', ',', ';', '#', 'S', '~', '*', 'R', 'r', 'T', 'd', 'w', 's', 'c', 'P'};
+        private string[] mNames = { "Short Grass", "Trees", "Grass", "Tall Grass", "Fence", "Sand", "Water", "Deep Water", "Stone", "Lime Stone", "Thick Trees", "Dirt", "Shallow Water", "Sand with brushes", "Cactus", "Palm Tree" };
+        private Color[] mColors = { Color.Green, Color.PaleGreen, Color.LightGreen, Color.ForestGreen, Color.BurlyWood, 
+                                    Color.SandyBrown, Color.LightBlue, Color.Blue, Color.Gray, Color.LightGray, Color.DarkGreen, Color.DarkRed,
+                                    Color.Cyan, Color.LightSeaGreen, Color.LawnGreen, Color.LimeGreen };
         private List<string> mMapList;
         private Dictionary<Color, char> mTileMap = new Dictionary<Color, char>();
         private Dictionary<char, Color> mColourMap = new Dictionary<char, Color>();
         private Bitmap mMapImg = null;
+        private Bitmap mMapTotal = null;
         private int mColourCount = 0;
         private int mCharCount = 0;
 
@@ -284,40 +288,81 @@ namespace SimpleRPGMapEditor
             panel.Left = 5;
             panel.Tag = t;
             panel.Top = 6 + pnlColours.Controls.Count / 2 * 30;
-            if (editColour)
+            if (!editColour)
             {
                 panel.Click += new EventHandler(panel_Click);
             }
             pnlColours.Controls.Add(panel);
 
-            TextBox textbox = new TextBox();
-            textbox.Font = new Font("Arial", 12);
-            textbox.Width = 24;
-            textbox.Height = 23;
-            textbox.MaxLength = 1;
-            textbox.Top = panel.Top;
-            textbox.Left = pnlColours.Width - 5 - textbox.Width;
-            textbox.Text = t.ToString();
-            if (!editColour)
+            ComboBox box = new ComboBox();
+
+            for (int i = 0; i < mNames.Length; i++)
             {
-                textbox.TextChanged += new EventHandler(textbox_TextChanged);
+                box.Items.Add(mNames[i]);
+                if (mTiles[i] == t)
+                {
+                    box.Text = mNames[i];
+                }
             }
-            else
+            box.Width = 66;
+            box.Height = 23;
+            box.Top = panel.Top;
+            box.Left = pnlColours.Width - 5 - box.Width;
+            box.Tag = c;
+            box.SelectedIndexChanged += new EventHandler(box_SelectedIndexChanged);
+
+            pnlColours.Controls.Add(box);
+
+        }
+
+        void box_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ComboBox t = sender as ComboBox;
+            if (t == null)
             {
-                textbox.Enabled = false;
+                return;
             }
-            textbox.Tag = c;
-            pnlColours.Controls.Add(textbox);
+
+            Color c = (Color)t.Tag;
+
+            if (mTileMap.ContainsKey(c))
+            {
+                mTileMap[c] = findChar(t.Text);
+            }
+        }
+
+        char findChar(string c)
+        {
+            for (int i = 0; i < mNames.Length; i++)
+            {
+                if (c == mNames[i])
+                {
+                    return mTiles[i];
+                }
+            }
+            return '\0';
         }
 
         void panel_Click(object sender, EventArgs e)
         {
             Panel p = sender as Panel;
-            char c = (char)p.Tag;
-            mColourMap[c] = Color.Maroon;
-            p.BackColor = mColourMap[c];
-            renderImage();
-            MessageBox.Show(p.BackColor.ToString());
+            renderHighlight(p.BackColor);
+        }
+
+        void renderHighlight(Color highlight)
+        {
+            mMapTotal = new Bitmap(mMapImg);
+            for (int i = 0; i < mMapImg.Width; i++)
+            {
+                for (int j = 0; j < mMapImg.Height; j++)
+                {
+                    if (mMapImg.GetPixel(i, j) == highlight)
+                    {
+                        mMapTotal.SetPixel(i, j, Color.White);
+                    }
+                }
+            }
+            picMain.Image = mMapTotal;
         }
 
         void textbox_TextChanged(object sender, EventArgs e)

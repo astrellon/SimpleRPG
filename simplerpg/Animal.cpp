@@ -19,6 +19,8 @@ Animal::Animal(Game *game) : GameEntity(game)
 	mHungerUpperLimit = 0.8f;
 	mHungerBreedLimit = 1.2f;
 	mHungerDamageCooldown = 0.0f;
+	mHungerHealCooldown = 0.0f;
+	mAggression = 0.0f;
 
 	mEnergyNeededPerDay = 1.0f;
 	mEnergy = 1.0f;
@@ -51,7 +53,7 @@ Animal::Animal(Game *game) : GameEntity(game)
 	mBirthdate = "0 0";
 	mDeathdate = "0 0";
 	mDeathtime = -1.0f;
-
+	mLocalPopulationMax = 8.0f;
 	mDeathBy = "Not Dead";
 
 	mMateFindCooldown = 0.0f;
@@ -253,6 +255,7 @@ void Animal::loadProperties(FormattedFileIterator &iter)
 	else loadProp(ENERGY, setEnergy, float)
 	else loadProp(REST_ENERGY_PER_DAY, setEnergyNeededPerDay, float)
 	else loadProp(HUNGER_DAMAGE_COOLDOWN, setHungerDamageCooldown, float)
+	else loadProp(HUNGER_HEAL_COOLDOWN, setHungerHealCooldown, float)
 	else loadProp(MUTATION_RATE, setMutationRate, float)
 	else loadProp(MUTATION_AMOUNT, setMutationAmount, float)
 	else loadProp(ACCUMULATED_ENERGY, setAccumulatedEnergy, float)
@@ -394,6 +397,7 @@ void Animal::saveProperties(FormattedFile &file)
 	saveProperty(PARENTS, file);
 	saveProperty(HUNGER_LIMITS, file);
 	saveProperty(HUNGER_DAMAGE_COOLDOWN, file);
+	saveProperty(HUNGER_HEAL_COOLDOWN, file);
 	saveProperty(MUTATION_RATE, file);
 	saveProperty(MUTATION_AMOUNT, file);
 	saveProperty(SPECIES_ALIGNMENT, file);
@@ -424,6 +428,7 @@ void Animal::saveProperty(const EntityProperty &propertyId, FormattedFile &file)
 	saveProp(ENERGY, getEnergy)
 	saveProp(REST_ENERGY_PER_DAY, getEnergyNeededPerDay)
 	saveProp(HUNGER_DAMAGE_COOLDOWN, getHungerDamageCooldown)
+	saveProp(HUNGER_HEAL_COOLDOWN, getHungerHealCooldown)
 	saveProp(MUTATION_RATE, getMutationRate)
 	saveProp(MUTATION_AMOUNT, getMutationAmount)
 	saveProp(ACCUMULATED_ENERGY, getAccumulatedEnergy)
@@ -485,8 +490,7 @@ void Animal::update(float dt)
 
 	if (isDead())
 	{
-		setDeathtime(getDeathtime() + dt);
-		if(getDeathtime() / mGame->getDayLength() > 10.0f)
+		if(mGame->getCurrentDay() - getDeathtime() / mGame->getDayLength() > 4.0f)
 		{
 			mGame->removeEntity(this);
 		}
@@ -552,6 +556,21 @@ void Animal::update(float dt)
 				setDeathBy("Starvation");
 			}
 			setHungerDamageCooldown(20.0f);
+		}
+	}
+
+	if(getHungerHealCooldown() > 0.0f)
+	{
+		setHungerHealCooldown(getHungerHealCooldown() - dt);
+	}
+
+	float midEnergy = (getHungerLowerLimit() +  getHungerUpperLimit()) * 0.5f;
+	if(getEnergy() > midEnergy)
+	{
+		if(getHungerHealCooldown() <= 0.0f)
+		{
+			changeHealth(getMaxHealth() / 20.0f);
+			setHungerHealCooldown(15.0f);
 		}
 	}
 
@@ -668,11 +687,11 @@ void Animal::moveAnimal(float dt)
 
 	if (getWalking())
 	{
-		mEnergyUsage.push_back(1.1f);
+		mEnergyUsage.push_back(1.1f * getWalkingDexMultiplier());
 	}
 	else
 	{
-		mEnergyUsage.push_back(4.0f);
+		mEnergyUsage.push_back(4.0f * getRunningDexMultiplier());
 	}
 	
 	while(timeTaken < dt)
@@ -746,17 +765,17 @@ float Animal::getTurnAmount(float facing, float dest)
 
 float Animal::getRunningSpeed()
 {
-	return getRunningSpeedBase();
+	return getRunningSpeedBase() * getRunningDexMultiplier();
 }
 
 float Animal::getWalkingSpeed()
 {
-	return getWalkingSpeedBase();
+	return getWalkingSpeedBase() * getWalkingDexMultiplier();
 }
 
 float Animal::getTurningSpeed()
 {
-	return getTurningSpeedBase();
+	return getTurningSpeedBase() * getTurningDexMultiplier();
 }
 
 void Animal::attackAnimal(Animal *target, float dt)
@@ -822,7 +841,6 @@ void Animal::doActionMove(float dt)
 	{
 		// Direct distance between this animal and the target.
 		setWalking(false);
-		//double simpleDist = distanceToEntity(action->getTarget().getEntity());
 		double simpleDist = getPosition().sub(action->getTarget().getLocation()).length();
 		if(simpleDist <= getAttackRange())
 		{
@@ -1040,6 +1058,7 @@ void Animal::doActionBreed(float dt)
 	{
 		vector<Animal *> mates;
 		getNearbyAnimals(getLineOfSightRadius() * 1.5f, mates, getSpecies());
+		//getNearbyAnimalsForBreeding(getLineOfSightRadius() * 1.5f, mates);
 		bool mateFound = false;
 		if(mates.empty())
 		{
@@ -1050,7 +1069,7 @@ void Animal::doActionBreed(float dt)
 				mateFound = true;
 			}
 		}
-		else
+		else if(mates.size() < (int)getLocalPopulationMax())
 		{
 			vector<float> fitness;
 			fitness.reserve(mates.size());
@@ -1290,6 +1309,9 @@ void Animal::breed(vector<Animal *> &children, Animal *p1, Animal *p2)
 	p1->changeEnergy(p1->getEnergyNeededPerDay() * numChildren * -0.2f);
 	p2->changeEnergy(p2->getEnergyNeededPerDay() * numChildren * -0.2f);
 
+	p1->setAccumulatedEnergy(0.0f);
+	p2->setAccumulatedEnergy(0.0f);
+
 	string birthdate = "0 0";
 	if(p1->mGame != NULL)
 	{
@@ -1346,6 +1368,7 @@ void Animal::breed(vector<Animal *> &children, Animal *p1, Animal *p2)
 		c->setSize(breedProperty(p1->getSize(), p2->getSize(), a, r));
 		c->setDamageBase(breedProperty(p1->getDamageBase(), p2->getDamageBase(), a, r));
 		c->setAttackRate(breedProperty(p1->getAttackRate(), p2->getAttackRate(), a, r));
+		c->setLocalPopulationMax(breedProperty(p1->getLocalPopulationMax(), p2->getLocalPopulationMax(), a, r));
 
 		c->setMutationAmount(breedProperty(p1->getMutationAmount(), p2->getMutationAmount(), a, r));
 		c->setMutationRate(breedProperty(p1->getMutationRate(), p2->getMutationRate(), a, r));
@@ -1384,6 +1407,11 @@ float Animal::breedProperty(const float &parent1Value, const float &parent2Value
 			float amount = mutationAmount * value;
 			value = value + (amount * (math::nextFloat() - 0.5f) * 2.0f);
 		}
+	}
+	if(value < 0)
+	{
+		// Break!
+		clog << "Ahh negative breed! " << value << endl;
 	}
 	return value;
 }

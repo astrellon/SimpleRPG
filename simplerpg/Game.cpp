@@ -1125,6 +1125,11 @@ vector<Vector2f> *Game::findPath(Vector2i startPosition, Vector2i endPosition)
 	return getMap()->search(startPosition, endPosition);
 }
 
+bool Game::findPath(Vector2i startPosition, Vector2i endPosition, vector<Vector2f> &path)
+{
+	return getMap()->search(startPosition, endPosition, path);
+}
+
 inline void Game::checkAdjacentTile(const int &x, const int &y, const int &group, queue<Vector2i> &openList)
 {
 	if (x >= 0 && x < mMap->getWidth() && 
@@ -1790,6 +1795,59 @@ FindEntityResult Game::findClosestEntity(Vector2f position, const string &entity
 		}
 	}
 	return FindEntityResult(shortestEntity, shortestPath);
+}
+
+FindEntityResult Game::findClosestEdibleAnimal(Animal *eater, bool sameSpecies)
+{
+	GameEntity *shortestEntity = NULL;
+	GameEntity *shortestDeadEntity = NULL;
+
+	vector<Vector2f> *shortestPath = new vector<Vector2f>();
+	vector<Vector2f> *shortestDeadPath = new vector<Vector2f>();
+	vector<Vector2f> tempPath;
+
+	float shortest = 1e30f;
+	float shortestDead = shortest;
+
+	Map *m = getMap();
+	Vector2i positionInt = (Vector2i)eater->getPosition();
+
+	for(EntityList::iterator iter = mEntities.begin(); iter != mEntities.end(); ++iter)
+	{
+		GameEntity *entity = *iter;
+		Animal *animal = dynamic_cast<Animal *>(entity);
+		if(animal != NULL && (sameSpecies || !iequals(entity->getSpecies(), eater->getSpecies())))
+		{
+			tempPath.clear();
+			bool path = m->search(positionInt, entity->getPosition(), tempPath);
+
+			if (path)
+			{
+				float length = lengthOfPath(&tempPath);
+				if(length < shortest)
+				{
+					shortest = length;
+					shortestEntity = entity;
+					*shortestPath = tempPath;
+				}
+				if(animal->isDead() && animal->getAmountFoodLeft() > 0.1f && length < shortestDead)
+				{
+					shortestDead = length;
+					shortestDeadEntity = entity;
+					*shortestDeadPath = tempPath;
+				}
+			}
+		}
+	}
+
+	if(shortest * 2.0f < shortestDead)
+	{
+		delete shortestDeadPath;
+		return FindEntityResult(shortestEntity, shortestPath);
+		
+	}
+	delete shortestPath;
+	return FindEntityResult(shortestDeadEntity, shortestDeadPath);
 }
 
 void Game::switchKeyItem(IKeyActions *item, UIContainer &hud)

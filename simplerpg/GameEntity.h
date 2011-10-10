@@ -106,6 +106,8 @@ public:
 	// Called when this entity looses focus.
 	virtual void clearDisplay(UIContainer &hud);
 
+	virtual bool isDead() { return true; }
+
 	// Sets the name of the entity. This is a trivial name.
 	virtual void setEntityName(string name) { mName = name; }
 	// Returns the name of the entity.
@@ -116,7 +118,8 @@ public:
 	virtual string getEntityType() { return "GameEntity"; }
 
 	virtual float getAmountEaten() { return mAmountEaten; }
-	virtual float beEaten(GameEntity *eater);
+	virtual void  setAmountEaten(float amount) { mAmountEaten = amount; }
+	virtual float beEaten(float amountWanted, GameEntity *eater);
 
 	virtual string getSpecies() { return mSpecies; }
 	virtual void setSpecies(string species) { mSpecies = species; }

@@ -538,7 +538,7 @@ void Animal::update(float dt)
 	if (getAttackCooldown() < 0.0f)
 	{
 		setAttackedByCooldown(0.0f);
-		mAttackedBy.setEntity(NULL);
+		//mAttackedBy.setEntity(NULL);
 	}
 
 	if (getHungerDamageCooldown() > 0.0f)
@@ -565,11 +565,16 @@ void Animal::update(float dt)
 	}
 
 	float midEnergy = (getHungerLowerLimit() +  getHungerUpperLimit()) * 0.5f;
-	if(getEnergy() > midEnergy)
+	if(getEnergy() > midEnergy && getHealth() < getMaxHealth())
 	{
 		if(getHungerHealCooldown() <= 0.0f)
 		{
-			changeHealth(getMaxHealth() / 20.0f);
+			float newHealth = getMaxHealth() / 20.0f + getHealth();
+			if (newHealth > getMaxHealth())
+			{
+				newHealth = getMaxHealth();
+			}
+			setHealth(newHealth);
 			setHungerHealCooldown(15.0f);
 		}
 	}
@@ -589,8 +594,6 @@ void Animal::update(float dt)
 		doActionMove(dt);
 		break;
 	case IDLE:
-		// Do nothing!
-
 		if (isHungry() || (wantsToBreed() && isHungry(2)))
 		{
 			setCurrentAction(new TargetAction(EAT));
@@ -607,7 +610,6 @@ void Animal::update(float dt)
 		doActionFlee(dt);
 		break;
 	case ATTACK:
-		// Do some more nothing.
 		doActionAttack(dt);
 		break;
 	case BREED:
@@ -794,13 +796,26 @@ void Animal::attackAnimal(Animal *target, float dt)
 	}
 }
 
-void Animal::receiveDamage(float damage, GameEntity *from)
+void Animal::receiveDamage(float damage, Animal *from)
 {
 	if(from != NULL)
 	{
 		mAttackedBy.setEntity(from);
 		mAttackedByCooldown = 100.0f;
 		changeSpeciesAlignment(from, -0.05f);
+		float threat = getEntityThreat(from);
+		if(threat > getAggression() && getCurrentAction()->getAction() != FLEE)
+		{
+			TargetAction *action = new TargetAction(FLEE);
+			action->getTarget().setEntity(from);
+			setCurrentAction(action);
+		}
+		else if(getCurrentAction()->getAction() != ATTACK)
+		{
+			TargetAction *action = new TargetAction(ATTACK);
+			action->getTarget().setEntity(from);
+			setCurrentAction(action);
+		}
 	}
 	changeHealth(-damage);
 	if(from != NULL && isDead())
@@ -845,6 +860,55 @@ void Animal::doActionMove(float dt)
 		if(simpleDist <= getAttackRange())
 		{
 			action->nextStep();
+		}
+	}
+	else
+	{
+		setCurrentAction(new TargetAction(IDLE));
+	}
+}
+
+void Animal::doActionFlee(float dt)
+{
+	TargetAction *action = castTargetAction(getCurrentAction(), "Flee");
+	if(action == NULL)
+	{
+		return;
+	}
+
+	if(mAttackedBy.getEntity() == NULL)
+	{
+		setCurrentAction(new TargetAction(IDLE));
+		return;
+	}
+
+	Vector2f toAttacker = mAttackedBy.getEntity()->getPosition().sub(getPosition());
+	if(toAttacker.length() > 2)
+	{
+		return;
+	}
+	toAttacker.normalise();
+	toAttacker = toAttacker.scale(-8);
+	action->getTarget().setLocation(getPosition().add(toAttacker));
+	if(action->getTarget().getPath(getPosition()).size() == 0)
+	{
+		float angle = math::nextFloat() * M_PI * 2.0f;
+		toAttacker.x = cos(angle);
+		toAttacker.y = sin(angle);
+
+		toAttacker = toAttacker.scale(8);
+		action->getTarget().setLocation(getPosition().add(toAttacker));
+	}
+	
+	if(action->getStep() == 0)
+	{
+		// Direct distance between this animal and the target.
+		setWalking(false);
+
+		double simpleDist = action->getTarget().getLocation().sub(getPosition()).length();
+		if(simpleDist <= getAttackRange())
+		{
+			setCurrentAction(new TargetAction(IDLE));
 		}
 	}
 	else
@@ -933,13 +997,27 @@ void Animal::doActionEat(float dt)
 		else
 		{
 			FindEntityResult result;
-			result = mGame->findClosestEntity(getPosition(), "Animal", this);
+			result = mGame->findClosestEdibleAnimal(this);
 
 			if(result.entity != NULL && result.path != NULL)
 			{
 				action->getTarget().setEntity(result.entity);
 				result.clear();
 				action->nextStep();
+
+				// Desperate, will eat own kind when 
+				// really hungry and no other food is around.
+				if(getEnergy() < getHungerLowerLimit() * 0.5f)
+				{
+					result = mGame->findClosestEdibleAnimal(this, true);
+
+					if(result.entity != NULL && result.path != NULL)
+					{
+						action->getTarget().setEntity(result.entity);
+						result.clear();
+						action->nextStep();
+					}
+				}
 			}
 		}
 	}
@@ -947,7 +1025,7 @@ void Animal::doActionEat(float dt)
 	{
 		// Direct distance between this animal and the target.
 		double simpleDist = distanceToEntity(action->getTarget().getEntity());
-		setWalking(false);
+		setWalking(action->getTarget().getEntity()->isDead());
 		if(simpleDist <= getAttackRange())
 		{
 			action->nextStep();
@@ -962,7 +1040,7 @@ void Animal::doActionEat(float dt)
 		}
 		setWalking(true);
 		Animal *animal = dynamic_cast<Animal *>(action->getTarget().getEntity());
-		Plant *plant = dynamic_cast<Plant *>(action->getTarget().getEntity());
+		//Plant *plant = dynamic_cast<Plant *>(action->getTarget().getEntity());
 		if(animal != NULL)
 		{
 			if(!animal->isDead())
@@ -975,10 +1053,10 @@ void Animal::doActionEat(float dt)
 				action->nextStep();
 			}
 		}
-		else if(plant != NULL)
+		/*else if(plant != NULL)
 		{
 			action->nextStep();
-		}
+		}*/
 		else
 		{
 			clog << getEntityName() << " cannot eat " << action->getTarget().getEntity()->getEntityType() << endl;
@@ -990,19 +1068,31 @@ void Animal::doActionEat(float dt)
 	else if(action->getStep() == 3)
 	{
 		double simpleDist = distanceToEntity(action->getTarget().getEntity());
-		if(simpleDist <= 1.0f)
+		if(simpleDist > 1.0f)
 		{
 			action->setStep(1);
 			return;
 		}
-		eatEntity(action->getTarget().getEntity());
-		if(!isHungry(true))
+		Animal *ani = dynamic_cast<Animal *>(action->getTarget().getEntity());
+		bool animalPlentiful = eatAnimal(ani, dt);
+
+		int limit = 1;
+		if(wantsToBreed())
+		{
+			limit = 2;
+		}
+		if(!isHungry(limit))
 		{
 			action->setCompleted(true, mGame->getCurrentTimeString(true));
 			setCurrentAction(new Action(IDLE));
 		}
+		else if(!animalPlentiful)
+		{
+			action->setStep(0);
+		}
 	}
 
+	// Eating off tiles
 	else if(action->getStep() == 4)
 	{
 		// Direct distance between this animal and the target.
@@ -1133,19 +1223,30 @@ void Animal::breedWith(Animal *other)
 	setMateFindCooldown(mGame->getDayLength() * 0.5f);
 }
 
-void Animal::eatEntity(GameEntity *entity)
+bool Animal::eatAnimal(Animal *animal, float dt)
 {
-	
+	if(animal == NULL)
+	{
+		return false;
+	}
+	float amountWanted = getSize() * getEnergyNeededPerDay() / 10.0f * dt;
+	float amountEaten = animal->beEaten(amountWanted, this);
+
+	changeEnergy(amountEaten);
+
+	return amountEaten > amountWanted * 0.5f;
 }
 
-void Animal::eatAnimal(Animal *animal)
+float Animal::beEaten(float amountWanted, GameEntity *eater)
 {
-	eatEntity(animal);
-}
-
-void Animal::eatPlant(Plant *plant)
-{
-	eatEntity(plant);
+	float totalEnergy = getEnergyNeededPerDay() + getEnergy();
+	if(amountWanted + getAmountEaten() > totalEnergy)
+	{
+		setAmountEaten(totalEnergy);
+		return amountWanted + getAmountEaten() - totalEnergy;
+	}
+	setAmountEaten(amountWanted + getAmountEaten());
+	return amountWanted;
 }
 
 bool Animal::eatTile(TileData *tile, float dt)

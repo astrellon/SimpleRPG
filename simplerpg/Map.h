@@ -74,6 +74,7 @@ public:
 	void analyseMapForGroups();
 
 	vector<Vector2f> *search(const Vector2i &start, const Vector2i &end);
+	bool search(const Vector2i &start, const Vector2i &end, vector<Vector2f> &path);
 
 	void renderMap(Rect &rect, WINDOW *wnd);
 
@@ -100,5 +101,5 @@ protected:
 
 	map<char, Tile *> mMappedTiles;
 
-	vector<Vector2f> *getPath(AStarNode *node);
+	void getPath(AStarNode *node, vector<Vector2f> &path);
 };

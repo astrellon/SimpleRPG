@@ -87,9 +87,6 @@ public:
 
 	string getEntityType() { return "Animal"; }
 
-	void  eatPlant(Plant *plant);
-	void  eatAnimal(Animal *animal);
-
 	float getEnergyNeededPerDay() { return mEnergyNeededPerDay; }
 	void  setEnergyNeededPerDay(float energy) { mEnergyNeededPerDay = energy; }
 	
@@ -144,7 +141,7 @@ public:
 	float getHungerHealCooldown() { return mHungerHealCooldown; }
 	void  setHungerHealCooldown(float cooldown) { mHungerHealCooldown = cooldown; }
 
-	void  receiveDamage(float damage, GameEntity *from = NULL);
+	void  receiveDamage(float damage, Animal *from = NULL);
 
 	void  killAnimal();
 	bool  isDead() { return mHealth <= 0.0f; }
@@ -228,6 +225,10 @@ public:
 	AnimalRef &getParent1() { return mParent1; }
 	AnimalRef &getParent2() { return mParent2; }
 
+	float getAmountFoodLeft() { return getEnergyNeededPerDay() + getEnergy() - getAmountEaten(); }
+
+	virtual float beEaten(float amountWanted, GameEntity *eater);
+
 protected:
 
 	Destination mDestination;
@@ -297,7 +298,7 @@ protected:
 	virtual float calculateKcalPerDay();
 	virtual bool isHungry(int limitLevel = 0);
 	
-	virtual void eatEntity(GameEntity *entity);
+	virtual bool eatAnimal(Animal *animal, float dt);
 	virtual bool eatTile(TileData *data, float dt);
 
 	virtual void doStateIdle(float dt) {}
@@ -310,7 +311,7 @@ protected:
 	virtual void attackAnimal(Animal *target, float dt);
 	virtual void doActionEat(float dt);
 	virtual void doActionMove(float dt);
-	virtual void doActionFlee(float dt) {}
+	virtual void doActionFlee(float dt);
 	virtual void doActionAttack(float dt);
 	virtual void doActionBreed(float dt);
 

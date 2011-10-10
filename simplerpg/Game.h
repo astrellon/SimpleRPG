@@ -147,9 +147,12 @@ public:
 	FindEntityResult findClosestEntity(Vector2f startPosition, const string &entityType, const GameEntity *ignore, const string &species);
 	FindEntityResult findClosestEntity(Vector2f startPosition, const string &entityType, const GameEntity *ignore, const string *species);
 
+	FindEntityResult findClosestEdibleAnimal(Animal *eater, bool sameSpecies = false);
+
 	FindEntityResult findBreedingPartner(Animal *origin);
 
 	vector<Vector2f> *findPath(Vector2i startPosition, Vector2i endPosition);
+	bool findPath(Vector2i startPosition, Vector2i endPosition, vector<Vector2f> &path);
 
 	Vector2i findClosestTileWithFood(Vector2i position);
 	Vector2i findClosestTileWithFood(Animal *entity);

@@ -137,12 +137,7 @@ void Destination::updatePath(Vector2f &startPosition)
 	if(Game::CURRENT_GAME != NULL && Game::CURRENT_GAME->getMap() != NULL)
 	{
 		mPath.clear();
-		vector<Vector2f> *p = Game::CURRENT_GAME->getMap()->search(startPosition, dest);
-		if(p != NULL)
-		{
-			mPath = *p;
-			delete p;
-		}
+		Game::CURRENT_GAME->getMap()->search(startPosition, dest, mPath);
 	}
 }
 

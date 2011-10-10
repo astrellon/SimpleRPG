@@ -297,7 +297,7 @@ void GameEntity::loadProperties(FormattedFileIterator &iter)
 	}
 	else if(iequals(propertyName, EntityPropertyNames[AMOUNT_EATEN]))
 	{
-		mAmountEaten = lexical_cast<float>(*iter); ++iter;
+		setAmountEaten(lexical_cast<float>(*iter)); ++iter;
 	}
 	else if(iequals(propertyName, EntityPropertyNames[AMOUNT_EATEN]))
 	{
@@ -305,9 +305,6 @@ void GameEntity::loadProperties(FormattedFileIterator &iter)
 	}
 	else if(iequals(propertyName, EntityPropertyNames[GRAPHIC]))
 	{
-		/*mGraphic.setColour(lexical_cast<int>(*iter));	++iter;
-		mGraphic.bold = (lexical_cast<bool>(*iter));	++iter;
-		mGraphic.graphic = string(*iter)[0];			++iter;*/
 		mGraphic.loadPixel(iter);
 	}
 	else if(iequals(propertyName, EntityPropertyNames[CURRENT_ACTION]))
@@ -358,7 +355,7 @@ double GameEntity::distanceToEntity(GameEntity *entity)
 	return otherPos.sub(pos).length();
 }
 
-float GameEntity::beEaten(GameEntity *eater)
+float GameEntity::beEaten(float amountWanted, GameEntity *eater)
 {
 	return 0.0f;
 }

@@ -159,17 +159,28 @@ void Map::logGroups()
 
 vector<Vector2f> *Map::search(const Vector2i &start, const Vector2i &end)
 {
+	vector<Vector2f> *path = new vector<Vector2f>();
+	search(start, end, *path);
+	return path;
+}
+bool Map::search(const Vector2i &start, const Vector2i &end, vector<Vector2f> &path)
+{
 	if (start.x < 0 || start.x >= mWidth ||
 		start.y < 0 || start.y >= mHeight)
 	{
-		return NULL;
+		return false;
+	}
+
+	if (start.x == end.x && start.y == end.y)
+	{
+		return true;
 	}
 
 	int startGroup = mMapData[start.x][start.y].group;
 	int endGroup = mMapData[end.x][end.y].group;
 	if(startGroup != endGroup)
 	{
-		return NULL;
+		return false;
 	}
 
 	mOpenList.clear();
@@ -195,7 +206,9 @@ vector<Vector2f> *Map::search(const Vector2i &start, const Vector2i &end)
 		if(node == endNode)
 		{
 			// Complete
-			return getPath(node);
+			getPath(node, path);
+			//return getPath(node);
+			return true;
 		}
 		else
 		{
@@ -229,22 +242,20 @@ vector<Vector2f> *Map::search(const Vector2i &start, const Vector2i &end)
 		}
 	}
 	// NO PATH! D:
-	return NULL;
+	return false;
 }
 
-vector<Vector2f> *Map::getPath(AStarNode *node)
+void Map::getPath(AStarNode *node, vector<Vector2f> &path)
 {
-	vector<Vector2f> *path = new vector<Vector2f>();
+	//vector<Vector2f> *path = new vector<Vector2f>();
 
 	while(node != NULL)
 	{
-		path->push_back(node->position);
+		path.push_back(node->position);
 		node = node->parent;
 	}
 
-	reverse(path->begin(), path->end());
-
-	return path;
+	reverse(path.begin(), path.end());
 }
 
 void Map::renderMap(Rect &rect, WINDOW *wnd)

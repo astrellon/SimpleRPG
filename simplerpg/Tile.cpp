@@ -122,5 +122,6 @@ void Tile::registerDefaults()
 
 	// Palm Tree
 	tile = new Tile(Pixel('*', COLOR_GREEN, true), 15, "Palm Tree");
+	tile->setPassable(false);
 	Tile::registerTile(tile);
 }

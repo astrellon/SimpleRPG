@@ -229,6 +229,13 @@ public:
 
 	virtual float beEaten(float amountWanted, GameEntity *eater);
 
+	float getDesiredNumChildren() { return mDesiredNumChildren; }
+	void  setDesiredNumChildren(float num) { mDesiredNumChildren = num; }
+
+	vector<AnimalRef> &getChildren() { return mChildren; }
+
+	void dealWithAttackFrom(Animal *from);
+
 protected:
 
 	Destination mDestination;
@@ -287,6 +294,8 @@ protected:
 	float mBreedingRate;
 	float mBreedingCount;
 	float mFertility;
+	vector<AnimalRef> mChildren;
+	float mDesiredNumChildren;
 
 	float mMateFindCooldown;
 

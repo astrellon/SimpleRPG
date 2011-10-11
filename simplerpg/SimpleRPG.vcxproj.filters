@@ -215,9 +215,6 @@
     <ClInclude Include="GameEntityRef.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FleeAction.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="map.txt" />

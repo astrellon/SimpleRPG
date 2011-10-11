@@ -108,11 +108,50 @@ namespace SimpleRPGAnalyser
         public float fertility;
         public int parent1;
         public int parent2;
+        public List<int> children = new List<int>();
+        protected float _numAliveChildren = -1;
+        public float numAliveChildren
+        {
+            get
+            {
+                if (_numAliveChildren < 0)
+                {
+                    int num = 0;
+                    foreach (int i in children)
+                    {
+                        if (!Animals[i].isDead)
+                        {
+                            num++;
+                        }
+                    }
+                    _numAliveChildren = num;
+                    return num;
+                }
+                else
+                {
+                    return _numAliveChildren;
+                }
+            }
+            set
+            {
+                _numAliveChildren = value;
+            }
+        }
+
+        public float desired_num_children;
+        public float local_population_max;
         public float hunger_damage_cooldown;
         public float hunger_heal_cooldown;
         public float mutation_rate;
         public float mutation_amount;
 
+        public bool isDead
+        {
+            get
+            {
+                return health <= 0.0f;
+            }
+        }
         public Dictionary<string, int> deathbys = new Dictionary<string, int>();
 
         public string deathby
@@ -203,6 +242,9 @@ namespace SimpleRPGAnalyser
                 average.strength += a.strength / animals.Count;
                 average.turning_speed += a.turning_speed / animals.Count;
                 average.walking_speed += a.walking_speed / animals.Count;
+                average.local_population_max += a.local_population_max / animals.Count;
+                average.desired_num_children += a.desired_num_children / animals.Count;
+                average.numAliveChildren += a.numAliveChildren / animals.Count;
 
                 average.position.x += a.position.x / animals.Count;
                 average.position.y += a.position.y / animals.Count;
@@ -418,12 +460,27 @@ namespace SimpleRPGAnalyser
                     case "mutation_amount":
                         mutation_amount = float.Parse(iter[index++]);
                         break;
+                    case "local_population_max":
+                        local_population_max = float.Parse(iter[index++]);
+                        break;
+                    case "desired_num_children":
+                        desired_num_children = float.Parse(iter[index++]);
+                        break;
+                    case "children":
+                        line = iter[index++];
+                        while (line != "end")
+                        {
+                            children.Add(int.Parse(line));
+                            line = iter[index++];
+                        }
+                        line = iter[index++];
+                        break;
                     case "species_alignment":
                         while (line != "end")
                         {
                             line = iter[index++];
                         }
-                        index++;
+                        line = iter[index++];
                         break;
                     case "end":
                         index--;

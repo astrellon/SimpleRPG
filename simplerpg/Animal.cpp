@@ -21,6 +21,7 @@ Animal::Animal(Game *game) : GameEntity(game)
 	mHungerDamageCooldown = 0.0f;
 	mHungerHealCooldown = 0.0f;
 	mAggression = 0.0f;
+	mDesiredNumChildren = 2.0f;
 
 	mEnergyNeededPerDay = 1.0f;
 	mEnergy = 1.0f;
@@ -264,7 +265,21 @@ void Animal::loadProperties(FormattedFileIterator &iter)
 	else loadProp(DEATHTIME, setDeathtime, float)
 	else loadProp(MATE_FIND_COOLDOWN, setMateFindCooldown, float)
 	else loadProp(FERTILITY, setFertility, float)
+	else loadProp(DESIRED_NUM_CHILDREN, setDesiredNumChildren, float)
 
+	else if(iequals(propertyName, EntityPropertyNames[CHILDREN]))
+	{
+		++iter;
+		string token = *iter;
+		//string speciesName;
+		while (!iequals(token, "end"))
+		{
+			mChildren.push_back(AnimalRef(lexical_cast<int>(token)));
+			++iter;
+			token = *iter;
+		}
+		++iter;
+	}
 	else if(iequals(propertyName, EntityPropertyNames[DEATHBY]))
 	{
 		string deathby;
@@ -395,6 +410,8 @@ void Animal::saveProperties(FormattedFile &file)
 	saveProperty(MATE_FIND_COOLDOWN, file);
 	saveProperty(FERTILITY, file);
 	saveProperty(PARENTS, file);
+	saveProperty(DESIRED_NUM_CHILDREN, file);
+	saveProperty(CHILDREN, file);
 	saveProperty(HUNGER_LIMITS, file);
 	saveProperty(HUNGER_DAMAGE_COOLDOWN, file);
 	saveProperty(HUNGER_HEAL_COOLDOWN, file);
@@ -437,7 +454,20 @@ void Animal::saveProperty(const EntityProperty &propertyId, FormattedFile &file)
 	saveProp(MATE_FIND_COOLDOWN, getBreedingRate)
 	saveProp(FERTILITY, getFertility)
 	saveProp(DEATHTIME, getDeathtime)
+	saveProp(DESIRED_NUM_CHILDREN, getDesiredNumChildren)
 
+	case CHILDREN:
+		file << EntityPropertyNames[CHILDREN] << '\n';
+		
+		file.changeTabLevel(1);
+		for(vector<AnimalRef>::iterator iter = mChildren.begin(); iter != mChildren.end(); ++iter)
+		{
+			file << iter->getEntityId() << ' ';
+		}
+		file.changeTabLevel(-1);
+		
+		file << "\nend\n";
+		break;
 	case DEATHBY:
 		file << EntityPropertyNames[DEATHBY] << " \"" << getDeathBy() << "\"\n";
 		break;
@@ -800,27 +830,39 @@ void Animal::receiveDamage(float damage, Animal *from)
 {
 	if(from != NULL)
 	{
-		mAttackedBy.setEntity(from);
-		mAttackedByCooldown = 100.0f;
-		changeSpeciesAlignment(from, -0.05f);
-		float threat = getEntityThreat(from);
-		if(threat > getAggression() && getCurrentAction()->getAction() != FLEE)
+		vector<Animal *> nearby;
+		getNearbyAnimals(getLineOfSightRadius(), nearby, mSpecies);
+		for(vector<Animal *>::iterator iter = nearby.begin(); iter != nearby.end(); ++iter)
 		{
-			TargetAction *action = new TargetAction(FLEE);
-			action->getTarget().setEntity(from);
-			setCurrentAction(action);
+			Animal *other = dynamic_cast<Animal *>(*iter);
+			other->dealWithAttackFrom(from);
 		}
-		else if(getCurrentAction()->getAction() != ATTACK)
-		{
-			TargetAction *action = new TargetAction(ATTACK);
-			action->getTarget().setEntity(from);
-			setCurrentAction(action);
-		}
+		dealWithAttackFrom(from);
 	}
 	changeHealth(-damage);
 	if(from != NULL && isDead())
 	{
 		setDeathBy("Killed by " + from->getLongName());
+	}
+}
+
+void Animal::dealWithAttackFrom(Animal *from)
+{
+	mAttackedBy.setEntity(from);
+	mAttackedByCooldown = 100.0f;
+	changeSpeciesAlignment(from, -0.05f);
+	float threat = getEntityThreat(from);
+	if(threat > getAggression() && getCurrentAction()->getAction() != FLEE)
+	{
+		TargetAction *action = new TargetAction(FLEE);
+		action->getTarget().setEntity(from);
+		setCurrentAction(action);
+	}
+	else if(threat <= getAggression() && getCurrentAction()->getAction() != ATTACK)
+	{
+		TargetAction *action = new TargetAction(ATTACK);
+		action->getTarget().setEntity(from);
+		setCurrentAction(action);
 	}
 }
 
@@ -883,7 +925,7 @@ void Animal::doActionFlee(float dt)
 	}
 
 	Vector2f toAttacker = mAttackedBy.getEntity()->getPosition().sub(getPosition());
-	if(toAttacker.length() > 2)
+	if(toAttacker.length() > 8)
 	{
 		return;
 	}
@@ -996,13 +1038,11 @@ void Animal::doActionEat(float dt)
 		}
 		else
 		{
-			FindEntityResult result;
-			result = mGame->findClosestEdibleAnimal(this);
+			Animal *result = mGame->findClosestEdibleAnimal(this);
 
-			if(result.entity != NULL && result.path != NULL)
+			if(result != NULL)
 			{
-				action->getTarget().setEntity(result.entity);
-				result.clear();
+				action->getTarget().setEntity(result);
 				action->nextStep();
 
 				// Desperate, will eat own kind when 
@@ -1011,10 +1051,9 @@ void Animal::doActionEat(float dt)
 				{
 					result = mGame->findClosestEdibleAnimal(this, true);
 
-					if(result.entity != NULL && result.path != NULL)
+					if(result != NULL)
 					{
-						action->getTarget().setEntity(result.entity);
-						result.clear();
+						action->getTarget().setEntity(result);
 						action->nextStep();
 					}
 				}
@@ -1053,10 +1092,6 @@ void Animal::doActionEat(float dt)
 				action->nextStep();
 			}
 		}
-		/*else if(plant != NULL)
-		{
-			action->nextStep();
-		}*/
 		else
 		{
 			clog << getEntityName() << " cannot eat " << action->getTarget().getEntity()->getEntityType() << endl;
@@ -1150,6 +1185,18 @@ void Animal::doActionBreed(float dt)
 		getNearbyAnimals(getLineOfSightRadius() * 1.5f, mates, getSpecies());
 		//getNearbyAnimalsForBreeding(getLineOfSightRadius() * 1.5f, mates);
 		bool mateFound = false;
+
+		int numAliveChildren = 0;
+		for(vector<AnimalRef>::iterator iter = mChildren.begin(); iter != mChildren.end(); ++iter)
+		{
+			Animal *child = iter->getEntity();
+
+			if(!child->isDead())
+			{
+				numAliveChildren++;
+			}
+		}
+
 		if(mates.empty())
 		{
 			FindEntityResult closest = mGame->findBreedingPartner(this);
@@ -1159,7 +1206,7 @@ void Animal::doActionBreed(float dt)
 				mateFound = true;
 			}
 		}
-		else if(mates.size() < (int)getLocalPopulationMax())
+		else if(mates.size() < (int)getLocalPopulationMax() && numAliveChildren < round(getDesiredNumChildren()))
 		{
 			vector<float> fitness;
 			fitness.reserve(mates.size());
@@ -1434,6 +1481,9 @@ void Animal::breed(vector<Animal *> &children, Animal *p1, Animal *p2)
 		Animal *c = new Animal(p1->mGame);
 		children.push_back(c);
 
+		p1->getChildren().push_back(AnimalRef(c));
+		p2->getChildren().push_back(AnimalRef(c));
+
 		c->setSpecies(species);
 		if (p1->mGame != NULL)
 		{
@@ -1470,6 +1520,7 @@ void Animal::breed(vector<Animal *> &children, Animal *p1, Animal *p2)
 		c->setDamageBase(breedProperty(p1->getDamageBase(), p2->getDamageBase(), a, r));
 		c->setAttackRate(breedProperty(p1->getAttackRate(), p2->getAttackRate(), a, r));
 		c->setLocalPopulationMax(breedProperty(p1->getLocalPopulationMax(), p2->getLocalPopulationMax(), a, r));
+		c->setDesiredNumChildren(breedProperty(p1->getDesiredNumChildren(), p2->getDesiredNumChildren(), a, r));
 
 		c->setMutationAmount(breedProperty(p1->getMutationAmount(), p2->getMutationAmount(), a, r));
 		c->setMutationRate(breedProperty(p1->getMutationRate(), p2->getMutationRate(), a, r));

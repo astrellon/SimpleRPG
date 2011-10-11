@@ -12,10 +12,18 @@ public:
 	{
 		setEntity(entity);
 	}
+	GameEntityRef(int id)
+	{
+		setEntityId(id);
+	}
 	~GameEntityRef() {}
 
 	T *getEntity()
 	{
+		if(mEntity != NULL)
+		{
+			return mEntity;
+		}
 		GameEntity *entity = GameEntity::getEntityById(getEntityId());
 		return dynamic_cast<T *>(entity);
 	}

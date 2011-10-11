@@ -1797,44 +1797,44 @@ FindEntityResult Game::findClosestEntity(Vector2f position, const string &entity
 	return FindEntityResult(shortestEntity, shortestPath);
 }
 
-FindEntityResult Game::findClosestEdibleAnimal(Animal *eater, bool sameSpecies)
+Animal *Game::findClosestEdibleAnimal(Animal *eater, bool sameSpecies)
 {
-	GameEntity *shortestEntity = NULL;
-	GameEntity *shortestDeadEntity = NULL;
-
-	vector<Vector2f> *shortestPath = new vector<Vector2f>();
-	vector<Vector2f> *shortestDeadPath = new vector<Vector2f>();
-	vector<Vector2f> tempPath;
+	Animal *shortestEntity = NULL;
+	Animal *shortestDeadEntity = NULL;
 
 	float shortest = 1e30f;
 	float shortestDead = shortest;
 
 	Map *m = getMap();
-	Vector2i positionInt = (Vector2i)eater->getPosition();
+	Vector2f position = eater->getPosition();
+	Vector2i positionInt = (Vector2i)position;
+	int eaterGroup = m->getGroup(positionInt);
 
 	for(EntityList::iterator iter = mEntities.begin(); iter != mEntities.end(); ++iter)
 	{
 		GameEntity *entity = *iter;
-		Animal *animal = dynamic_cast<Animal *>(entity);
-		if(animal != NULL && (sameSpecies || !iequals(entity->getSpecies(), eater->getSpecies())))
+		
+		if(sameSpecies || !iequals(entity->getSpecies(), eater->getSpecies()))
 		{
-			tempPath.clear();
-			bool path = m->search(positionInt, entity->getPosition(), tempPath);
-
-			if (path)
+			int entityGroup = m->getGroup(entity->getPosition());
+			if (entityGroup != eaterGroup)
 			{
-				float length = lengthOfPath(&tempPath);
-				if(length < shortest)
+				continue;
+			}
+
+			Animal *animal = dynamic_cast<Animal *>(entity);
+			if(animal != NULL)
+			{
+				double distance = position.sub(entity->getPosition()).lengthSqrd();
+				if(distance < shortest)
 				{
-					shortest = length;
-					shortestEntity = entity;
-					*shortestPath = tempPath;
+					shortest = distance;
+					shortestEntity = animal;
 				}
-				if(animal->isDead() && animal->getAmountFoodLeft() > 0.1f && length < shortestDead)
+				if(animal->isDead() && animal->getAmountFoodLeft() > 0.1f && distance < shortestDead)
 				{
-					shortestDead = length;
-					shortestDeadEntity = entity;
-					*shortestDeadPath = tempPath;
+					shortestDead = distance;
+					shortestDeadEntity = animal;
 				}
 			}
 		}
@@ -1842,12 +1842,9 @@ FindEntityResult Game::findClosestEdibleAnimal(Animal *eater, bool sameSpecies)
 
 	if(shortest * 2.0f < shortestDead)
 	{
-		delete shortestDeadPath;
-		return FindEntityResult(shortestEntity, shortestPath);
-		
+		return shortestEntity;
 	}
-	delete shortestPath;
-	return FindEntityResult(shortestDeadEntity, shortestDeadPath);
+	return shortestDeadEntity;
 }
 
 void Game::switchKeyItem(IKeyActions *item, UIContainer &hud)
@@ -2040,8 +2037,6 @@ void Game::findNearby(Vector2f origin, const float &radius, vector<GameEntity *>
 
 void Game::findNearby(Vector2f origin, const float &radius, vector<GameEntity *> &results, string *restrictToSpecies)
 {
-	vector<GameEntity *> withinRadius;
-
 	for(EntityList::iterator iter = mEntities.begin(); iter != mEntities.end(); ++iter)
 	{
 		GameEntity *entity = *iter;
@@ -2052,18 +2047,6 @@ void Game::findNearby(Vector2f origin, const float &radius, vector<GameEntity *>
 
 		Vector2f diff = origin.sub(entity->getPosition());
 		if(diff.length() < radius)
-		{
-			withinRadius.push_back(entity);
-		}
-	}
-
-	for(EntityList::iterator iter = withinRadius.begin(); iter != withinRadius.end(); ++iter)
-	{
-		GameEntity *entity = *iter;
-		RayResult cast;
-		Vector2f pos = entity->getPosition();
-		bresenhamLine(origin.x, origin.y, pos.x, pos.y, NULL, '\0', &cast);
-		if(cast.point.x < 0 || cast.point.y < 0)
 		{
 			results.push_back(entity);
 		}

@@ -404,6 +404,7 @@ namespace SimpleRPGAnalyser
             mValues.Add(new KeyPair("Size", averaged.entity_size, Color.White));
             mValues.Add(new KeyPair("Mutation Rate", averaged.mutation_rate, 1, Color.Purple));
             mValues.Add(new KeyPair("Mutation Amount", averaged.mutation_amount, 1, Color.Purple));
+            mValues.Add(new KeyPair("Num Alive Children", averaged.numAliveChildren, Color.Blue));
             
             picGraph.Invalidate();
         }

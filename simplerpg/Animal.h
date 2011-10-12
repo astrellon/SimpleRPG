@@ -315,7 +315,7 @@ protected:
 
 	virtual void dealWithThreats(float dt);
 
-	virtual GameEntity *findGreatestThreat();
+	virtual Animal *findGreatestThreat();
 	
 	virtual void attackAnimal(Animal *target, float dt);
 	virtual void doActionEat(float dt);

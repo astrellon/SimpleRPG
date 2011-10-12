@@ -613,17 +613,20 @@ void Animal::update(float dt)
 	// If not in danger. Continue doing the same action.
 
 	mSurroundingEntities.clear();
-	//getNearbyEntities(getLineOfSightRadius(), mSurroundingEntities);
+	getNearbyEntities(getLineOfSightRadius(), mSurroundingEntities);
 
-	//dealWithThreats(dt);
+	dealWithThreats(dt);
 
 	switch(action->getAction())
 	{
 	default:
 	case MOVE:
+		// Simple move action sets that the animal only wants to move
+		// to a given spot.
 		doActionMove(dt);
 		break;
 	case IDLE:
+		// Checks if the animal is hungry or wants to breed when idle.
 		if (isHungry() || (wantsToBreed() && isHungry(2)))
 		{
 			setCurrentAction(new TargetAction(EAT));
@@ -634,9 +637,14 @@ void Animal::update(float dt)
 		}
 		break;
 	case EAT:
+		// Goes through the steps required to find food, move to it, 
+		// kill it if it's an animal, and eat it.
 		doActionEat(dt);
 		break;
 	case FLEE:
+		// Goes through the steps of choosing a position to run away from
+		// an enemy and to continue running from an enemy if it's still within
+		// sight.
 		doActionFlee(dt);
 		break;
 	case ATTACK:
@@ -661,8 +669,8 @@ void Animal::update(float dt)
 
 void Animal::dealWithThreats(float dt)
 {
-	GameEntity *threat = findGreatestThreat();
-	if(threat == NULL || getEntityThreat(threat) < 1.0f)
+	Animal *threat = findGreatestThreat();
+	if(threat == NULL || getEntityThreat(threat) < getAggression())
 	{
 		return;
 	}
@@ -681,18 +689,23 @@ void Animal::dealWithThreats(float dt)
 	setCurrentAction(target);
 }
 
-GameEntity *Animal::findGreatestThreat()
+Animal *Animal::findGreatestThreat()
 {
-	GameEntity *greatest = NULL;
+	Animal *greatest = NULL;
 	float greatestThreat = -100.0f;
-	for(vector<GameEntity *>::iterator iter = mSurroundingEntities.begin();
-		iter != mSurroundingEntities.end(); ++iter)
+	for(EntityList::iterator iter = mSurroundingEntities.begin(); iter != mSurroundingEntities.end(); ++iter)
 	{
-		float threat = getEntityThreat(*iter);
+		Animal *animal = dynamic_cast<Animal *>(*iter);
+		if(animal == NULL || iequals(animal->getSpecies(), getSpecies()))
+		{
+			continue;
+		}
+		float threat = getEntityThreat(animal);
+		
 		if (threat > greatestThreat)
 		{
 			greatestThreat = threat;
-			greatest = *iter;
+			greatest = animal;
 		}
 	}
 	return greatest;
@@ -830,12 +843,13 @@ void Animal::receiveDamage(float damage, Animal *from)
 {
 	if(from != NULL)
 	{
-		vector<Animal *> nearby;
-		getNearbyAnimals(getLineOfSightRadius(), nearby, mSpecies);
-		for(vector<Animal *>::iterator iter = nearby.begin(); iter != nearby.end(); ++iter)
+		for(EntityList::iterator iter = mSurroundingEntities.begin(); iter != mSurroundingEntities.end(); ++iter)
 		{
 			Animal *other = dynamic_cast<Animal *>(*iter);
-			other->dealWithAttackFrom(from);
+			if(iequals(other->getSpecies(), getSpecies()))
+			{
+				other->dealWithAttackFrom(from);
+			}
 		}
 		dealWithAttackFrom(from);
 	}

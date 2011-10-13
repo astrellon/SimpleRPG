@@ -5,19 +5,19 @@
 #include "Vector2.h"
 #include "GameEntity.h"
 
-class TargetAction : public Action
+class TargetAction : public Action, public Destination
 {
 public:
 	TargetAction();
 	TargetAction(EntityAction action);
 	~TargetAction();
 
-	Destination &getTarget();
+	//Destination &getTarget();
 
 	virtual string getActionType() { return "TargetAction"; }
 
 protected:
-	Destination mTarget;
+	//Destination mTarget;
 
 	// The function which loads each property from the file tokens.
 	// Should increment the iterator at least once.

@@ -7,19 +7,20 @@ TargetAction::TargetAction() : Action()
 TargetAction::TargetAction(EntityAction action) : Action(action)
 {
 }
-
+/*
 Destination &TargetAction::getTarget()
 {
 	return mTarget;
 }
-
+*/
 void TargetAction::loadProperties(FormattedFileIterator &iter)
 {
 	string propertyName = *iter;
 	if(iequals(propertyName, ActionPropertyNames[TARGET]))
 	{
 		++iter;
-		mTarget.loadDestination(iter);
+		//mTarget.loadDestination(iter);
+		loadDestination(iter);
 	}
 	else
 	{
@@ -32,7 +33,8 @@ void TargetAction::saveProperty(const ActionProperty &propertyId, FormattedFile 
 	switch(propertyId)
 	{
 	case TARGET:
-		getTarget().saveDestination(ActionPropertyNames[TARGET], file);
+		//getTarget().saveDestination(ActionPropertyNames[TARGET], file);
+		saveDestination(ActionPropertyNames[TARGET], file);
 		break;
 	default:
 		Action::saveProperty(propertyId, file);

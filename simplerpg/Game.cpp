@@ -550,7 +550,7 @@ void Game::keyActions(const int key)
 				else
 				{
 					TargetAction *action = new TargetAction(MOVE);
-					action->getTarget().setLocation(mCursor);
+					action->setLocation(mCursor);
 					mDebugEntity->setCurrentAction(action);
 				}
 			}

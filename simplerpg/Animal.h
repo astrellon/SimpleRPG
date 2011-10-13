@@ -336,7 +336,7 @@ protected:
 
 	float getTurnAmount(float facing, float dest);
 
-	static float breedProperty(const float &parent1Value, const float &parent2Value, const float &mutationAmount = -1.0f, const float &mutationRate = -1.0f, float diff = 4.0f, float minClamp = 0.0f, float maxClamp = -1.0f);
+	static float breedProperty(const float &parent1Value, const float &parent2Value, const float &mutationAmount = -1.0f, const float &mutationRate = -1.0f, float diff = 2.0f, float minClamp = 0.0f, float maxClamp = -1.0f);
 
 	static const Pixel GRAPHIC_DEAD;
 };

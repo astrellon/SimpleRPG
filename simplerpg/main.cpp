@@ -52,20 +52,26 @@ void loadConfig(string filename)
 	}
 }
 
+bool autoQuit = false;
+int timeScale = 1;
+int maxDays = -1;
+
 Game *startGame(string filename)
 {
 	Game *game = new Game(windowWidth, windowHeight);
 	game->loadMap(filename);
 	if(game->getMap() == NULL)
 	{
-		cerr << "Unable to load map!" << endl << "Exiting program, press enter." << endl;
+		cerr << "Unable to load map " << filename << "!" << endl << "Exiting program, press enter." << endl;
 		getchar();
 		return NULL;
 	}
 
-	game->loadNameList("names.txt");
+	game->setAutoQuit(autoQuit);
+	game->setTimeScale(timeScale);
+	game->setMaxDays(maxDays);
 
-	//vector<Vector2f> *path = game->getMap()->search(Vector2i(97, 36), Vector2i(98, 35));
+	game->loadNameList("names.txt");
 
 	// Start game timer.
 	QueryPerformanceCounter(&updateTime);
@@ -262,6 +268,8 @@ int main(int argc, char **argv)
 	ofstream logfile("logfile.log");
 	clog.rdbuf(logfile.rdbuf());
 
+	clog << "Starting log file." << endl;
+
 	loadConfig("config.ini");
 
 	// If set from the command line, that file will be used to directly load
@@ -279,20 +287,53 @@ int main(int argc, char **argv)
 				i++;
 				if(iequals(cmd, "-s") || iequals(cmd, "-size"))
 				{
-					if(i + 1 >= argc)
+					if(i + 2 >= argc)
 					{
 						clog << "Not enough arguments for size command." << endl;
 						break;
 					}
 
-					windowWidth = lexical_cast<int>(argv[i]);
-					windowHeight = lexical_cast<int>(argv[i + 1]);
-					i += 2;
+					windowWidth = lexical_cast<int>(argv[i++]);
+					windowHeight = lexical_cast<int>(argv[i++]);
+				}
+				else if(iequals(cmd, "-o") || iequals(cmd, "-output"))
+				{
+					if(i + 1 >= argc)
+					{
+						clog << "Not enough arguments for output command." << endl;
+						break;
+					}
+
+					Game::defaultOutputFilename = argv[i++];
+				}
+				else if(iequals(cmd, "-a") || iequals(cmd, "-auto"))
+				{
+					autoQuit = true;
+				}
+				else if(iequals(cmd, "-t") || iequals(cmd, "-timescale"))
+				{
+					if(i + 1 >= argc)
+					{
+						clog << "Not enough arguments for timescale command." << endl;
+						break;
+					}
+
+					timeScale = lexical_cast<int>(argv[i++]);
+				}
+				else if(iequals(cmd, "-m") || iequals(cmd, "-maxdays"))
+				{
+					if(i + 1 >= argc)
+					{
+						clog << "Not enough arguments for maxdays command." << endl;
+						break;
+					}
+
+					maxDays = lexical_cast<int>(argv[i++]);
 				}
 			}
 			else
 			{
-				loadFile = argv[i];
+				loadFile = argv[i++];
 			}
 		}
 	}

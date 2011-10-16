@@ -108,6 +108,7 @@ public:
 
 	void loadMap(string filename);
 	void saveMap(string filename);
+	void saveMap() { saveMap(defaultOutputFilename); }
 
 	bool getCursorMode() { return mCursorMode; }
 	void setCursorMode(bool mode)
@@ -172,6 +173,12 @@ public:
 	virtual float getDayLength() { return mDayLength; }
 	virtual void  setDayLength(float length) { mDayLength = length; }
 
+	bool getAutoQuit() { return mAutoQuit; }
+	void setAutoQuit(bool quit) { mAutoQuit = quit; }
+
+	int  getMaxDays() { return mMaxDays; }
+	void setMaxDays(int days) { mMaxDays = days; }
+
 	virtual string getCurrentTimeString(bool includeDay = false);
 
 	static Game *CURRENT_GAME;
@@ -201,6 +208,8 @@ public:
 
 	void addActiveTile(TileData *tile) { mActiveTiles.push_back(tile); }
 
+	static string defaultOutputFilename;
+
 protected:
 	bool mRedisplay;
 	bool mGameRunning;
@@ -218,6 +227,8 @@ protected:
 	Map *mMap;
 	TileData **mTileData;
 	int **mTileDataUpdate;
+
+	bool mAutoQuit;
 
 	Rect mScreenSize;
 	bool mUpdating;
@@ -247,6 +258,7 @@ protected:
 	float mTileTimeFinal;
 	float mEntityTimeFinal;
 	int mTimeCounter;
+	int mMaxDays;
 
 	MenuLevel mMenuLevel;
 	Vector2i mCursor;

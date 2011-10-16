@@ -84,6 +84,8 @@
 copy "$(ProjectDir)map.txt" "$(OutputPath)"
 copy "$(ProjectDir)map1.txt" "$(OutputPath)"
 copy "$(ProjectDir)map2.txt" "$(OutputPath)"
+copy "$(ProjectDir)map3.txt" "$(OutputPath)"
+copy "$(ProjectDir)names.txt" "$(OutputPath)"
 copy "$(ProjectDir)map.data" "$(OutputPath)"
 copy "$(ProjectDir)config.ini" "$(OutputPath)"</Command>
     </PostBuildEvent>
@@ -113,6 +115,8 @@ copy "$(ProjectDir)config.ini" "$(OutputPath)"</Command>
 copy "$(ProjectDir)map.txt" "$(OutputPath)"
 copy "$(ProjectDir)map1.txt" "$(OutputPath)"
 copy "$(ProjectDir)map2.txt" "$(OutputPath)"
+copy "$(ProjectDir)map3.txt" "$(OutputPath)"
+copy "$(ProjectDir)names.txt" "$(OutputPath)"
 copy "$(ProjectDir)map.data" "$(OutputPath)"
 copy "$(ProjectDir)config.ini" "$(OutputPath)"</Command>
     </PostBuildEvent>
@@ -143,6 +147,8 @@ copy "$(ProjectDir)config.ini" "$(OutputPath)"</Command>
 copy "$(ProjectDir)map.txt" "$(OutputPath)"
 copy "$(ProjectDir)map1.txt" "$(OutputPath)"
 copy "$(ProjectDir)map2.txt" "$(OutputPath)"
+copy "$(ProjectDir)map3.txt" "$(OutputPath)"
+copy "$(ProjectDir)names.txt" "$(OutputPath)"
 copy "$(ProjectDir)map.data" "$(OutputPath)"
 copy "$(ProjectDir)config.ini" "$(OutputPath)"</Command>
     </PostBuildEvent>

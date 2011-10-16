@@ -10,6 +10,8 @@ extern const char *GamePropertyNames[] = { "hud_width", "current_time", "current
 
 Game *Game::CURRENT_GAME = NULL;
 
+string Game::defaultOutputFilename = "test.out";
+
 _FindEntityResult::_FindEntityResult()
 {
 	entity = NULL;
@@ -106,6 +108,9 @@ Game::Game(int width, int height)
 	mTileTime = mEntityTime = 0;
 	mTileTimeFinal = mEntityTimeFinal = 0.0f;
 	mTimeCounter = 0;
+
+	mAutoQuit = false;
+	mMaxDays = -1;
 
 	mCheckedTilesCounter = 0;
 }
@@ -278,7 +283,7 @@ void Game::keyActions(const int key)
 
 		if (key == 's')
 		{
-			saveMap("test.out");
+			saveMap();
 		}
 
 		if (key == 'q')
@@ -385,7 +390,7 @@ void Game::keyActions(const int key)
 		
 		if (key == 's')
 		{
-			saveMap("test.out");
+			saveMap();
 			// QUIT!.
 			mGameRunning = false;
 		}
@@ -433,6 +438,11 @@ void Game::keyActions(const int key)
 		if (key == 123)
 		{
 			setTimeScale(getTimeScale() - 10);
+		}
+
+		if (key == 'a')
+		{
+			mAutoQuit = !mAutoQuit;
 		}
 
 		break;
@@ -642,6 +652,11 @@ void Game::displayActions()
 
 	mHudText << "<15>Time</>:\t<12>" << mTileTimeFinal << ", " << mEntityTimeFinal << "</>\n\n";
 
+	if(getAutoQuit())
+	{
+		mHudText << "<12>AUTO MODE</>\n\n";
+	}
+
 	switch (mMenuLevel)
 	{
 	default:
@@ -707,6 +722,7 @@ void Game::displayActions()
 		mHudText << "<15>Options:</>\n\n";
 		mHudText << "<15>Menu size</>:\t<12>" << getHudWidth() << "</> <11>+</>/<11>-</>\n";
 		mHudText << "<15>Time scale</>:\t<12>" << getTimeScale() << "</> <11>[</>/<11>]</>\n";
+		mHudText << "<15>Auto quit</>:\t<12>" << (mAutoQuit ? "true" : "false") << "</> <11>a</></>\n";
 
 		break;
 
@@ -967,6 +983,13 @@ void Game::update(float dt)
 		removeEntity(*iter);
 	}
 	mRemoveEntities.clear();
+
+	if ((size <= 0 && mAutoQuit ||
+		(mMaxDays > 0 && mCurrentDay > mMaxDays)))
+	{
+		saveMap();
+		mGameRunning = false;
+	}
 
 	end = clock();
 	mEntityTime += (end - start);

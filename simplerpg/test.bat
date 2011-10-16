@@ -12,7 +12,7 @@ IF %index% GEQ 10 GOTO EndLoop
 
 set output=%base%%index%.out
 echo Running test %index%.
-start /Wait SimpleRPG.exe -m 200 -a -t 600 -o %output% map3.txt
+start /Wait SimpleRPG.exe -m 60 -a -t 200 -o %output% map3.txt
 set /A index += 1
 GOTO:StartLoop
 

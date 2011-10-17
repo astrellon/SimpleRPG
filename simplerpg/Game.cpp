@@ -1849,7 +1849,7 @@ Animal *Game::findClosestEdibleAnimal(Animal *eater, bool sameSpecies)
 			if(animal != NULL)
 			{
 				double distance = position.sub(entity->getPosition()).lengthSqrd();
-				if(distance < shortest)
+				if(!animal->isDead() && distance < shortest)
 				{
 					shortest = distance;
 					shortestEntity = animal;

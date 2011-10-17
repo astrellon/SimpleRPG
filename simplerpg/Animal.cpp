@@ -163,6 +163,8 @@ void Animal::displayActions(UIContainer &hud)
 		text << "<15>Dex</>:\t" << getDexterity() << '\n';
 		text << "<15>Int</>:\t" << getIntelligence() << '\n';
 		text << "<15>Diet</>:\t" << getDiet() << '\n';
+
+		text << "<15>Amount Eaten</>:\t" << getAmountEaten() << ", " << getAmountFoodLeft() << '\n';
 		
 		format fmtEnergy("%.5f (%.0f) [%.1f]\n");
 		fmtEnergy % getEnergy() % getEnergyNeededPerDay() % mOldEnergyMultiplier;
@@ -1313,8 +1315,9 @@ float Animal::beEaten(float amountWanted, GameEntity *eater)
 	float totalEnergy = getEnergyNeededPerDay() + getEnergy();
 	if(amountWanted + getAmountEaten() > totalEnergy)
 	{
+		float remaining = getAmountEaten() - totalEnergy;
 		setAmountEaten(totalEnergy);
-		return amountWanted + getAmountEaten() - totalEnergy;
+		return remaining;
 	}
 	setAmountEaten(amountWanted + getAmountEaten());
 	return amountWanted;
@@ -1372,7 +1375,7 @@ void Animal::changeHealth(float health)
 
 void Animal::setHealth(float health)
 {
-	if(health < 0 && mHealth > 0)
+	if(health <= 0 && mHealth > 0)
 	{
 		mHealth = 0;
 		killAnimal();

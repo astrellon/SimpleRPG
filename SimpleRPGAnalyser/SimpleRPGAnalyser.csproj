@@ -80,6 +80,7 @@
     <Compile Include="ILoadable.cs" />
     <Compile Include="KeyPair.cs" />
     <Compile Include="Pixel.cs" />
+    <Compile Include="PopulationStat.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TargetAction.cs" />

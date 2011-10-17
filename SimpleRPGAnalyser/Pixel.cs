@@ -20,6 +20,11 @@ namespace SimpleRPGAnalyser
             graphic = 'x';
         }
 
+        override public string ToString()
+        {
+            return graphic + "_" + colour.ToString() + '_' + (bold ? '1' : '0');
+        }
+
         public void load(ref string[] iter, ref int index)
         {
             string c = iter[index++];

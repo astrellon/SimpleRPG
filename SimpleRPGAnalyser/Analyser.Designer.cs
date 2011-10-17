@@ -28,14 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series7 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series8 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series9 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Title title7 = new System.Windows.Forms.DataVisualization.Charting.Title();
-            System.Windows.Forms.DataVisualization.Charting.Title title8 = new System.Windows.Forms.DataVisualization.Charting.Title();
-            System.Windows.Forms.DataVisualization.Charting.Title title9 = new System.Windows.Forms.DataVisualization.Charting.Title();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Title title1 = new System.Windows.Forms.DataVisualization.Charting.Title();
+            System.Windows.Forms.DataVisualization.Charting.Title title2 = new System.Windows.Forms.DataVisualization.Charting.Title();
+            System.Windows.Forms.DataVisualization.Charting.Title title3 = new System.Windows.Forms.DataVisualization.Charting.Title();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -53,10 +54,11 @@
             this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.picGraph = new System.Windows.Forms.PictureBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.trcDay = new System.Windows.Forms.TrackBar();
             this.picMain = new System.Windows.Forms.PictureBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.lstPopulations = new System.Windows.Forms.ListBox();
             this.chrtPopulation = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.trcDay = new System.Windows.Forms.TrackBar();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -66,10 +68,10 @@
             this.splitContainer1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picGraph)).BeginInit();
             this.tabPage2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trcDay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picMain)).BeginInit();
             this.tabPage3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chrtPopulation)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.trcDay)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -228,6 +230,17 @@
             this.tabPage2.Text = "Location Heat Map";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
+            // trcDay
+            // 
+            this.trcDay.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.trcDay.BackColor = System.Drawing.SystemColors.Window;
+            this.trcDay.Location = new System.Drawing.Point(6, 451);
+            this.trcDay.Name = "trcDay";
+            this.trcDay.Size = new System.Drawing.Size(699, 45);
+            this.trcDay.TabIndex = 3;
+            this.trcDay.Scroll += new System.EventHandler(this.trcDay_Scroll);
+            // 
             // picMain
             // 
             this.picMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
@@ -243,6 +256,7 @@
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.lstPopulations);
             this.tabPage3.Controls.Add(this.chrtPopulation);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
@@ -252,60 +266,71 @@
             this.tabPage3.Text = "Timeline";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
+            // lstPopulations
+            // 
+            this.lstPopulations.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.lstPopulations.FormattingEnabled = true;
+            this.lstPopulations.Items.AddRange(new object[] {
+            "hello",
+            "there",
+            "how",
+            "are",
+            "you"});
+            this.lstPopulations.Location = new System.Drawing.Point(548, 6);
+            this.lstPopulations.Name = "lstPopulations";
+            this.lstPopulations.Size = new System.Drawing.Size(157, 485);
+            this.lstPopulations.TabIndex = 5;
+            // 
             // chrtPopulation
             // 
             this.chrtPopulation.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            chartArea3.Name = "ChartArea1";
-            this.chrtPopulation.ChartAreas.Add(chartArea3);
-            legend3.Name = "Legend1";
-            this.chrtPopulation.Legends.Add(legend3);
+            chartArea1.Name = "ChartArea1";
+            this.chrtPopulation.ChartAreas.Add(chartArea1);
+            legend1.Alignment = System.Drawing.StringAlignment.Center;
+            legend1.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom;
+            legend1.Name = "Legend1";
+            this.chrtPopulation.Legends.Add(legend1);
             this.chrtPopulation.Location = new System.Drawing.Point(6, 6);
             this.chrtPopulation.Name = "chrtPopulation";
-            series7.ChartArea = "ChartArea1";
-            series7.EmptyPointStyle.AxisLabel = "Hello";
-            series7.Legend = "Legend1";
-            series7.Name = "Population Count";
-            series8.ChartArea = "ChartArea1";
-            series8.Legend = "Legend1";
-            series8.Name = "Death By Starvation";
-            series9.ChartArea = "ChartArea1";
-            series9.Legend = "Legend1";
-            series9.Name = "Death From Old Age";
-            this.chrtPopulation.Series.Add(series7);
-            this.chrtPopulation.Series.Add(series8);
-            this.chrtPopulation.Series.Add(series9);
-            this.chrtPopulation.Size = new System.Drawing.Size(699, 493);
+            series1.ChartArea = "ChartArea1";
+            series1.EmptyPointStyle.AxisLabel = "Hello";
+            series1.Legend = "Legend1";
+            series1.Name = "Population Count";
+            series2.ChartArea = "ChartArea1";
+            series2.Legend = "Legend1";
+            series2.Name = "Death By Starvation";
+            series3.ChartArea = "ChartArea1";
+            series3.Legend = "Legend1";
+            series3.Name = "Death From Old Age";
+            series4.ChartArea = "ChartArea1";
+            series4.Legend = "Legend1";
+            series4.Name = "Killed";
+            this.chrtPopulation.Series.Add(series1);
+            this.chrtPopulation.Series.Add(series2);
+            this.chrtPopulation.Series.Add(series3);
+            this.chrtPopulation.Series.Add(series4);
+            this.chrtPopulation.Size = new System.Drawing.Size(536, 493);
             this.chrtPopulation.TabIndex = 1;
             this.chrtPopulation.Text = "chart1";
-            title7.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            title7.Name = "Title1";
-            title7.Text = "Population Counts";
-            title8.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Left;
-            title8.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            title8.Name = "Title2";
-            title8.Text = "Animal Count";
-            title8.TextOrientation = System.Windows.Forms.DataVisualization.Charting.TextOrientation.Rotated270;
-            title9.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom;
-            title9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            title9.Name = "Title3";
-            title9.Text = "In Game Days";
-            this.chrtPopulation.Titles.Add(title7);
-            this.chrtPopulation.Titles.Add(title8);
-            this.chrtPopulation.Titles.Add(title9);
+            title1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            title1.Name = "Title1";
+            title1.Text = "Population Counts";
+            title2.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Left;
+            title2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            title2.Name = "Title2";
+            title2.Text = "Animal Count";
+            title2.TextOrientation = System.Windows.Forms.DataVisualization.Charting.TextOrientation.Rotated270;
+            title3.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom;
+            title3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            title3.Name = "Title3";
+            title3.Text = "In Game Days";
+            this.chrtPopulation.Titles.Add(title1);
+            this.chrtPopulation.Titles.Add(title2);
+            this.chrtPopulation.Titles.Add(title3);
             this.chrtPopulation.Click += new System.EventHandler(this.chart1_Click);
-            // 
-            // trcDay
-            // 
-            this.trcDay.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.trcDay.BackColor = System.Drawing.SystemColors.Window;
-            this.trcDay.Location = new System.Drawing.Point(6, 451);
-            this.trcDay.Name = "trcDay";
-            this.trcDay.Size = new System.Drawing.Size(699, 45);
-            this.trcDay.TabIndex = 3;
-            this.trcDay.Scroll += new System.EventHandler(this.trcDay_Scroll);
             // 
             // Analyser
             // 
@@ -328,10 +353,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.picGraph)).EndInit();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trcDay)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picMain)).EndInit();
             this.tabPage3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.chrtPopulation)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.trcDay)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -360,6 +385,7 @@
         private System.Windows.Forms.ColumnHeader columnHeader7;
         private System.Windows.Forms.DataVisualization.Charting.Chart chrtPopulation;
         private System.Windows.Forms.TrackBar trcDay;
+        private System.Windows.Forms.ListBox lstPopulations;
     }
 }
 

@@ -34,17 +34,26 @@ bool compare(AStarNode *n1, AStarNode *n2)
 	return n1->f < n2->f;
 }
 
-bool listContains(vector<AStarNode *> *list, AStarNode *node)
+bool listContains(const vector<AStarNode *> &list, AStarNode *node)
 {
 	bool found = false;
-	for(vector<AStarNode *>::iterator iter = list->begin(); iter != list->end(); ++iter)
+	int size = (int)list.size();
+	for(int i = 0; i < size; i++)
+	{
+		if(list[i] == node)
+		{
+			found = true;
+			break;
+		}
+	}
+	/*for(vector<AStarNode *>::iterator iter = list.begin(); iter != list.end(); ++iter)
 	{
 		if((*iter) == node)
 		{
 			found = true;
 			break;
 		}
-	}
+	}*/
 	return found;
 }
 
@@ -166,7 +175,9 @@ vector<Vector2f> *Map::search(const Vector2i &start, const Vector2i &end)
 bool Map::search(const Vector2i &start, const Vector2i &end, vector<Vector2f> &path)
 {
 	if (start.x < 0 || start.x >= mWidth ||
-		start.y < 0 || start.y >= mHeight)
+		start.y < 0 || start.y >= mHeight ||
+		end.x < 0 || end.x >= mWidth ||
+		end.y < 0 || end.y >= mHeight)
 	{
 		return false;
 	}
@@ -207,7 +218,6 @@ bool Map::search(const Vector2i &start, const Vector2i &end, vector<Vector2f> &p
 		{
 			// Complete
 			getPath(node, path);
-			//return getPath(node);
 			return true;
 		}
 		else
@@ -220,8 +230,8 @@ bool Map::search(const Vector2i &start, const Vector2i &end, vector<Vector2f> &p
 			for(vector<AStarNode *>::iterator iter = mNeighbors.begin(); iter != mNeighbors.end(); ++iter)
 			{
 				AStarNode *n = *iter;
-				if (!listContains(&mOpenList, n) &&
-					!listContains(&mClosedList, n))
+				if (!listContains(mOpenList, n) &&
+					!listContains(mClosedList, n))
 				{
 					if(n->useCounter < mNodeUseCounter)
 					{

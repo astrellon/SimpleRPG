@@ -22,6 +22,7 @@ namespace SimpleRPGAnalyser
         private List<string> mMapList;
         private Dictionary<Color, char> mTileMap = new Dictionary<Color, char>();
         private Dictionary<char, Color> mColourMap = new Dictionary<char, Color>();
+        private Dictionary<string, PopulationStat> mPopulations = new Dictionary<string, PopulationStat>();
         private List<List<Vector2f>> mLocationHistory = new List<List<Vector2f>>();
 
         private Bitmap mMapImg = null;
@@ -81,6 +82,11 @@ namespace SimpleRPGAnalyser
                         mMapImg.Dispose();
                         mMapImg = null;
                     }
+                    mPopulations.Clear();
+
+                    mLocationHistory.Clear();
+                    lstPopulations.Items.Clear();
+                    mPopulations.Clear();
                     mColourCount = 0;
                     mCharCount = 0;
 
@@ -107,14 +113,10 @@ namespace SimpleRPGAnalyser
                         string endState = null;
                         string state = "none";
 
-                        //bool readingAnimal = false;
-
                         Dictionary<string, float> values = new Dictionary<string, float>();
                         int numAnimals = 0;
 
                         char tile = '\0';
-
-                        int endSkip = 0;
 
                         mMapList = new List<string>();
                         int mapWidth = -1;
@@ -224,11 +226,26 @@ namespace SimpleRPGAnalyser
                                     Animal a = new Animal();
                                     a.load(ref cc, ref i);
                                     i--;
-                                    Console.WriteLine("Loaded Animal " + a.LongName);
+                                    //Console.WriteLine("Loaded Animal " + a.LongName);
                                     string[] subItems = new string[] { a.id.ToString(), a.name, a.species, a.age.ToString(), a.birthdate, a.deathdate, a.deathby };
                                     ListViewItem item = new ListViewItem(subItems);
                                     item.Tag = a;
                                     viewAnimals.Items.Add(item);
+
+                                    string identifier = a.graphic.ToString() + '_' + a.species;
+                                    if (!mPopulations.ContainsKey(identifier))
+                                    {
+                                        mPopulations[identifier] = new PopulationStat();
+                                    }
+
+                                    if (a.isDead)
+                                    {
+                                        mPopulations[identifier].dead++;
+                                    }
+                                    else
+                                    {
+                                        mPopulations[identifier].alive++;
+                                    }
                                 }
                             }
                             else if (state.Equals("locationhistory", StringComparison.CurrentCultureIgnoreCase))
@@ -273,13 +290,19 @@ namespace SimpleRPGAnalyser
                         }
                     }
 
+                    foreach (KeyValuePair<string, PopulationStat> pair in mPopulations)
+                    {
+                        lstPopulations.Items.Add(pair.Key + ": " + pair.Value.alive.ToString() + ", " + pair.Value.dead.ToString());
+                    }
+
                     trcDay.Maximum = mLocationHistory.Count - 1;
 
                     tabPage1.Invalidate();
 
-                    chrtPopulation.Series[0].Points.Clear();
-                    chrtPopulation.Series[1].Points.Clear();
-                    chrtPopulation.Series[2].Points.Clear();
+                    foreach (System.Windows.Forms.DataVisualization.Charting.Series s in chrtPopulation.Series)
+                    {
+                        s.Points.Clear();
+                    }
 
                     for (int i = 0; i < mCurrentDay; i++)
                     {
@@ -287,20 +310,27 @@ namespace SimpleRPGAnalyser
                         List<Animal> died = Animal.getAnimalsDiedOn(i);
                         double starvation = 0;
                         double oldAge = 0;
+                        double killed = 0;
                         for (int j = 0; j < died.Count; j++)
                         {
                             string d = died[j].deathby;
-                            if (d[0] == 'S' || d[0] == 's')
+                            char c = d[0];
+                            if (c == 'S' || c == 's')
                             {
                                 starvation += 1;
                             }
-                            else if (d[0] == 'O' || d[0] == 'o')
+                            else if (c == 'O' ||c == 'o')
                             {
                                 oldAge += 1;
+                            }
+                            else if (c == 'K' || c == 'k')
+                            {
+                                killed += 1;
                             }
                         }
                         chrtPopulation.Series[1].Points.AddY(starvation);
                         chrtPopulation.Series[2].Points.AddY(oldAge);
+                        chrtPopulation.Series[3].Points.AddY(killed);
                     }
                 }
 
@@ -336,8 +366,31 @@ namespace SimpleRPGAnalyser
             {
                 mMapTotal.Dispose();
             }
-            mMapTotal = new Bitmap(mMapImg);
+            mMapTotal = new Bitmap(width, height);
+
+            ImageAttributes imageAttrs = new ImageAttributes();
+
+            float[][] colorMatrixElements = { 
+                new float[] {1,  0,  0,  0, 0},        // red scaling factor of 2
+                new float[] {0,  1,  0,  0, 0},        // green scaling factor of 1
+                new float[] {0,  0,  1,  0, 0},        // blue scaling factor of 1
+                new float[] {0,  0,  0,.25f, 0},        // alpha scaling factor of 1
+                new float[] {0,  0,  0,  0, 1}};    // three translations of 0.2
+
+            ColorMatrix colorMatrix = new ColorMatrix(colorMatrixElements);
+
+            imageAttrs.SetColorMatrix(
+                colorMatrix,
+                ColorMatrixFlag.Default,
+                ColorAdjustType.Bitmap);
+
             Graphics g = Graphics.FromImage(mMapTotal);
+            //g.DrawImage(mMapImg, new Point[]{new Point()}, new Rectangle(0, 0, width, height), GraphicsUnit.Display, imageAttrs);
+            g.DrawImage(mMapImg, new Rectangle(0, 0, width, height),
+                0, 0,
+                width, height,
+                GraphicsUnit.Pixel,
+                imageAttrs);
 
             if (mMapOverlay != null)
             {

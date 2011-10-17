@@ -148,6 +148,7 @@ copy "$(ProjectDir)map.txt" "$(OutputPath)"
 copy "$(ProjectDir)map1.txt" "$(OutputPath)"
 copy "$(ProjectDir)map2.txt" "$(OutputPath)"
 copy "$(ProjectDir)map3.txt" "$(OutputPath)"
+copy "$(ProjectDir)map4.txt" "$(OutputPath)"
 copy "$(ProjectDir)names.txt" "$(OutputPath)"
 copy "$(ProjectDir)test.bat" "$(OutputPath)"
 copy "$(ProjectDir)config.ini" "$(OutputPath)"</Command>

@@ -66,6 +66,17 @@ bool autoQuit = false;
 int timeScale = 1;
 int maxDays = -1;
 
+string titleBase = "Alan Lawrey's SimpleRPG 2011";
+
+void updateTitle(string filename)
+{
+	string total = titleBase + ' ' + filename;
+#if _DEBUG_RPG
+	total = "Debug " + total;
+#endif
+	SetConsoleTitle(total.c_str());
+}
+
 Game *startGame(string filename)
 {
 	Game *game = new Game(windowWidth, windowHeight);
@@ -79,6 +90,8 @@ Game *startGame(string filename)
 	loadText.render();
 	wrefresh(mainMenuWnd);
 
+	updateTitle("Loading: " + filename + "...");
+
 	game->loadMap(filename);
 	if(game->getMap() == NULL)
 	{
@@ -86,6 +99,8 @@ Game *startGame(string filename)
 		getchar();
 		return NULL;
 	}
+
+	updateTitle(filename);
 
 	game->setAutoQuit(autoQuit);
 	game->setTimeScale(timeScale);
@@ -287,6 +302,8 @@ int main(int argc, char **argv)
 {
 	ofstream logfile("logfile.log");
 	clog.rdbuf(logfile.rdbuf());
+
+	updateTitle("");
 
 	clog << "Starting log file." << endl;
 

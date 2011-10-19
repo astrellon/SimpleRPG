@@ -41,13 +41,17 @@ namespace SimpleRPGAnalyser
             return list;
         }
 
-        public static List<Animal> getAnimalsAliveOn(int day)
+        public static List<Animal> getAnimalsAliveOn(int day, string species = null)
         {
             List<Animal> list = new List<Animal>();
 
             foreach (KeyValuePair<int, Animal> pair in Animals)
             {
                 Animal a = pair.Value;
+                if (species != null && a.species != species)
+                {
+                    continue;
+                }
                 int birth = (int)Math.Floor(a.birthtime / Analyser.mDayLength);
                 int death = (int)Math.Floor(a.deathtime / Analyser.mDayLength);
                 if (birth <= day && (death >= day || death < 0.1))

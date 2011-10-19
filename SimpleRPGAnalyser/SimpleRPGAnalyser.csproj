@@ -76,6 +76,8 @@
     </Compile>
     <Compile Include="Animal.cs" />
     <Compile Include="AnimalSorter.cs" />
+    <Compile Include="Vector2i.cs" />
+    <Compile Include="DayEvents.cs" />
     <Compile Include="Destination.cs" />
     <Compile Include="ILoadable.cs" />
     <Compile Include="KeyPair.cs" />

@@ -34,6 +34,7 @@
             System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.Windows.Forms.DataVisualization.Charting.Title title1 = new System.Windows.Forms.DataVisualization.Charting.Title();
             System.Windows.Forms.DataVisualization.Charting.Title title2 = new System.Windows.Forms.DataVisualization.Charting.Title();
             System.Windows.Forms.DataVisualization.Charting.Title title3 = new System.Windows.Forms.DataVisualization.Charting.Title();
@@ -57,7 +58,6 @@
             this.trcDay = new System.Windows.Forms.TrackBar();
             this.picMain = new System.Windows.Forms.PictureBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.lstPopulations = new System.Windows.Forms.ListBox();
             this.chrtPopulation = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -246,6 +246,7 @@
             this.picMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
+            this.picMain.BackColor = System.Drawing.Color.Black;
             this.picMain.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.picMain.Location = new System.Drawing.Point(6, 6);
             this.picMain.Name = "picMain";
@@ -256,7 +257,6 @@
             // 
             // tabPage3
             // 
-            this.tabPage3.Controls.Add(this.lstPopulations);
             this.tabPage3.Controls.Add(this.chrtPopulation);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
@@ -265,22 +265,6 @@
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Timeline";
             this.tabPage3.UseVisualStyleBackColor = true;
-            // 
-            // lstPopulations
-            // 
-            this.lstPopulations.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.lstPopulations.FormattingEnabled = true;
-            this.lstPopulations.Items.AddRange(new object[] {
-            "hello",
-            "there",
-            "how",
-            "are",
-            "you"});
-            this.lstPopulations.Location = new System.Drawing.Point(548, 6);
-            this.lstPopulations.Name = "lstPopulations";
-            this.lstPopulations.Size = new System.Drawing.Size(157, 485);
-            this.lstPopulations.TabIndex = 5;
             // 
             // chrtPopulation
             // 
@@ -296,23 +280,32 @@
             this.chrtPopulation.Location = new System.Drawing.Point(6, 6);
             this.chrtPopulation.Name = "chrtPopulation";
             series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.StackedColumn;
             series1.EmptyPointStyle.AxisLabel = "Hello";
             series1.Legend = "Legend1";
-            series1.Name = "Population Count";
+            series1.Name = "Rabbit Population";
             series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.StackedColumn;
             series2.Legend = "Legend1";
-            series2.Name = "Death By Starvation";
+            series2.Name = "Wolf Population";
             series3.ChartArea = "ChartArea1";
+            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.StackedColumn;
             series3.Legend = "Legend1";
-            series3.Name = "Death From Old Age";
+            series3.Name = "Death By Starvation";
             series4.ChartArea = "ChartArea1";
+            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.StackedColumn;
             series4.Legend = "Legend1";
-            series4.Name = "Killed";
+            series4.Name = "Death From Old Age";
+            series5.ChartArea = "ChartArea1";
+            series5.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.StackedColumn;
+            series5.Legend = "Legend1";
+            series5.Name = "Killed";
             this.chrtPopulation.Series.Add(series1);
             this.chrtPopulation.Series.Add(series2);
             this.chrtPopulation.Series.Add(series3);
             this.chrtPopulation.Series.Add(series4);
-            this.chrtPopulation.Size = new System.Drawing.Size(536, 493);
+            this.chrtPopulation.Series.Add(series5);
+            this.chrtPopulation.Size = new System.Drawing.Size(699, 493);
             this.chrtPopulation.TabIndex = 1;
             this.chrtPopulation.Text = "chart1";
             title1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -385,7 +378,6 @@
         private System.Windows.Forms.ColumnHeader columnHeader7;
         private System.Windows.Forms.DataVisualization.Charting.Chart chrtPopulation;
         private System.Windows.Forms.TrackBar trcDay;
-        private System.Windows.Forms.ListBox lstPopulations;
     }
 }
 

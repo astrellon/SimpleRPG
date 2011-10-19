@@ -1,7 +1,4 @@
 #include "UIText.h"
-//boost::regex UIText::lineBreakup("(</[^>]*>)|(<[^>]+>)|([^<]+)");
-//boost::regex UIText::lineBreakup("(</?)|(>)|([^(<|>)]+)");
-
 
 UIText::UIText() : UIComponent()
 {
@@ -123,6 +120,9 @@ void UIText::renderRaw(bool nullRender, bool overrideFormat)
 
 		if(c == '\t')
 		{
+			// Make the next x value a multiple of 4.
+			// By rounding down the next lowest value of 4
+			// and then adding 4.
 			x = (x & (~3)) + 4;
 			if(x >= getMaxWidth() && getWordWrap())
 			{
@@ -167,6 +167,8 @@ void UIText::renderRaw(bool nullRender, bool overrideFormat)
 					}
 					if(!overrideFormat)
 					{
+						// If the colour value is greater than 8 then
+						// the colour is brighter bold version.
 						bool bold = (colour & 0x8) > 0;
 						colour = colour & 0x7;
 						pushColour(colour, bold);

@@ -8,6 +8,10 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/math/special_functions/round.hpp>
 
+using boost::math::round;
+using boost::algorithm::iequals;
+using boost::lexical_cast;
+
 #include "Pixel.h"
 #include "GameMath.h"
 #include "IKeyActions.h"
@@ -20,10 +24,6 @@
 
 using std::map;
 
-using boost::math::round;
-using boost::algorithm::iequals;
-using boost::lexical_cast;
-
 // Different properties that can be used during loading/saving.
 // Not all entities will have these.
 enum EntityProperty { ID, FACING, POSITION, DESTINATION, NAME, GRAPHIC, HEALTH,
@@ -34,7 +34,8 @@ enum EntityProperty { ID, FACING, POSITION, DESTINATION, NAME, GRAPHIC, HEALTH,
 	HUNGER_LIMITS, HUNGER_DAMAGE_COOLDOWN, PARENTS, MUTATION_RATE, MUTATION_AMOUNT,
 	ACCUMULATED_ENERGY, AGE, LIFE_EXPECTANCY, BREEDING_AGE, BREEDING_RATE, BIRTHDATE,
 	MATE_FIND_COOLDOWN, FERTILITY, BREEDING_COUNT, DEATHDATE, DEATHTIME, DEATHBY,
-	HUNGER_HEAL_COOLDOWN, LOCAL_POPULATION_MAX, DESIRED_NUM_CHILDREN, CHILDREN };
+	HUNGER_HEAL_COOLDOWN, LOCAL_POPULATION_MAX, DESIRED_NUM_CHILDREN, CHILDREN,
+	BIRTHTIME };
 
 const char *EntityPropertyNames[];
 

@@ -53,8 +53,9 @@ Animal::Animal(Game *game) : GameEntity(game)
 
 	mBirthdate = "0 0";
 	mDeathdate = "0 0";
+	mBirthtime = 0.0f;
 	mDeathtime = -1.0f;
-	mLocalPopulationMax = 8.0f;
+	mLocalPopulationMax = 20.0f;
 	mDeathBy = "Not Dead";
 
 	mMateFindCooldown = 0.0f;
@@ -265,8 +266,10 @@ void Animal::loadProperties(FormattedFileIterator &iter)
 	else loadProp(LIFE_EXPECTANCY, setLifeExpectancy, float)
 	else loadProp(BREEDING_AGE, setBreedingAge, float)
 	else loadProp(DEATHTIME, setDeathtime, float)
+	else loadProp(BIRTHTIME, setBirthtime, float)
 	else loadProp(MATE_FIND_COOLDOWN, setMateFindCooldown, float)
 	else loadProp(FERTILITY, setFertility, float)
+	else loadProp(LOCAL_POPULATION_MAX, setLocalPopulationMax, float)
 	else loadProp(DESIRED_NUM_CHILDREN, setDesiredNumChildren, float)
 
 	else if(iequals(propertyName, EntityPropertyNames[CHILDREN]))
@@ -402,6 +405,7 @@ void Animal::saveProperties(FormattedFile &file)
 	saveProperty(ACCUMULATED_ENERGY, file);
 	saveProperty(AGE, file);
 	saveProperty(BIRTHDATE, file);
+	saveProperty(BIRTHTIME, file);
 	saveProperty(DEATHDATE, file);
 	saveProperty(DEATHTIME, file);
 	saveProperty(DEATHBY, file);
@@ -418,6 +422,7 @@ void Animal::saveProperties(FormattedFile &file)
 	saveProperty(HUNGER_HEAL_COOLDOWN, file);
 	saveProperty(MUTATION_RATE, file);
 	saveProperty(MUTATION_AMOUNT, file);
+	saveProperty(LOCAL_POPULATION_MAX, file);
 	saveProperty(SPECIES_ALIGNMENT, file);
 }
 
@@ -455,6 +460,8 @@ void Animal::saveProperty(const EntityProperty &propertyId, FormattedFile &file)
 	saveProp(MATE_FIND_COOLDOWN, getBreedingRate)
 	saveProp(FERTILITY, getFertility)
 	saveProp(DEATHTIME, getDeathtime)
+	saveProp(BIRTHTIME, getBirthtime)
+	saveProp(LOCAL_POPULATION_MAX, getLocalPopulationMax)
 	saveProp(DESIRED_NUM_CHILDREN, getDesiredNumChildren)
 
 	case CHILDREN:
@@ -919,8 +926,10 @@ void Animal::doActionMove(float dt)
 		// Direct distance between this animal and the target.
 		setWalking(false);
 		
-		double simpleDist = getPosition().sub(action->getLocation()).length();
-		if(simpleDist <= getAttackRange())
+		//double simpleDist = getPosition().sub(action->getLocation()).length();
+		//if(simpleDist <= getAttackRange())
+		bool onSpot = ((Vector2i)getPosition()).equals((Vector2i)action->getLocation());
+		if(onSpot)
 		{
 			action->nextStep();
 		}
@@ -997,16 +1006,20 @@ void Animal::doActionAttack(float dt)
 	{
 		// Direct distance between this animal and the target.
 		setWalking(false);
-		double simpleDist = distanceToEntity(action->getEntity());
-		if(simpleDist <= getAttackRange())
+		//double simpleDist = distanceToEntity(action->getEntity());
+		//if(simpleDist <= getAttackRange())
+		bool onSpot = ((Vector2i)getPosition()).equals((Vector2i)action->getEntity()->getPosition());
+		if(onSpot)
 		{
 			action->nextStep();
 		}
 	}
 	else if(action->getStep() == 1)
 	{
-		double simpleDist = distanceToEntity(action->getEntity());
-		if(simpleDist > getAttackRange())
+		//double simpleDist = distanceToEntity(action->getEntity());
+		//if(simpleDist > getAttackRange())
+		bool onSpot = ((Vector2i)getPosition()).equals((Vector2i)action->getEntity()->getPosition());
+		if(!onSpot)
 		{
 			action->prevStep();
 		}
@@ -1089,17 +1102,21 @@ void Animal::doActionEat(float dt)
 	else if(action->getStep() == 1)
 	{
 		// Direct distance between this animal and the target.
-		double simpleDist = distanceToEntity(action->getEntity());
+		//double simpleDist = distanceToEntity(action->getEntity());
+		bool onSpot = ((Vector2i)getPosition()).equals((Vector2i)action->getEntity()->getPosition());
 		setWalking(action->getEntity()->isDead());
-		if(simpleDist <= getAttackRange())
+		//if(simpleDist <= getAttackRange())
+		if(onSpot)
 		{
 			action->nextStep();
 		}
 	}
 	else if(action->getStep() == 2)
 	{
-		double simpleDist = distanceToEntity(action->getEntity());
-		if(simpleDist >	getAttackRange())
+		//double simpleDist = distanceToEntity(action->getEntity());
+		bool onSpot = ((Vector2i)getPosition()).equals((Vector2i)action->getEntity()->getPosition());
+		//if(simpleDist >	getAttackRange())
+		if(!onSpot)
 		{
 			action->prevStep();
 		}
@@ -1128,8 +1145,10 @@ void Animal::doActionEat(float dt)
 	}
 	else if(action->getStep() == 3)
 	{
-		double simpleDist = distanceToEntity(action->getEntity());
-		if(simpleDist > 1.0f)
+		//double simpleDist = distanceToEntity(action->getEntity());
+		//if(simpleDist > 1.0f)
+		bool onSpot = ((Vector2i)getPosition()).equals((Vector2i)action->getEntity()->getPosition());
+		if(!onSpot)
 		{
 			action->setStep(1);
 			return;
@@ -1157,9 +1176,11 @@ void Animal::doActionEat(float dt)
 	else if(action->getStep() == 4)
 	{
 		// Direct distance between this animal and the target.
-		double simpleDist = action->getLocation().sub(getPosition()).length();
+		//double simpleDist = action->getLocation().sub(getPosition()).length();
 		setWalking(true);
-		if(simpleDist <= 1.0f)
+		//if(simpleDist <= 1.0f)
+		bool onSpot = ((Vector2i)getPosition()).equals((Vector2i)action->getLocation());
+		if(onSpot)
 		{
 			action->nextStep();
 		}
@@ -1167,8 +1188,10 @@ void Animal::doActionEat(float dt)
 	else if(action->getStep() == 5)
 	{
 		Vector2i pos = action->getLocation();
-		double simpleDist = pos.sub(getPosition()).length();
-		if(simpleDist >	getAttackRange())
+		//double simpleDist = pos.sub(getPosition()).length();
+		//if(simpleDist >	getAttackRange())
+		bool onSpot = (pos).equals((Vector2i)action->getLocation());
+		if(!onSpot)
 		{
 			action->setStep(0);
 		}
@@ -1268,8 +1291,10 @@ void Animal::doActionBreed(float dt)
 	{
 		// Direct distance between this animal and the target.
 		setWalking(true);
-		double simpleDist = distanceToEntity(action->getEntity());
-		if(simpleDist <= 1.0f)
+		//double simpleDist = distanceToEntity(action->getEntity());
+		//if(simpleDist <= 1.0f)
+		bool onSpot = ((Vector2i)getPosition()).equals((Vector2i)action->getEntity()->getPosition());
+		if(onSpot)
 		{
 			action->nextStep();
 		}
@@ -1523,6 +1548,7 @@ void Animal::breed(vector<Animal *> &children, Animal *p1, Animal *p2)
 		c->getParent2().setEntity(p2);
 
 		c->setBirthdate(birthdate);
+		c->setBirthtime(p1->mGame->getCurrentTime() + p1->mGame->getCurrentDay() * p1->mGame->getDayLength());
 
 		c->mGraphic = p1->mGraphic;
 
@@ -1629,4 +1655,26 @@ void Animal::getNearbyAnimals(const float &radius, vector<Animal *> &result, str
 			result.push_back(ani);
 		}
 	}
+}
+
+bool Animal::diedToday(int day)
+{
+	if(!isDead())
+	{
+		return false;
+	}
+	float deathtime = getDeathtime();
+	int deathday = (int)(deathtime / mGame->getDayLength());
+	return day == deathday;
+}
+
+bool Animal::bornToday(int day)
+{
+	if(isDead())
+	{
+		return false;
+	}
+	float birthtime = getBirthtime();
+	int birthday = (int)(birthtime / mGame->getDayLength());
+	return day == birthday;
 }

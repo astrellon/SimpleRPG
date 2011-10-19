@@ -53,14 +53,20 @@ typedef struct _folder_entry
 {
 	int index;
 	bool isDir;
+	bool isSrm;
+	bool isLikelySupported;
 	string filename;
+	string ext;
 	string formattedName;
 
-	_folder_entry(int i, bool d, string f, string ff)
+	_folder_entry(int i, bool d, string f, string ff, string e, bool srm, bool likely)
 	{
 		index = i;
 		isDir = d;
 		filename = f;
 		formattedName = ff;
+		ext = e;
+		isSrm = srm;
+		isLikelySupported = likely;
 	}
 } folder_entry;

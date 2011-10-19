@@ -20,6 +20,18 @@ namespace SimpleRPGAnalyser
             graphic = 'x';
         }
 
+        public int fullColour
+        {
+            get
+            {
+                if (bold)
+                {
+                    return colour | 0x8;
+                }
+                return colour;
+            }
+        }
+
         override public string ToString()
         {
             return graphic + "_" + colour.ToString() + '_' + (bold ? '1' : '0');

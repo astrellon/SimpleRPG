@@ -7,6 +7,16 @@ bool sortFolders(folder_entry i, folder_entry j)
 	if(!i.isDir && j.isDir)
 		return false;
 
+	if(i.isSrm && !j.isSrm)
+		return true;
+	if(!i.isSrm && j.isSrm)
+		return false;
+
+	if(i.isLikelySupported && !j.isLikelySupported)
+		return true;
+	if(!i.isLikelySupported && j.isLikelySupported)
+		return false;
+
 	return strcmp(i.filename.c_str(), j.filename.c_str()) < 0;
 }
 
@@ -276,6 +286,7 @@ int main(int argc, char **argv)
 	// a map.
 	string loadFile = "";
 
+	// Read commandline 
 	if(argc >= 2)
 	{
 		int i = 1;
@@ -512,9 +523,17 @@ int main(int argc, char **argv)
 					{
 						mainItem2FileList.scrollSelection(-1);
 					}
+					else if (c == 339)
+					{
+						mainItem2FileList.scrollSelection(-10);
+					}
 					else if (c == 258 || c == 's' || c == '2')
 					{
 						mainItem2FileList.scrollSelection(1);
+					}
+					else if (c == 338)
+					{
+						mainItem2FileList.scrollSelection(10);
 					}
 					// Enter or numpad enter.
 					else if (c == 10 || c == 459)
@@ -554,6 +573,10 @@ int main(int argc, char **argv)
 					else if(c >= 'a' && c <= 'z')
 					{
 						mainItem2FileList.selectNextItem(c);
+					}
+					else if(c >= 'A' && c <= 'Z')
+					{
+						mainItem2FileList.selectPrevItem(c);
 					}
 
 					break;
@@ -629,13 +652,15 @@ int main(int argc, char **argv)
 					currentPathText << "<15>Current path:</> " << currentPath.external_directory_string() << '\n';
 
 					folderEntries.clear();
-					folderEntries.push_back(folder_entry(0, true, "..", ".."));
+					folderEntries.push_back(folder_entry(0, true, "..", "..", "", false, false));
 
 					int i = 1;
 					for(directory_iterator dir_iter(currentPath); dir_iter != end_iter; ++dir_iter)
 					{
 						string ext = extension(*dir_iter);					
-						if(is_directory(*dir_iter) || iequals(ext, ".txt") || iequals(ext, ".out") || iequals(ext, ".map"))
+						bool isSrm = iequals(ext, ".srm");
+						bool likelySupported = iequals(ext, ".txt") || iequals(ext, ".out") || iequals(ext, ".map");
+						//if(is_directory(*dir_iter) || likelySupported || isSrm)
 						{
 							string filename = (*dir_iter).filename();
 
@@ -646,8 +671,16 @@ int main(int argc, char **argv)
 								dir = true;
 								formatted = "<12>" + filename + "</>";
 							}
+							else if(isSrm)
+							{
+								formatted = "<15>" + filename + "</>";
+							}
+							else if(!likelySupported)
+							{
+								formatted = "<8>" + filename + "</>";
+							}
 
-							folderEntries.push_back(folder_entry(i++, dir, filename, formatted));
+							folderEntries.push_back(folder_entry(i++, dir, filename, formatted, ext, isSrm, likelySupported));
 						}
 					}
 					

@@ -19,6 +19,7 @@ public:
 	virtual bool getWrapSelection() { return mWrapSelection; }
 
 	virtual void selectNextItem(char c);
+	virtual void selectPrevItem(char c);
 
 	virtual UIComponent *getSelectedItem();
 

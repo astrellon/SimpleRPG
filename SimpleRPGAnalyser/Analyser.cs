@@ -10,6 +10,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using System.IO;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace SimpleRPGAnalyser
 {
@@ -19,11 +20,15 @@ namespace SimpleRPGAnalyser
         private Color[] mColors = { Color.Green, Color.PaleGreen, Color.LightGreen, Color.ForestGreen, Color.BurlyWood, 
                                     Color.SandyBrown, Color.LightBlue, Color.Blue, Color.Gray, Color.LightGray, Color.DarkGreen, Color.DarkRed,
                                     Color.Cyan, Color.LightSeaGreen, Color.LawnGreen, Color.LimeGreen };
+
+        private Color[] mColourList = { Color.Black, Color.DarkBlue, Color.DarkGreen, Color.DarkCyan, Color.DarkRed, Color.DarkMagenta, Color.Tan, Color.LightGray,
+                                        Color.DarkGray, Color.Blue, Color.Green, Color.Cyan, Color.Red, Color.Magenta, Color.Yellow, Color.White };    
         private List<string> mMapList;
         private Dictionary<Color, char> mTileMap = new Dictionary<Color, char>();
         private Dictionary<char, Color> mColourMap = new Dictionary<char, Color>();
         private Dictionary<string, PopulationStat> mPopulations = new Dictionary<string, PopulationStat>();
-        private List<List<Vector2f>> mLocationHistory = new List<List<Vector2f>>();
+        //private List<List<Vector2f>> mLocationHistory = new List<List<Vector2f>>();
+        private List<DayEvents> mHistory = new List<DayEvents>();
 
         private Bitmap mMapImg = null;
         private Bitmap mMapOverlay = null;
@@ -49,7 +54,7 @@ namespace SimpleRPGAnalyser
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
-                openFileDialog.Filter = "Map files |*.txt;*.out| All files |*.*";
+                openFileDialog.Filter = "Map files |*.txt;*.out;*.map;*.srm| All files |*.*";
                 openFileDialog.FilterIndex = 1;
                 openFileDialog.RestoreDirectory = true;
 
@@ -84,8 +89,7 @@ namespace SimpleRPGAnalyser
                     }
                     mPopulations.Clear();
 
-                    mLocationHistory.Clear();
-                    lstPopulations.Items.Clear();
+                    mHistory.Clear();
                     mPopulations.Clear();
                     mColourCount = 0;
                     mCharCount = 0;
@@ -248,22 +252,13 @@ namespace SimpleRPGAnalyser
                                     }
                                 }
                             }
-                            else if (state.Equals("locationhistory", StringComparison.CurrentCultureIgnoreCase))
+                            else if (state.Equals("history", StringComparison.CurrentCultureIgnoreCase))
                             {
-                                if (line == "begin")
+                                if (line.Equals("DayEvent", StringComparison.CurrentCultureIgnoreCase))
                                 {
-                                    List<Vector2f> list = new List<Vector2f>();
-                                    mLocationHistory.Add(list);
-                                    i++;
-                                    line = cc[i];
-                                    while (line != "end")
-                                    {
-                                        float x = float.Parse(line); i++;
-                                        line = cc[i];
-                                        float y = float.Parse(line); i++;
-                                        line = cc[i];
-                                        list.Add(new Vector2f(x, y));
-                                    }
+                                    DayEvents day = new DayEvents();
+                                    day.load(ref cc, ref i);
+                                    mHistory.Add(day);
                                 }
                             }
                             else
@@ -290,50 +285,59 @@ namespace SimpleRPGAnalyser
                         }
                     }
 
-                    foreach (KeyValuePair<string, PopulationStat> pair in mPopulations)
-                    {
-                        lstPopulations.Items.Add(pair.Key + ": " + pair.Value.alive.ToString() + ", " + pair.Value.dead.ToString());
-                    }
-
-                    trcDay.Maximum = mLocationHistory.Count - 1;
+                    trcDay.Maximum = mHistory.Count - 1;
 
                     tabPage1.Invalidate();
 
-                    foreach (System.Windows.Forms.DataVisualization.Charting.Series s in chrtPopulation.Series)
+                    chrtPopulation.Series.Clear();
+
+                    List<string> species = new List<string>();
+
+                    foreach (KeyValuePair<string, bool> pair in DayEvents.ALL_SPECIES)
                     {
-                        s.Points.Clear();
+                        species.Add(pair.Key);
+                    }
+
+                    species.Sort();
+
+                    foreach (string s in species)
+                    {
+                        Series series = new Series("Population " + s);
+                        series.ChartType = SeriesChartType.StackedColumn;
+                        chrtPopulation.Series.Add(series);
+                    }
+
+                    foreach (string s in species)
+                    {
+                        Series series = new Series("Births " + s);
+                        series.ChartType = SeriesChartType.StackedColumn;
+                        chrtPopulation.Series.Add(series);
+                    }
+
+                    foreach (string s in species)
+                    {
+                        Series series = new Series("Deaths " + s);
+                        series.ChartType = SeriesChartType.StackedColumn;
+                        chrtPopulation.Series.Add(series);
                     }
 
                     for (int i = 0; i < mCurrentDay; i++)
                     {
-                        chrtPopulation.Series[0].Points.AddY((double)(Animal.getAnimalsAliveOn(i).Count));
-                        List<Animal> died = Animal.getAnimalsDiedOn(i);
-                        double starvation = 0;
-                        double oldAge = 0;
-                        double killed = 0;
-                        for (int j = 0; j < died.Count; j++)
+                        int j = 0;
+                        foreach (string s in species)
                         {
-                            string d = died[j].deathby;
-                            char c = d[0];
-                            if (c == 'S' || c == 's')
-                            {
-                                starvation += 1;
-                            }
-                            else if (c == 'O' ||c == 'o')
-                            {
-                                oldAge += 1;
-                            }
-                            else if (c == 'K' || c == 'k')
-                            {
-                                killed += 1;
-                            }
+                            chrtPopulation.Series[j++].Points.AddY((double)mHistory[i].getPopulation(s));
                         }
-                        chrtPopulation.Series[1].Points.AddY(starvation);
-                        chrtPopulation.Series[2].Points.AddY(oldAge);
-                        chrtPopulation.Series[3].Points.AddY(killed);
+                        foreach (string s in species)
+                        {
+                            chrtPopulation.Series[j++].Points.AddY((double)mHistory[i].getBirths(s));
+                        }
+                        foreach (string s in species)
+                        {
+                            chrtPopulation.Series[j++].Points.AddY((double)mHistory[i].getTotalDeaths(s));
+                        }
                     }
                 }
-
             }
         }
 
@@ -410,12 +414,12 @@ namespace SimpleRPGAnalyser
             }
             mMapOverlay = new Bitmap(width, height);
 
-            List<Vector2f> list = mLocationHistory[day];
-            foreach (Vector2f p in list)
+            DayEvents dayEvent = mHistory[day];
+            foreach (Location location in dayEvent.locations)
             {
-                int x = (int)Math.Round(p.x);
-                int y = (int)Math.Round(p.y);
-                mMapOverlay.SetPixel(x, y, invertColor(mMapImg.GetPixel(x, y)));
+                int x = location.position.x;
+                int y = location.position.y;
+                mMapOverlay.SetPixel(x, y, mColourList[Animal.Animals[location.id].graphic.fullColour]);
             }
         }
 

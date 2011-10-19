@@ -41,7 +41,7 @@ namespace SimpleRPGMapEditor
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
-                openFileDialog.Filter = "All Supported |*.bmp;*.jpg;*.png;*.txt|Images files |*.bmp;*.jpg;*.png|Map files |*.txt| All files |*.*";
+                openFileDialog.Filter = "All Supported |*.bmp;*.jpg;*.png;*.txt;*.out;*.map;*.srm|Images files |*.bmp;*.jpg;*.png|Map files |*.txt;*.out;*.map;*.srm| All files |*.*";
                 openFileDialog.FilterIndex = 1;
                 openFileDialog.RestoreDirectory = true;
 

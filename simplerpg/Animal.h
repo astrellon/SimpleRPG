@@ -55,8 +55,6 @@ public:
 	inline float getWalkingSpeedBase() { return mWalkingSpeed; }
 	inline void  setWalkingSpeedBase(float speed) { mWalkingSpeed = speed; }
 
-	
-
 	inline bool  getWalking() { return mWalking; }
 	inline void  setWalking(bool walking) { mWalking = walking; }
 
@@ -145,6 +143,8 @@ public:
 
 	void  killAnimal();
 	bool  isDead() { return mHealth <= 0.0f; }
+	bool  diedToday(int day);
+	bool  bornToday(int day);
 
 	float getSpeciesAlignment(GameEntity *entity);
 	float getSpeciesAlignment(const string &species);
@@ -201,6 +201,9 @@ public:
 
 	float getDeathtime() { return mDeathtime ; }
 	void  setDeathtime(float time) { mDeathtime = time; }
+
+	float getBirthtime() { return mBirthtime ; }
+	void  setBirthtime(float time) { mBirthtime = time; }
 
 	float getLocalPopulationMax() { return mLocalPopulationMax; }
 	void  setLocalPopulationMax(float population) { mLocalPopulationMax = population; }
@@ -301,7 +304,7 @@ protected:
 
 	string mBirthdate;
 	string mDeathdate;
-
+	float mBirthtime;
 	float mDeathtime;
 	
 	virtual float calculateKcalPerDay();

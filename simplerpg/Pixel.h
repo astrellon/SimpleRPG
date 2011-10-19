@@ -33,6 +33,17 @@ public:
 			mColour = colour;
 	}
 
+	inline int getFullColour() 
+	{
+		int colour = getColour();
+		if (bold)
+		{
+			colour |= 0x8;
+		}
+	
+		return colour;
+	}
+
 	inline void render(WINDOW *wnd, int x, int y)
 	{
 		if(bold)

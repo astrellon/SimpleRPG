@@ -38,6 +38,38 @@ void UISelector::selectNextItem(char c)
 		}
 		i++;
 	}
+
+	updateScroll();
+}
+
+void UISelector::selectPrevItem(char c)
+{
+	if(mChildren.empty())
+	{
+		return;
+	}
+	int i = mSelectedIndex - 1;
+	c = tolower(c);
+	while(i != mSelectedIndex)
+	{
+		if(i < 0)
+		{
+			i = mChildren.size() - 1;
+		}
+		UIText *text = dynamic_cast<UIText *>(mChildren[i]);
+		if(text != NULL)
+		{
+			char f = tolower(text->getFirstUnformatted());
+			if(c == f)
+			{
+				mSelectedIndex = i;
+				break;
+			}
+		}
+		i--;
+	}
+
+	updateScroll();
 }
 
 void UISelector::renderChild(UIComponent *child, int childIndex, bool overrideFormat)

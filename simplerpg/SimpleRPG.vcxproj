@@ -82,9 +82,7 @@
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)pdcurses.dll" "$(OutputPath)"
 copy "$(ProjectDir)map.txt" "$(OutputPath)"
-copy "$(ProjectDir)map1.txt" "$(OutputPath)"
-copy "$(ProjectDir)map2.txt" "$(OutputPath)"
-copy "$(ProjectDir)map3.txt" "$(OutputPath)"
+copy "$(ProjectDir)*.srm" "$(OutputPath)"
 copy "$(ProjectDir)names.txt" "$(OutputPath)"
 copy "$(ProjectDir)test.bat" "$(OutputPath)"
 copy "$(ProjectDir)config.ini" "$(OutputPath)"</Command>
@@ -113,9 +111,7 @@ copy "$(ProjectDir)config.ini" "$(OutputPath)"</Command>
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)pdcurses.dll" "$(OutputPath)"
 copy "$(ProjectDir)map.txt" "$(OutputPath)"
-copy "$(ProjectDir)map1.txt" "$(OutputPath)"
-copy "$(ProjectDir)map2.txt" "$(OutputPath)"
-copy "$(ProjectDir)map3.txt" "$(OutputPath)"
+copy "$(ProjectDir)*.srm" "$(OutputPath)"
 copy "$(ProjectDir)names.txt" "$(OutputPath)"
 copy "$(ProjectDir)test.bat" "$(OutputPath)"
 copy "$(ProjectDir)config.ini" "$(OutputPath)"</Command>
@@ -145,10 +141,7 @@ copy "$(ProjectDir)config.ini" "$(OutputPath)"</Command>
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)pdcurses.dll" "$(OutputPath)"
 copy "$(ProjectDir)map.txt" "$(OutputPath)"
-copy "$(ProjectDir)map1.txt" "$(OutputPath)"
-copy "$(ProjectDir)map2.txt" "$(OutputPath)"
-copy "$(ProjectDir)map3.txt" "$(OutputPath)"
-copy "$(ProjectDir)map4.txt" "$(OutputPath)"
+copy "$(ProjectDir)*.srm" "$(OutputPath)"
 copy "$(ProjectDir)names.txt" "$(OutputPath)"
 copy "$(ProjectDir)test.bat" "$(OutputPath)"
 copy "$(ProjectDir)config.ini" "$(OutputPath)"</Command>
@@ -163,6 +156,7 @@ copy "$(ProjectDir)config.ini" "$(OutputPath)"</Command>
     <ClCompile Include="ActionFactory.cpp" />
     <ClCompile Include="Animal.cpp" />
     <ClCompile Include="AStarNode.cpp" />
+    <ClCompile Include="DayEvents.cpp" />
     <ClCompile Include="Debug.cpp" />
     <ClCompile Include="Destination.cpp" />
     <ClCompile Include="FormattedFile.cpp" />
@@ -190,6 +184,7 @@ copy "$(ProjectDir)config.ini" "$(OutputPath)"</Command>
   <ItemGroup>
     <ClInclude Include="ActionFactory.h" />
     <ClInclude Include="Animal.h" />
+    <ClInclude Include="DayEvents.h" />
     <ClInclude Include="GameEntityRef.h" />
     <ClInclude Include="AStarNode.h" />
     <ClInclude Include="Debug.h" />

@@ -18,6 +18,7 @@
 #include "IKeyActions.h"
 #include "FormattedFile.h"
 #include "FormattedFileIterator.h"
+#include "DayEvents.h"
 
 #include "ui/ui.hpp"
 
@@ -280,6 +281,7 @@ protected:
 	vector<TileData *> mActiveTiles;
 	
 	vector< vector<Vector2i> *> mLocationHistory;
+	vector<DayEvents *> mHistory;
 
 	vector<string> mListOfNames;
 

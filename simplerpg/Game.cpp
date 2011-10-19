@@ -932,12 +932,42 @@ void Game::update(float dt)
 
 	if(previousDay < mCurrentDay)
 	{
-		vector<Vector2i> *list = new vector<Vector2i>();
+		DayEvents *dayEvent = new DayEvents(previousDay);
 		for(EntityList::iterator iter = mEntities.begin(); iter != mEntities.end(); ++iter)
 		{
-			list->push_back((*iter)->getPosition());
+			GameEntity *entity = *iter;
+			Location *location = new Location();
+			location->position = entity->getPosition();
+			location->id = entity->getId();
+			
+			dayEvent->locations.push_back(location);
+
+			Animal *animal = dynamic_cast<Animal *>(entity);
+			if(animal == NULL)
+			{
+				continue;
+			}
+
+			string species = animal->getSpecies();
+
+			if(animal->diedToday(previousDay))
+			{
+				char deathby = animal->getDeathBy()[0];
+				dayEvent->deaths[species][deathby]++;
+			}
+
+			if(animal->bornToday(previousDay))
+			{
+				dayEvent->births[species]++;
+			}
+
+			if(!animal->isDead())
+			{
+				dayEvent->populations[species]++;
+			}
 		}
-		mLocationHistory.push_back(list);
+
+		mHistory.push_back(dayEvent);
 	}
 
 	clock_t start = clock();
@@ -1247,22 +1277,10 @@ Vector2i Game::findClosestTileWithFood(Animal *entity)
 		average.x++;
 	}
 
-	// Gives a biased random number around 0.0 and between -0.5 and 0.5.
-	//float offset = ((math::nextFloat() + math::nextFloat()) * 0.5f - 0.5f) * M_PI * 2;
-	
-	//float facingX = cos(entity->getFacing() + M_PIF * 0.5f + offset); 
-	//float facingY = sin(entity->getFacing() + M_PIF * 0.5f + offset);
-
 	float angle = math::nextFloat() * M_PI * 2;
 	int facingX = round(cos(angle));
 	int facingY = round(sin(angle));
 
-	//Vector2i toAverage(facingX, facingY);
-	//float facingX = 0;
-	//float facingY = 1;
-
-	//clog << entity->getEntityName() << " now going to face " << facingX << ", " << facingY << endl;
-	
 	while(!openList.empty())
 	{
 		Vector2i current = openList.front();
@@ -1297,16 +1315,12 @@ Vector2i Game::findClosestTileWithFood(Animal *entity)
 			}
 			// Right
 			checkAdjacentTile(current.x + toAverage.x, current.y + toAverage.y, group, openList);
-			//checkAdjacentTile(current.x + toAverage.x, current.y - toAverage.y, openList);
 			// Down
 			checkAdjacentTile(current.x + toAverage.y, current.y - toAverage.x, group, openList);
-			//checkAdjacentTile(current.x - toAverage.y, current.y - toAverage.x, openList);
 			// Left
 			checkAdjacentTile(current.x - toAverage.x, current.y - toAverage.y, group, openList);
-			//checkAdjacentTile(current.x - toAverage.x, current.y + toAverage.y, openList);
 			// Up
 			checkAdjacentTile(current.x - toAverage.y, current.y + toAverage.x, group, openList);
-			//checkAdjacentTile(current.x + toAverage.y, current.y + toAverage.x, openList);
 		}
 	}
 
@@ -1380,24 +1394,12 @@ void Game::saveMap(string filename)
 		(*iter)->saveToFile(file);
 	}
 
-	file << "\n-- LocationHistory\n";
+	file << "\n-- History\n";
 
-	for(vector< vector<Vector2i> *>::iterator iter = mLocationHistory.begin(); iter != mLocationHistory.end(); ++iter)
+	for(vector<DayEvents *>::iterator iter = mHistory.begin(); iter != mHistory.end(); ++iter)
 	{
-		file << "begin\n";
-		file.changeTabLevel(1);
-		vector<Vector2i> *list = *iter;
-
-		for(vector<Vector2i>::iterator locIter = list->begin(); locIter != list->end(); ++locIter)
-		{
-			file << locIter->x << ' ' << locIter->y << "\t";
-		}
-
-		file.changeTabLevel(-1);
-		file << "\nend\n";
+		(*iter)->saveToFile(file);
 	}
-
-	file << "\n-- End";
 	mSaveCounter = 20;
 
 	file.closeFile();
@@ -1421,7 +1423,7 @@ void Game::loadMap(string filename)
 	static const int STATE_MAP_DATA = 6;
 	static const int STATE_TILE_DATA = 7;
 	static const int STATE_REMOVED_ENTITIES = 8;
-	static const int STATE_LOCATION_HISTORY = 9;
+	static const int STATE_HISTORY = 9;
 
 	vector<TileData> tileData;
 	TileData data;
@@ -1436,6 +1438,7 @@ void Game::loadMap(string filename)
 	char c = '\0';
 
 	GameEntity *entity = NULL;
+	DayEvents *dayEvent;
 
 	// Indicates that we want to change the current state of the file loader.
 	bool changeState = false;
@@ -1504,10 +1507,10 @@ void Game::loadMap(string filename)
 				state = STATE_REMOVED_ENTITIES;
 				clog << "Switch to reading removed entities." << endl;
 			}
-			else if(iequals(line, "LocationHistory"))
+			else if(iequals(line, "History"))
 			{
-				state = STATE_LOCATION_HISTORY;
-				clog << "Switch to reading location history." << endl;
+				state = STATE_HISTORY;
+				clog << "Switch to reading history." << endl;
 			}
 			else
 			{
@@ -1591,7 +1594,6 @@ void Game::loadMap(string filename)
 
 				map->analyseMapForGroups();
 				setMap(map);
-				//map->logGroups();
 				break;
 			}
 
@@ -1666,29 +1668,17 @@ void Game::loadMap(string filename)
 			
 			break;
 
-		case STATE_LOCATION_HISTORY:
+		case STATE_HISTORY:
 
 			if(endState)
 			{
-				clog << "End state for location history." << endl;
+				clog << "End state for history." << endl;
 				break;
 			}
 
-			if(iequals(line, "begin"))
-			{
-				vector<Vector2i> *list = new vector<Vector2i>();
-				mLocationHistory.push_back(list);
-				line = *iter;
-				while(!iequals(line, "end"))
-				{
-					float x = lexical_cast<float>(line);	++iter;
-					line = *iter;
-					float y = lexical_cast<float>(line);	++iter;
-					line = *iter;
-					list->push_back(Vector2i(x, y));
-				}
-				++iter;
-			}
+			dayEvent = new DayEvents();
+			dayEvent->loadFromFile(iter);
+			mHistory.push_back(dayEvent);
 
 			break;
 		}

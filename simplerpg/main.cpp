@@ -69,6 +69,16 @@ int maxDays = -1;
 Game *startGame(string filename)
 {
 	Game *game = new Game(windowWidth, windowHeight);
+
+	wclear(mainMenuWnd);
+
+	UIText loadText("<15>Loading: <12>" + filename + "</>...</>");
+	loadText.setX(1);
+	loadText.setY(1);
+	loadText.setWindow(mainMenuWnd);
+	loadText.render();
+	wrefresh(mainMenuWnd);
+
 	game->loadMap(filename);
 	if(game->getMap() == NULL)
 	{

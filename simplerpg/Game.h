@@ -301,6 +301,7 @@ protected:
 
 	void bresenhamLine(float x1, float y1, float x2, float y2, WINDOW *wnd, const char &c, RayResult *result);
 
+
 	static const char *LOOK_FOR_TABLE[];
 
 private:

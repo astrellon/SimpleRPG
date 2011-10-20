@@ -34,10 +34,10 @@
             System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.Windows.Forms.DataVisualization.Charting.Title title1 = new System.Windows.Forms.DataVisualization.Charting.Title();
             System.Windows.Forms.DataVisualization.Charting.Title title2 = new System.Windows.Forms.DataVisualization.Charting.Title();
             System.Windows.Forms.DataVisualization.Charting.Title title3 = new System.Windows.Forms.DataVisualization.Charting.Title();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Analyser));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -58,6 +58,9 @@
             this.trcDay = new System.Windows.Forms.TrackBar();
             this.picMain = new System.Windows.Forms.PictureBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.trcTimeline = new System.Windows.Forms.TrackBar();
+            this.lstPopulations = new System.Windows.Forms.ListBox();
+            this.chkNormalisePopulations = new System.Windows.Forms.CheckBox();
             this.chrtPopulation = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -71,6 +74,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.trcDay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picMain)).BeginInit();
             this.tabPage3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trcTimeline)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chrtPopulation)).BeginInit();
             this.SuspendLayout();
             // 
@@ -210,10 +214,10 @@
             this.picGraph.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.picGraph.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.picGraph.Location = new System.Drawing.Point(3, 3);
+            this.picGraph.Location = new System.Drawing.Point(10, 10);
+            this.picGraph.Margin = new System.Windows.Forms.Padding(10);
             this.picGraph.Name = "picGraph";
-            this.picGraph.Size = new System.Drawing.Size(699, 240);
+            this.picGraph.Size = new System.Drawing.Size(685, 226);
             this.picGraph.TabIndex = 0;
             this.picGraph.TabStop = false;
             this.picGraph.Paint += new System.Windows.Forms.PaintEventHandler(this.picGraph_Paint);
@@ -257,6 +261,9 @@
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.trcTimeline);
+            this.tabPage3.Controls.Add(this.lstPopulations);
+            this.tabPage3.Controls.Add(this.chkNormalisePopulations);
             this.tabPage3.Controls.Add(this.chrtPopulation);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
@@ -266,6 +273,40 @@
             this.tabPage3.Text = "Timeline";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
+            // trcTimeline
+            // 
+            this.trcTimeline.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.trcTimeline.BackColor = System.Drawing.SystemColors.Window;
+            this.trcTimeline.Location = new System.Drawing.Point(174, 479);
+            this.trcTimeline.Minimum = -1;
+            this.trcTimeline.Name = "trcTimeline";
+            this.trcTimeline.Size = new System.Drawing.Size(367, 45);
+            this.trcTimeline.TabIndex = 4;
+            this.trcTimeline.Scroll += new System.EventHandler(this.trcTimeline_Scroll);
+            // 
+            // lstPopulations
+            // 
+            this.lstPopulations.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.lstPopulations.FormattingEnabled = true;
+            this.lstPopulations.Location = new System.Drawing.Point(547, 6);
+            this.lstPopulations.Name = "lstPopulations";
+            this.lstPopulations.Size = new System.Drawing.Size(158, 485);
+            this.lstPopulations.TabIndex = 3;
+            // 
+            // chkNormalisePopulations
+            // 
+            this.chkNormalisePopulations.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkNormalisePopulations.AutoSize = true;
+            this.chkNormalisePopulations.Location = new System.Drawing.Point(7, 479);
+            this.chkNormalisePopulations.Name = "chkNormalisePopulations";
+            this.chkNormalisePopulations.Size = new System.Drawing.Size(161, 17);
+            this.chkNormalisePopulations.TabIndex = 2;
+            this.chkNormalisePopulations.Text = "Normalise Population Counts";
+            this.chkNormalisePopulations.UseVisualStyleBackColor = true;
+            this.chkNormalisePopulations.CheckedChanged += new System.EventHandler(this.chkNormalisePopulations_CheckedChanged);
+            // 
             // chrtPopulation
             // 
             this.chrtPopulation.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
@@ -273,6 +314,7 @@
                         | System.Windows.Forms.AnchorStyles.Right)));
             chartArea1.Name = "ChartArea1";
             this.chrtPopulation.ChartAreas.Add(chartArea1);
+            this.chrtPopulation.Cursor = System.Windows.Forms.Cursors.Arrow;
             legend1.Alignment = System.Drawing.StringAlignment.Center;
             legend1.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom;
             legend1.Name = "Legend1";
@@ -280,32 +322,27 @@
             this.chrtPopulation.Location = new System.Drawing.Point(6, 6);
             this.chrtPopulation.Name = "chrtPopulation";
             series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.StackedColumn;
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
             series1.EmptyPointStyle.AxisLabel = "Hello";
             series1.Legend = "Legend1";
             series1.Name = "Rabbit Population";
             series2.ChartArea = "ChartArea1";
-            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.StackedColumn;
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
             series2.Legend = "Legend1";
-            series2.Name = "Wolf Population";
+            series2.Name = "Death By Starvation";
             series3.ChartArea = "ChartArea1";
-            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.StackedColumn;
+            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
             series3.Legend = "Legend1";
-            series3.Name = "Death By Starvation";
+            series3.Name = "Wolf Population";
             series4.ChartArea = "ChartArea1";
-            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.StackedColumn;
+            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
             series4.Legend = "Legend1";
             series4.Name = "Death From Old Age";
-            series5.ChartArea = "ChartArea1";
-            series5.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.StackedColumn;
-            series5.Legend = "Legend1";
-            series5.Name = "Killed";
             this.chrtPopulation.Series.Add(series1);
             this.chrtPopulation.Series.Add(series2);
             this.chrtPopulation.Series.Add(series3);
             this.chrtPopulation.Series.Add(series4);
-            this.chrtPopulation.Series.Add(series5);
-            this.chrtPopulation.Size = new System.Drawing.Size(699, 493);
+            this.chrtPopulation.Size = new System.Drawing.Size(535, 466);
             this.chrtPopulation.TabIndex = 1;
             this.chrtPopulation.Text = "chart1";
             title1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -332,6 +369,7 @@
             this.ClientSize = new System.Drawing.Size(743, 570);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.menuStrip1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Analyser";
             this.Text = "SimpleRPG Analyer";
@@ -349,6 +387,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.trcDay)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picMain)).EndInit();
             this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trcTimeline)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chrtPopulation)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -378,6 +418,9 @@
         private System.Windows.Forms.ColumnHeader columnHeader7;
         private System.Windows.Forms.DataVisualization.Charting.Chart chrtPopulation;
         private System.Windows.Forms.TrackBar trcDay;
+        private System.Windows.Forms.CheckBox chkNormalisePopulations;
+        private System.Windows.Forms.ListBox lstPopulations;
+        private System.Windows.Forms.TrackBar trcTimeline;
     }
 }
 

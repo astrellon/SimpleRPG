@@ -30,6 +30,8 @@ namespace SimpleRPGAnalyser
         //private List<List<Vector2f>> mLocationHistory = new List<List<Vector2f>>();
         private List<DayEvents> mHistory = new List<DayEvents>();
 
+        private Dictionary<char, string> mDeathNames = new Dictionary<char, string>();
+
         private Bitmap mMapImg = null;
         private Bitmap mMapOverlay = null;
         private Bitmap mMapTotal = null;
@@ -41,6 +43,10 @@ namespace SimpleRPGAnalyser
         private float mCurrentTime = 0;
         public static float mDayLength = 600;
 
+        private Series mHighLight;
+
+        public string mTitleBase;
+
         private List<KeyPair> mValues = null;
 
         private enum MapState { UNKNOWN, TILES, MAP, ENTITIES, OPTIONS, TILEDATA, REMOVEDENTITIES, END };
@@ -48,6 +54,17 @@ namespace SimpleRPGAnalyser
         public Analyser()
         {
             InitializeComponent();
+
+            mDeathNames['o'] = mDeathNames['O'] = "Old Age";
+            mDeathNames['k'] = mDeathNames['K'] = "Killed";
+            mDeathNames['s'] = mDeathNames['S'] = "Starvation";
+
+            mTitleBase = this.Text;
+        }
+
+        public void updateTitle(string extra)
+        {
+            this.Text = mTitleBase + ": " + extra;
         }
 
         private void loadToolStripMenuItem_Click(object sender, EventArgs e)
@@ -60,6 +77,7 @@ namespace SimpleRPGAnalyser
 
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
+                    updateTitle("Loading " + openFileDialog.FileName + "...");
                     int extIndex = openFileDialog.FileName.LastIndexOf('.');
                     if (extIndex < 0)
                     {
@@ -94,249 +112,285 @@ namespace SimpleRPGAnalyser
                     mColourCount = 0;
                     mCharCount = 0;
 
-                    if (ext.Equals("txt", StringComparison.InvariantCultureIgnoreCase) ||
-                        ext.Equals("out", StringComparison.InvariantCultureIgnoreCase))
+                    Regex fileParse = new Regex("" +
+                        // Multi-line comments.
+                        "(/\\*[^/\\*]*\\*/)|" +
+                        // Single-line comments.
+                        "(//[^\n]*\n)|" +
+                        // Double quoted strings.
+                        "(\"[^\"]*\")|" +
+                        // Single quoted strings.
+                        "('[^']*')|" +
+                        // Everything that's not whitespace.
+                        "(\\S+)");
+
+                    StreamReader streamReader = new StreamReader(openFileDialog.FileName);
+                    string fileText = streamReader.ReadToEnd();
+                    streamReader.Close();
+
+                    bool findState = false;
+                    string endState = null;
+                    string state = "none";
+
+                    Dictionary<string, float> values = new Dictionary<string, float>();
+                    int numAnimals = 0;
+
+                    char tile = '\0';
+
+                    mMapList = new List<string>();
+                    int mapWidth = -1;
+
+                    string[] results = fileParse.Split(fileText);
+                    List<string> cleanedUp = new List<string>();
+
+                    for (int i = 0; i < results.Length; i++)
                     {
-                        Regex fileParse = new Regex("" +
-                            // Multi-line comments.
-                            "(/\\*[^/\\*]*\\*/)|" +
-                            // Single-line comments.
-                            "(//[^\n]*\n)|" +
-                            // Double quoted strings.
-                            "(\"[^\"]*\")|" +
-                            // Single quoted strings.
-                            "('[^']*')|" +
-                            // Everything that's not whitespace.
-                            "(\\S+)");
-
-                        StreamReader streamReader = new StreamReader(openFileDialog.FileName);
-                        string fileText = streamReader.ReadToEnd();
-                        streamReader.Close();
-
-                        bool findState = false;
-                        string endState = null;
-                        string state = "none";
-
-                        Dictionary<string, float> values = new Dictionary<string, float>();
-                        int numAnimals = 0;
-
-                        char tile = '\0';
-
-                        mMapList = new List<string>();
-                        int mapWidth = -1;
-
-                        string[] results = fileParse.Split(fileText);
-                        List<string> cleanedUp = new List<string>();
-
-                        for (int i = 0; i < results.Length; i++)
+                        string line = results[i].Trim();
+                        if (line.Length == 0)
                         {
-                            string line = results[i].Trim();
-                            if (line.Length == 0)
-                            {
-                                continue;
-                            }
-
-                            // Skip comments.
-                            if (line.Length >= 2 & (line[0] == '/' && (line[1] == '/' || line[1] == '*')))
-                            {
-                                continue;
-                            }
-                            cleanedUp.Add(line);
+                            continue;
                         }
 
-                        string [] cc = cleanedUp.ToArray();
-                        for (int i = 0; i < cc.Length; i++)
+                        // Skip comments.
+                        if (line.Length >= 2 & (line[0] == '/' && (line[1] == '/' || line[1] == '*')))
                         {
-                            string line = cc[i];
-                            if (line == "--")
-                            {
-                                findState = true;
-                                continue;
-                            }
+                            continue;
+                        }
+                        cleanedUp.Add(line);
+                    }
 
-                            if (findState)
-                            {
-                                findState = false;
-                                endState = line;
-                            }
+                    string [] cc = cleanedUp.ToArray();
+                    for (int i = 0; i < cc.Length; i++)
+                    {
+                        string line = cc[i];
+                        if (line == "--")
+                        {
+                            findState = true;
+                            continue;
+                        }
 
-                            if (state == null || state.Equals("none", StringComparison.CurrentCultureIgnoreCase) ||
-                                state.Equals("TileData", StringComparison.CurrentCultureIgnoreCase))
-                            {
+                        if (findState)
+                        {
+                            findState = false;
+                            endState = line;
+                        }
 
-                            }
-                            else if (state.Equals("tiles", StringComparison.CurrentCultureIgnoreCase))
+                        if (state == null || state.Equals("none", StringComparison.CurrentCultureIgnoreCase) ||
+                            state.Equals("TileData", StringComparison.CurrentCultureIgnoreCase))
+                        {
+
+                        }
+                        else if (state.Equals("tiles", StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            if (mCharCount < mColors.Length)
                             {
-                                if (mCharCount < mColors.Length)
+                                if (tile == '\0')
                                 {
-                                    if (tile == '\0')
-                                    {
-                                        tile = line[0];
-                                    }
-                                    else
-                                    {
-                                        int t = int.Parse(line);
-                                        if (!mColourMap.ContainsKey(tile))
-                                        {
-                                            Console.WriteLine("Adding char {0} with colour {1}", tile, mColors[t].ToKnownColor().ToString());
-                                            mColourMap[tile] = mColors[t];
-                                            //addColour(mColors[t], tile, true);
-                                            mCharCount++;
-                                            tile = '\0';
-                                        }
-                                    }
-                                }
-                            }
-                            else if (state.Equals("options", StringComparison.CurrentCultureIgnoreCase))
-                            {
-                                switch (line)
-                                {
-                                    case "current_time":
-                                        mCurrentTime = float.Parse(cc[++i]);
-                                        break;
-                                    case "current_day":
-                                        mCurrentDay = int.Parse(cc[++i]);
-                                        break;
-                                    case "day_length":
-                                        mDayLength = float.Parse(cc[++i]);
-                                        break;
-                                    default:
-                                        break;
-                                }
-                            }
-                            else if (state.Equals("map", StringComparison.CurrentCultureIgnoreCase))
-                            {
-                                if (endState != null)
-                                {
-                                    //mMapImg = new Bitmap(mapWidth, mMapList.Count);
-                                    renderImage();
-                                    picMain.Image = mMapTotal;
+                                    tile = line[0];
                                 }
                                 else
                                 {
-                                    if (mMapList.Count == 0)
+                                    int t = int.Parse(line);
+                                    if (!mColourMap.ContainsKey(tile))
                                     {
-                                        mapWidth = line.Length;
-                                    }
-                                    mMapList.Add(line);
-                                }
-                            }
-                            else if (state.Equals("entities", StringComparison.CurrentCultureIgnoreCase) ||
-                                     state.Equals("RemovedEntities", StringComparison.CurrentCultureIgnoreCase))
-                            {
-                                if (line == "Animal")
-                                {
-                                    i++;
-                                    Animal a = new Animal();
-                                    a.load(ref cc, ref i);
-                                    i--;
-                                    //Console.WriteLine("Loaded Animal " + a.LongName);
-                                    string[] subItems = new string[] { a.id.ToString(), a.name, a.species, a.age.ToString(), a.birthdate, a.deathdate, a.deathby };
-                                    ListViewItem item = new ListViewItem(subItems);
-                                    item.Tag = a;
-                                    viewAnimals.Items.Add(item);
-
-                                    string identifier = a.graphic.ToString() + '_' + a.species;
-                                    if (!mPopulations.ContainsKey(identifier))
-                                    {
-                                        mPopulations[identifier] = new PopulationStat();
-                                    }
-
-                                    if (a.isDead)
-                                    {
-                                        mPopulations[identifier].dead++;
-                                    }
-                                    else
-                                    {
-                                        mPopulations[identifier].alive++;
+                                        Console.WriteLine("Adding char {0} with colour {1}", tile, mColors[t].ToKnownColor().ToString());
+                                        mColourMap[tile] = mColors[t];
+                                        //addColour(mColors[t], tile, true);
+                                        mCharCount++;
+                                        tile = '\0';
                                     }
                                 }
                             }
-                            else if (state.Equals("history", StringComparison.CurrentCultureIgnoreCase))
+                        }
+                        else if (state.Equals("options", StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            switch (line)
                             {
-                                if (line.Equals("DayEvent", StringComparison.CurrentCultureIgnoreCase))
-                                {
-                                    DayEvents day = new DayEvents();
-                                    day.load(ref cc, ref i);
-                                    mHistory.Add(day);
-                                }
+                                case "current_time":
+                                    mCurrentTime = float.Parse(cc[++i]);
+                                    break;
+                                case "current_day":
+                                    mCurrentDay = int.Parse(cc[++i]);
+                                    break;
+                                case "day_length":
+                                    mDayLength = float.Parse(cc[++i]);
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                        else if (state.Equals("map", StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            if (endState != null)
+                            {
+                                //mMapImg = new Bitmap(mapWidth, mMapList.Count);
+                                renderImage();
+                                picMain.Image = mMapTotal;
                             }
                             else
                             {
-                                Console.WriteLine("Unknown state {0}", state);
+                                if (mMapList.Count == 0)
+                                {
+                                    mapWidth = line.Length;
+                                }
+                                mMapList.Add(line);
                             }
-
-                            if (endState != null)
+                        }
+                        else if (state.Equals("entities", StringComparison.CurrentCultureIgnoreCase) ||
+                                    state.Equals("RemovedEntities", StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            if (line == "Animal")
                             {
-                                state = endState;
-                                endState = null;
+                                i++;
+                                Animal a = new Animal();
+                                a.load(ref cc, ref i);
+                                i--;
+                                //Console.WriteLine("Loaded Animal " + a.LongName);
+                                string[] subItems = new string[] { a.id.ToString(), a.name, a.species, a.age.ToString(), a.birthdate, a.deathdate, a.deathby };
+                                ListViewItem item = new ListViewItem(subItems);
+                                item.Tag = a;
+                                viewAnimals.Items.Add(item);
+
+                                string identifier = a.graphic.ToString() + '_' + a.species;
+                                if (!mPopulations.ContainsKey(identifier))
+                                {
+                                    mPopulations[identifier] = new PopulationStat();
+                                }
+
+                                if (a.isDead)
+                                {
+                                    mPopulations[identifier].dead++;
+                                }
+                                else
+                                {
+                                    mPopulations[identifier].alive++;
+                                }
                             }
                         }
-                        mValues = new List<KeyPair>();
-                        foreach (KeyValuePair<string, float> pair in values)
+                        else if (state.Equals("history", StringComparison.CurrentCultureIgnoreCase))
                         {
-                            float value = pair.Value / numAnimals;
-                            KeyPair p = new KeyPair(pair.Key, value);
-                            if (pair.Key.Equals("diet", StringComparison.CurrentCultureIgnoreCase))
+                            if (line.Equals("DayEvent", StringComparison.CurrentCultureIgnoreCase))
                             {
-                                p.max = 1.0f;
+                                DayEvents day = new DayEvents();
+                                day.load(ref cc, ref i);
+                                mHistory.Add(day);
                             }
-                            mValues.Add(p);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Unknown state {0}", state);
+                        }
+
+                        if (endState != null)
+                        {
+                            state = endState;
+                            endState = null;
                         }
                     }
-
-                    trcDay.Maximum = mHistory.Count - 1;
-
-                    tabPage1.Invalidate();
-
-                    chrtPopulation.Series.Clear();
-
-                    List<string> species = new List<string>();
-
-                    foreach (KeyValuePair<string, bool> pair in DayEvents.ALL_SPECIES)
+                    mValues = new List<KeyPair>();
+                    foreach (KeyValuePair<string, float> pair in values)
                     {
-                        species.Add(pair.Key);
+                        float value = pair.Value / numAnimals;
+                        KeyPair p = new KeyPair(pair.Key, value);
+                        if (pair.Key.Equals("diet", StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            p.max = 1.0f;
+                        }
+                        mValues.Add(p);
                     }
+                }
 
-                    species.Sort();
+                trcDay.Maximum = mHistory.Count - 1;
+                trcTimeline.Maximum = mHistory.Count - 1;
 
+                tabPage1.Invalidate();
+
+                updateCharts();
+
+                updateTitle(openFileDialog.FileName);
+            }
+        }
+
+        private void updateCharts(bool normalise = false)
+        {
+            chrtPopulation.Series.Clear();
+
+            List<string> species = new List<string>();
+            Dictionary<string, float> maxValues = new Dictionary<string, float>();
+
+            foreach (KeyValuePair<string, bool> pair in DayEvents.ALL_SPECIES)
+            {
+                species.Add(pair.Key);
+            }
+
+            species.Sort();
+
+            if (normalise)
+            {
+                foreach (string s in species)
+                {
+                    maxValues[s] = 0;
+                }
+                for (int i = 0; i < mCurrentDay; i++)
+                {
                     foreach (string s in species)
                     {
-                        Series series = new Series("Population " + s);
-                        series.ChartType = SeriesChartType.StackedColumn;
-                        chrtPopulation.Series.Add(series);
+                        maxValues[s] = Math.Max(maxValues[s], mHistory[i].getPopulation(s));
+                    }
+                }
+            }
+
+            float maxPopValue = 0;
+            string maxPopSpecies = null;
+            foreach (KeyValuePair<string, float> pair in maxValues)
+            {
+                //maxPopValue = Math.Max(value, maxPopValue);
+                if (pair.Value > maxPopValue)
+                {
+                    maxPopValue = pair.Value;
+                    maxPopSpecies = pair.Key;
+                }
+            }
+
+            foreach (string s in species)
+            {
+                Series series = new Series("Population " + s);
+                series.ChartType = SeriesChartType.Line;
+                chrtPopulation.Series.Add(series);
+
+                series = new Series("Births " + s);
+                series.ChartType = SeriesChartType.Line;
+                chrtPopulation.Series.Add(series);
+
+                series = new Series("Deaths " + s);
+                series.ChartType = SeriesChartType.Line;
+                chrtPopulation.Series.Add(series);
+            }
+
+            mHighLight = new Series("Highlight");
+            mHighLight.ChartType = SeriesChartType.Column;
+            mHighLight.Color = Color.FromArgb(0x33000000);
+            chrtPopulation.Series.Add(mHighLight);
+
+            for (int i = 0; i < mCurrentDay; i++)
+            {
+                int j = 0;
+                foreach (string s in species)
+                {
+                    float modifier = 1;
+                    if (maxPopSpecies != s && maxPopSpecies != null)
+                    {
+                        modifier = maxPopValue / maxValues[s];
                     }
 
-                    foreach (string s in species)
-                    {
-                        Series series = new Series("Births " + s);
-                        series.ChartType = SeriesChartType.StackedColumn;
-                        chrtPopulation.Series.Add(series);
-                    }
+                    float v = mHistory[i].getPopulation(s) * modifier;
+                    chrtPopulation.Series[j++].Points.AddXY((double)i, (double)v);
 
-                    foreach (string s in species)
-                    {
-                        Series series = new Series("Deaths " + s);
-                        series.ChartType = SeriesChartType.StackedColumn;
-                        chrtPopulation.Series.Add(series);
-                    }
+                    v = mHistory[i].getBirths(s) * modifier;
+                    chrtPopulation.Series[j++].Points.AddXY((double)i, (double)v);
 
-                    for (int i = 0; i < mCurrentDay; i++)
-                    {
-                        int j = 0;
-                        foreach (string s in species)
-                        {
-                            chrtPopulation.Series[j++].Points.AddY((double)mHistory[i].getPopulation(s));
-                        }
-                        foreach (string s in species)
-                        {
-                            chrtPopulation.Series[j++].Points.AddY((double)mHistory[i].getBirths(s));
-                        }
-                        foreach (string s in species)
-                        {
-                            chrtPopulation.Series[j++].Points.AddY((double)mHistory[i].getTotalDeaths(s));
-                        }
-                    }
+                    v = mHistory[i].getTotalDeaths(s) * modifier;
+                    chrtPopulation.Series[j++].Points.AddXY((double)i, (double)v);
                 }
             }
         }
@@ -586,6 +640,44 @@ namespace SimpleRPGAnalyser
         {
             renderOverlay(trcDay.Value);
             renderImage();
+        }
+
+        private void chkNormalisePopulations_CheckedChanged(object sender, EventArgs e)
+        {
+            updateCharts(chkNormalisePopulations.Checked);
+        }
+
+        private void updatePopulationList(int day)
+        {
+            mHighLight.Points.Clear();
+            lstPopulations.Items.Clear();
+            if (day < 0)
+            {
+                return;
+            }
+            int max = 0;
+            
+            DayEvents dayEvent = mHistory[day];
+            lstPopulations.Items.Add("Day " + day);
+            foreach (KeyValuePair<string, int> s in dayEvent.populations)
+            {
+                max = Math.Max(s.Value, max);
+                lstPopulations.Items.Add(s.Key + " Population: " + s.Value);
+                lstPopulations.Items.Add(s.Key + " Births: " + dayEvent.getBirths(s.Key));
+                if(dayEvent.deaths.ContainsKey(s.Key))
+                {
+                    foreach (KeyValuePair<char, int> pair in dayEvent.deaths[s.Key])
+                    {
+                        lstPopulations.Items.Add(s.Key + " Deaths by " + mDeathNames[pair.Key] + ": " + pair.Value);
+                    }
+                }
+            }
+            mHighLight.Points.AddXY((double)day, (double)max);
+        }
+
+        private void trcTimeline_Scroll(object sender, EventArgs e)
+        {
+            updatePopulationList(trcTimeline.Value);
         }
     }
 }

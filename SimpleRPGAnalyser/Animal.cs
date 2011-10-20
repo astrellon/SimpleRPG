@@ -63,6 +63,15 @@ namespace SimpleRPGAnalyser
             return list;
         }
 
+        private static int sId = 0;
+        public static int nextId
+        {
+            get
+            {
+                return ++sId;
+            }
+        }
+
         public int id;
         public string name = "Johnny Noname";
         public string species = "Nullis";
@@ -177,7 +186,7 @@ namespace SimpleRPGAnalyser
         
         public Animal()
         {
-
+            id = nextId;
         }
 
         public static float convertDate(string date)
@@ -291,6 +300,7 @@ namespace SimpleRPGAnalyser
                     case "id":
                         id = int.Parse(iter[index++]);
                         Animals[id] = this;
+                        sId = Math.Max(id, sId);
                         break;
                     case "name":
                         name = iter[index++];

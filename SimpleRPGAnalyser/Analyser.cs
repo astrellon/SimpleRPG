@@ -372,7 +372,7 @@ namespace SimpleRPGAnalyser
             mHighLight.Color = Color.FromArgb(0x33000000);
             chrtPopulation.Series.Add(mHighLight);
 
-            for (int i = 0; i < mCurrentDay; i++)
+            for (int i = 0; i < mHistory.Count; i++)
             {
                 int j = 0;
                 foreach (string s in species)
@@ -651,7 +651,7 @@ namespace SimpleRPGAnalyser
         {
             mHighLight.Points.Clear();
             lstPopulations.Items.Clear();
-            if (day < 0)
+            if (day < 0 || day >= mHistory.Count)
             {
                 return;
             }

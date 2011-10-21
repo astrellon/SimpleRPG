@@ -325,7 +325,7 @@ int main(int argc, char **argv)
 				i++;
 				if(iequals(cmd, "-s") || iequals(cmd, "-size"))
 				{
-					if(i + 2 >= argc)
+					if(i + 2 > argc)
 					{
 						clog << "Not enough arguments for size command." << endl;
 						break;
@@ -350,7 +350,7 @@ int main(int argc, char **argv)
 				}
 				else if(iequals(cmd, "-t") || iequals(cmd, "-timescale"))
 				{
-					if(i + 1 >= argc)
+					if(i + 1 > argc)
 					{
 						clog << "Not enough arguments for timescale command." << endl;
 						break;
@@ -360,7 +360,7 @@ int main(int argc, char **argv)
 				}
 				else if(iequals(cmd, "-m") || iequals(cmd, "-maxdays"))
 				{
-					if(i + 1 >= argc)
+					if(i + 1 > argc)
 					{
 						clog << "Not enough arguments for maxdays command." << endl;
 						break;
@@ -432,6 +432,21 @@ int main(int argc, char **argv)
 
 	bool paused = false;
 	bool inMainMenu = true;
+
+	/*
+	UIText example("<10>. </><2>, ;</>\n\n"
+		"<10>^ </><2>^ </><10>*</>\n\n"
+		"<4>, </><7># </><15>#</>\n\n"
+		"<11>~ </><9>~ </><1>~</>\n\n"
+		"<6>, ; </><2>|</>\n\n"
+		"<14>r \\< ^ > V</>\n\n"
+		"<12>R \\< ^ > V</>\n\n"
+		"<7>W \\< ^ > V</>\n\n"
+		"<5>X</>");
+	example.setWindow(mainMenuWnd);
+	example.render();
+
+	wrefresh(mainMenuWnd);*/
 
 	// Main menu is setup to be a list and currently each different
 	// menu screen is a different item that is disabled when not

@@ -126,7 +126,7 @@ Game::~Game(void)
 
 void Game::resize(int width, int height)
 {
-	mScreenSize = Rect(0, 0, width - mHudWidth - 1, height);
+	mScreenSize = Rect(mScreenSize.getX(), mScreenSize.getY(), width - mHudWidth - 1, height);
 	mHud.setMaxHeight(height);
 	mHud.setMaxWidth(mHudWidth);
 
@@ -267,66 +267,66 @@ void Game::keyActions(const int key)
 		else if (key == 548)
 			moveCamera(0, 20);
 
-		if (key == 'k')
+		else if (key == 'k')
 		{
 			setCursorMode(true);
 			setGamePaused(true);
 			mMenuLevel = MENU_LOOK;
 		}
 
-		if (key == 'f')
+		else if (key == 'f')
 		{
 			setCursorMode(true);
 			setGamePaused(true);
 			mMenuLevel = MENU_FIND;
 		}
 
-		if (key == 's')
+		else if (key == 's')
 		{
 			saveMap();
 		}
 
-		if (key == 'q')
+		else if (key == 'q')
 		{
 			mMenuLevel = MENU_QUIT;
 			setGamePaused(true);
 		}
 
-		if (key == 'o')
+		else if (key == 'o')
 		{
 			mMenuLevel = MENU_OPTIONS;
 			setGamePaused(true);
 		}
 
-		if (key == 'r')
+		else if (key == 'r')
 		{
 			mMenuLevel = MENU_RAY;
 			setCursorMode(true);
 			setGamePaused(true);
 		}
 
-		if (key == 'n')
+		else if (key == 'n')
 		{
 			mMenuLevel = MENU_NEAR;
 			setCursorMode(true);
 			setGamePaused(true);
 		}
 
-		if (key == 'f')
+		else if (key == 'f')
 		{
 			mMenuLevel = MENU_FOOD;
 			setCursorMode(true);
 			setGamePaused(true);
 		}
 
-		if (key == 'm')
+		else if (key == 'm')
 		{
 			mMenuLevel = MENU_MOVE;
 			setCursorMode(true);
 			setGamePaused(true);
 		}
 
-		if (key == 'e')
+		else if (key == 'e')
 		{
 			mMenuLevel = MENU_SELECTION;
 			setCursorMode(true);
@@ -344,7 +344,7 @@ void Game::keyActions(const int key)
 			mMenuLevel = MENU_MAIN;
 		}
 
-		if(key >= '1' && key <= '9')
+		else if(key >= '1' && key <= '9')
 		{
 			EntityList list = getUnderCursor();
 			int numPressed = key - '1';
@@ -365,7 +365,7 @@ void Game::keyActions(const int key)
 			mMenuLevel = MENU_MAIN;
 		}
 
-		if (key == 'x')
+		else if (key == 'x')
 		{
 			int l = sizeof(LOOK_FOR_TABLE) / sizeof(char*);
 			mLookFor++;
@@ -373,7 +373,7 @@ void Game::keyActions(const int key)
 				mLookFor = 0;
 		}
 
-		if(key == 'f')
+		else if(key == 'f')
 		{
 			mFoundEntity.clear();
 			mFoundEntity = findClosestEntity(mCursor, LOOK_FOR_TABLE[mLookFor]);
@@ -388,14 +388,14 @@ void Game::keyActions(const int key)
 			mGameRunning = false;
 		}
 		
-		if (key == 's')
+		else if (key == 's')
 		{
 			saveMap();
 			// QUIT!.
 			mGameRunning = false;
 		}
 
-		if (key == 'n' || key == 27)
+		else if (key == 'n' || key == 27)
 		{
 			mMenuLevel = MENU_MAIN;
 			setGamePaused(false);
@@ -411,36 +411,36 @@ void Game::keyActions(const int key)
 		}
 
 		// Left
-		if (key == 260)
+		else if (key == 464 || key == 45)
 		{
 			setHudWidth(getHudWidth() - 1);
 		}
 		// Numpad + or =
-		if (key == 465 || key == 61)
+		else if (key == 465 || key == 61)
 		{
 			setHudWidth(getHudWidth() + 1);
 		}
 
-		if (key == ']')
+		else if (key == ']')
 		{
 			setTimeScale(getTimeScale() + 1);
 		}
-		if (key == '[')
+		else if (key == '[')
 		{
 			setTimeScale(getTimeScale() - 1);
 		}
 		// Shift + ]
-		if (key == 125)
+		else if (key == 125)
 		{
 			setTimeScale(getTimeScale() + 10);
 		}
 		// Shift + [
-		if (key == 123)
+		else if (key == 123)
 		{
 			setTimeScale(getTimeScale() - 10);
 		}
 
-		if (key == 'a')
+		else if (key == 'a')
 		{
 			mAutoQuit = !mAutoQuit;
 		}
@@ -457,7 +457,7 @@ void Game::keyActions(const int key)
 		}
 
 		// Left
-		if (key == 'a')
+		else if (key == 'a')
 			mCursorAngle -= 5;
 		// Right
 		else if (key == 'd')
@@ -533,7 +533,7 @@ void Game::keyActions(const int key)
 			mDebugEntity = NULL;
 		}
 
-		if (key == 'x')
+		else if (key == 'x')
 		{
 			mInstantMove = !mInstantMove;
 		}
@@ -649,8 +649,10 @@ void Game::displayActions()
 	vector<GameEntity *> results;
 	TileData *closestFood = NULL;
 	string species = "Rabbit";
-
+	
+#if _DEBUG_RPG
 	mHudText << "<15>Time</>:\t<12>" << mTileTimeFinal << ", " << mEntityTimeFinal << "</>\n\n";
+#endif
 
 	if(getAutoQuit())
 	{
@@ -970,7 +972,9 @@ void Game::update(float dt)
 		mHistory.push_back(dayEvent);
 	}
 
+#if _DEBUG_RPG
 	clock_t start = clock();
+#endif
 
 	int size = (int)mActiveTiles.size();
 	for(int i = 0; i < size; i++)
@@ -985,10 +989,12 @@ void Game::update(float dt)
 		}
 	}
 
+#if _DEBUG_RPG
 	clock_t end = clock();
 	mTileTime += (end - start);
 
 	start = clock();
+#endif
 
 	// Add any new entities.
 	for(EntityList::iterator iter = mNewEntities.begin(); iter != mNewEntities.end(); ++iter)
@@ -1021,6 +1027,7 @@ void Game::update(float dt)
 		mGameRunning = false;
 	}
 
+#if _DEBUG_RPG
 	end = clock();
 	mEntityTime += (end - start);
 
@@ -1032,6 +1039,7 @@ void Game::update(float dt)
 		mTileTime = mEntityTime = 0;
 		mTimeCounter = 0;
 	}
+#endif
 }
 
 void Game::displayUnderCursor()

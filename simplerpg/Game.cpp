@@ -1357,8 +1357,14 @@ void Game::saveMap(string filename)
 	file << "\n-- Tiles\n";
 	for(map<char, Tile *>::iterator iter = tileMap->begin(); iter != tileMap->end(); ++iter)
 	{
-		file << iter->first << ' ' << iter->second->getCode() << '\n';
-		tileLookup[iter->second] = iter->first;
+		Tile *tile = iter->second;
+		file << iter->first << ' ' << tile->getCode() << "\t";
+		if(tile->getCode() < 10)
+		{
+			file << '\t';
+		}
+		file << "// " << tile->getName() << '\n';
+		tileLookup[tile] = iter->first;
 	}
 
 	file << "\n-- Map\n";
@@ -1410,6 +1416,8 @@ void Game::saveMap(string filename)
 	}
 	mSaveCounter = 20;
 
+	file << "\n-- End\n";
+
 	file.closeFile();
 }
 
@@ -1452,8 +1460,9 @@ void Game::loadMap(string filename)
 	bool changeState = false;
 	// Indicates to the state machine that the current state is done, call finish code.
 	bool endState = false;
+	bool atEnd = false;
 
-	while(!iter.atEnd())
+	while(!iter.atEnd() && !atEnd)
 	{
 		string line;
 		if(!endState)
@@ -1544,6 +1553,12 @@ void Game::loadMap(string filename)
 
 			break;
 
+		case STATE_END_OF_FILE:
+
+			atEnd = true;
+
+			break;
+
 		case STATE_OPTIONS:
 
 			if(endState)
@@ -1570,7 +1585,7 @@ void Game::loadMap(string filename)
 			}
 			else
 			{
-				tileMap[c] = Tile::getTile(atoi(line.c_str()));
+				tileMap[c] = Tile::getTile(lexical_cast<int>(line));
 				c = '\0';
 			}
 

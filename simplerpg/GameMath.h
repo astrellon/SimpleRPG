@@ -14,8 +14,6 @@ using namespace std;
 #define M_PI 3.1415926535897932384626433832795
 #endif
 
-#define CONST_A 10.0f / 2.5f
-
 namespace math
 {
 	inline float nextFloat()
@@ -35,11 +33,6 @@ namespace math
 			return (x - min) / (mid - min);
 		}
 		return (x - max) / (mid - max);
-	}
-
-	inline double distG(const double &x)
-	{
-		return 0.5;
 	}
 
 	float nextDist(const float &min, const float &max, const float &mid);

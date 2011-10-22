@@ -6,18 +6,18 @@ current_day 0
 day_length 600
 
 -- Tiles
-# 4
-, 2
-. 0
-; 5
-^ 1
-~ 6
-* 7
-R 8
-r 9
-T 10
-d 11
-w 12
+# 4		// Fence
+, 2     // Deep water
+. 0     // Grass
+; 5     // Short grass
+^ 1     // Sand
+~ 6     // Stone
+* 7     // Thick Trees
+R 8     // Trees
+r 9     // Dirt
+T 10    // Lime Stone
+d 11    // Shallow water
+w 12    // Water
 
 
 -- Map
@@ -29,10 +29,10 @@ RdRdr^.^^....^.^^,,,,,^^TR
 Rdddr.....^^...^,,,,,^^TTR
 Rrrrr..ww~~~~^.,,,,,,^^TTR
 Rdddr.w~***~~w.,,,,,,,^^TR
-Rdwwww~*****~w..,,,,#d###R
+Rdwwww~*****~w..,,,,rdrrrR
 Rdw~*****~~w....^,,,dddddR
-R..ww~~~ww...~~TT^,;#ddddR
-R^.........~~~~~TT^^#ddddR
+R..ww~~~ww...~~TT^,;rddddR
+R^.........~~~~~TT^^rddddR
 RRRRRRRRRRRRRRRRRRRRRRRRRR
 
 
@@ -196,6 +196,7 @@ Plant
 	graphic 2 1 *
 end
 */
+
 -- TileData
 | | | | | | | | | | | | | | | | | | | | | | | | | | 
 fv 0 | fv 0  | fv 0  | fv 0  | fv 0  | fv 0  | fv 0 | fv 0 | fv 0 | fv 0 | fv 0 | fv 0 | fv 0 | fv 0 | fv 0 | fv 0 | fv 0 | fv 0 | fv 0 | fv 0 | | | | | | | 

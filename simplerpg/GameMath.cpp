@@ -13,7 +13,7 @@ float math::nextDist(const float &min, const float &max, const float &mid)
 		double x = total * nextDouble() + min;
 		double u = nextDouble();
         
-		if(u < distF(x, min, max, mid) / (CONST_A * distG(x)))
+		if(u < distF(x, min, max, mid))
 		{
 			return x;
 		}
@@ -36,16 +36,21 @@ int math::nextRoulette(const vector<float> &probabilities)
 		maxProb = max(maxProb, probabilities[i]);
 	}
 
-	int size = probabilities.size() - 1;
+	int size = probabilities.size();
 
 	int count = 0;
 
 	while(++count < 100)
 	{
 		double x = nextDouble() * size;
-		double u = nextDouble();
+		double u = nextDouble() * maxProb;
+		int index = floor(x);
+		if(index >= size)
+		{
+			continue;
+		}
         
-		if(u < probabilities[floor(x)] / (CONST_A * distG(x)))
+		if(u < probabilities[index])
 		{
 			return x;
 		}

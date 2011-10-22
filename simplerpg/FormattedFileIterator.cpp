@@ -9,9 +9,8 @@ boost::regex FormattedFileIterator::READ_FILE_REGEX(
 	"(\"[^\"]*\")|"
 	// Single quoted strings.
 	"('[^']*')|"
+	// A single | character
 	"(\\|?)"
-	//"([\\x21-\x7B\x7D\x7E]+)");
-	//"([[^\\|]\\S]+)");
 	// Everything that's not whitespace.
 	"(\\S+)");
 

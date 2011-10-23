@@ -45,6 +45,7 @@ namespace SimpleRPGAnalyser
 
         private Series mHighLight;
 
+        public string mLoadedFileBase = "";
         public string mTitleBase;
 
         private List<KeyPair> mValues = null;
@@ -84,6 +85,7 @@ namespace SimpleRPGAnalyser
                         MessageBox.Show("Unsupported file " + openFileDialog.FileName);
                         return;
                     }
+                    mLoadedFileBase = openFileDialog.FileName.Substring(0, extIndex);
                     string ext = openFileDialog.FileName.Substring(extIndex + 1);
 
                     viewAnimals.Items.Clear();
@@ -246,7 +248,7 @@ namespace SimpleRPGAnalyser
                                 a.load(ref cc, ref i);
                                 i--;
                                 //Console.WriteLine("Loaded Animal " + a.LongName);
-                                string[] subItems = new string[] { a.id.ToString(), a.name, a.species, a.age.ToString(), a.birthdate, a.deathdate, a.deathby };
+                                string[] subItems = new string[] { a.id.ToString(), a.name, a.species, a.age.ToString(), a.birthdate, a.deathdate, a.deathby, a.rest_energy_per_day.ToString(), a.life_expectancy.ToString(), a.aggression.ToString() };
                                 ListViewItem item = new ListViewItem(subItems);
                                 item.Tag = a;
                                 viewAnimals.Items.Add(item);
@@ -425,7 +427,7 @@ namespace SimpleRPGAnalyser
                 mMapTotal.Dispose();
             }
             mMapTotal = new Bitmap(width, height);
-
+            
             ImageAttributes imageAttrs = new ImageAttributes();
 
             float[][] colorMatrixElements = { 
@@ -443,8 +445,12 @@ namespace SimpleRPGAnalyser
                 ColorAdjustType.Bitmap);
 
             Graphics g = Graphics.FromImage(mMapTotal);
+
+            Rectangle rect = new Rectangle(0, 0, width, height);
+            g.FillRectangle(Brushes.Black, rect);
+
             //g.DrawImage(mMapImg, new Point[]{new Point()}, new Rectangle(0, 0, width, height), GraphicsUnit.Display, imageAttrs);
-            g.DrawImage(mMapImg, new Rectangle(0, 0, width, height),
+            g.DrawImage(mMapImg, rect,
                 0, 0,
                 width, height,
                 GraphicsUnit.Pixel,
@@ -467,6 +473,10 @@ namespace SimpleRPGAnalyser
                 mMapOverlay.Dispose();
             }
             mMapOverlay = new Bitmap(width, height);
+            if (day < 0)
+            {
+                return;
+            }
 
             DayEvents dayEvent = mHistory[day];
             foreach (Location location in dayEvent.locations)
@@ -494,29 +504,32 @@ namespace SimpleRPGAnalyser
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
         {
             ListView.SelectedListViewItemCollection selected = viewAnimals.SelectedItems;
-            List<Animal> animals = new List<Animal>();
-            foreach (ListViewItem item in selected)
+            if (selected.Count > 0)
             {
-                animals.Add((Animal)item.Tag);
-            }
-            Animal averaged = Animal.averageAnimals(animals);
+                List<Animal> animals = new List<Animal>();
+                foreach (ListViewItem item in selected)
+                {
+                    animals.Add((Animal)item.Tag);
+                }
+                Animal averaged = Animal.averageAnimals(animals);
 
-            mValues = new List<KeyPair>();
-            mValues.Add(new KeyPair("Diet", averaged.diet, 1, Color.Gray));
-            mValues.Add(new KeyPair("Strength", averaged.strength, Color.LightGray));
-            mValues.Add(new KeyPair("Dexterity", averaged.dexterity, Color.LightGray));
-            mValues.Add(new KeyPair("Intelligence", averaged.intelligence, Color.LightGray));
-            mValues.Add(new KeyPair("Life Expectancy", averaged.life_expectancy, Color.SkyBlue));
-            mValues.Add(new KeyPair("Fertility", averaged.fertility, 10, Color.SkyBlue));
-            mValues.Add(new KeyPair("Breeding Age", averaged.breeding_age, Color.SkyBlue));
-            mValues.Add(new KeyPair("Breeding Rate", averaged.breeding_rate, Color.SkyBlue));
-            mValues.Add(new KeyPair("Health", averaged.maxHealth, Color.Red));
-            mValues.Add(new KeyPair("Mass", averaged.entity_mass, Color.White));
-            mValues.Add(new KeyPair("Size", averaged.entity_size, Color.White));
-            mValues.Add(new KeyPair("Mutation Rate", averaged.mutation_rate, 1, Color.Purple));
-            mValues.Add(new KeyPair("Mutation Amount", averaged.mutation_amount, 1, Color.Purple));
-            mValues.Add(new KeyPair("Num Alive Children", averaged.numAliveChildren, Color.Blue));
-            
+                mValues = new List<KeyPair>();
+                mValues.Add(new KeyPair("Diet", averaged.diet, 1, Color.Gray));
+                mValues.Add(new KeyPair("Base Energy Requirements", averaged.rest_energy_per_day, 800, Color.DarkGray));
+                mValues.Add(new KeyPair("Strength", averaged.strength, Color.LightGray));
+                mValues.Add(new KeyPair("Dexterity", averaged.dexterity, Color.LightGray));
+                mValues.Add(new KeyPair("Intelligence", averaged.intelligence, Color.LightGray));
+                mValues.Add(new KeyPair("Life Expectancy", averaged.life_expectancy, Color.SkyBlue));
+                mValues.Add(new KeyPair("Fertility", averaged.fertility, 10, Color.SkyBlue));
+                mValues.Add(new KeyPair("Breeding Age", averaged.breeding_age, Color.SkyBlue));
+                mValues.Add(new KeyPair("Breeding Rate", averaged.breeding_rate, Color.SkyBlue));
+                mValues.Add(new KeyPair("Health", averaged.maxHealth, Color.Red));
+                mValues.Add(new KeyPair("Mass", averaged.entity_mass, Color.White));
+                mValues.Add(new KeyPair("Size", averaged.entity_size, Color.White));
+                mValues.Add(new KeyPair("Mutation Rate", averaged.mutation_rate, 1, Color.Purple));
+                mValues.Add(new KeyPair("Mutation Amount", averaged.mutation_amount, 1, Color.Purple));
+                mValues.Add(new KeyPair("Num Alive Children", averaged.numAliveChildren, Color.Blue));
+            }
             picGraph.Invalidate();
         }
 
@@ -678,6 +691,24 @@ namespace SimpleRPGAnalyser
         private void trcTimeline_Scroll(object sender, EventArgs e)
         {
             updatePopulationList(trcTimeline.Value);
+        }
+
+        private int mSaveImageIndex = 0;
+
+        private void btnSaveMap_Click(object sender, EventArgs e)
+        {
+            string filename = mLoadedFileBase + "_" + mSaveImageIndex + ".png";
+
+            if (File.Exists(filename))
+            {
+                do
+                {
+                    mSaveImageIndex++;
+                    filename = mLoadedFileBase + "_" + mSaveImageIndex + ".png";
+                } while (File.Exists(filename));
+            }
+
+            mMapTotal.Save(filename, ImageFormat.Png);
         }
     }
 }

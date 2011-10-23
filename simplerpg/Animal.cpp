@@ -269,6 +269,7 @@ void Animal::loadProperties(FormattedFileIterator &iter)
 	else loadProp(BIRTHTIME, setBirthtime, float)
 	else loadProp(MATE_FIND_COOLDOWN, setMateFindCooldown, float)
 	else loadProp(FERTILITY, setFertility, float)
+	else loadProp(AGGRESSION, setAggression, float)
 	else loadProp(LOCAL_POPULATION_MAX, setLocalPopulationMax, float)
 	else loadProp(DESIRED_NUM_CHILDREN, setDesiredNumChildren, float)
 
@@ -420,6 +421,7 @@ void Animal::saveProperties(FormattedFile &file)
 	saveProperty(HUNGER_LIMITS, file);
 	saveProperty(HUNGER_DAMAGE_COOLDOWN, file);
 	saveProperty(HUNGER_HEAL_COOLDOWN, file);
+	saveProperty(AGGRESSION, file);
 	saveProperty(MUTATION_RATE, file);
 	saveProperty(MUTATION_AMOUNT, file);
 	saveProperty(LOCAL_POPULATION_MAX, file);
@@ -461,6 +463,7 @@ void Animal::saveProperty(const EntityProperty &propertyId, FormattedFile &file)
 	saveProp(FERTILITY, getFertility)
 	saveProp(DEATHTIME, getDeathtime)
 	saveProp(BIRTHTIME, getBirthtime)
+	saveProp(AGGRESSION, getAggression)
 	saveProp(LOCAL_POPULATION_MAX, getLocalPopulationMax)
 	saveProp(DESIRED_NUM_CHILDREN, getDesiredNumChildren)
 
@@ -678,7 +681,13 @@ void Animal::update(float dt)
 void Animal::dealWithThreats(float dt)
 {
 	Animal *threat = findGreatestThreat();
-	if(threat == NULL || getEntityThreat(threat) < getAggression())
+	if(threat == NULL)
+	{
+		return;
+	}
+	float threatLevel = getEntityThreat(threat);
+	float agg = getAggression();
+	if(threatLevel < agg)
 	{
 		return;
 	}

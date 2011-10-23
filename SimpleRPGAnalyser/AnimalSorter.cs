@@ -21,7 +21,7 @@ namespace SimpleRPGAnalyser
             ListViewItem lvi2 = (ListViewItem)o1;
             string str2 = lvi2.SubItems[ByColumn].Text;
 
-            if (Column == 4 || Column == 5)
+            if (Column == 4 || Column == 5 || Column == 7 || Column == 8 || Column == 9)
             {
                 float date1 = Animal.convertDate(str1);
                 float date2 = Animal.convertDate(str2);

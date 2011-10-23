@@ -62,6 +62,10 @@
             this.lstPopulations = new System.Windows.Forms.ListBox();
             this.chkNormalisePopulations = new System.Windows.Forms.CheckBox();
             this.chrtPopulation = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.btnSaveMap = new System.Windows.Forms.Button();
+            this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader10 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -168,7 +172,10 @@
             this.columnHeader5,
             this.columnHeader3,
             this.columnHeader4,
-            this.columnHeader7});
+            this.columnHeader7,
+            this.columnHeader8,
+            this.columnHeader9,
+            this.columnHeader10});
             this.viewAnimals.FullRowSelect = true;
             this.viewAnimals.GridLines = true;
             this.viewAnimals.Location = new System.Drawing.Point(3, 3);
@@ -224,6 +231,7 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.btnSaveMap);
             this.tabPage2.Controls.Add(this.trcDay);
             this.tabPage2.Controls.Add(this.picMain);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
@@ -239,9 +247,9 @@
             this.trcDay.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.trcDay.BackColor = System.Drawing.SystemColors.Window;
-            this.trcDay.Location = new System.Drawing.Point(6, 451);
+            this.trcDay.Location = new System.Drawing.Point(87, 451);
             this.trcDay.Name = "trcDay";
-            this.trcDay.Size = new System.Drawing.Size(699, 45);
+            this.trcDay.Size = new System.Drawing.Size(618, 45);
             this.trcDay.TabIndex = 3;
             this.trcDay.Scroll += new System.EventHandler(this.trcDay_Scroll);
             // 
@@ -362,6 +370,29 @@
             this.chrtPopulation.Titles.Add(title3);
             this.chrtPopulation.Click += new System.EventHandler(this.chart1_Click);
             // 
+            // btnSaveMap
+            // 
+            this.btnSaveMap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnSaveMap.Location = new System.Drawing.Point(6, 451);
+            this.btnSaveMap.Name = "btnSaveMap";
+            this.btnSaveMap.Size = new System.Drawing.Size(75, 45);
+            this.btnSaveMap.TabIndex = 4;
+            this.btnSaveMap.Text = "Save";
+            this.btnSaveMap.UseVisualStyleBackColor = true;
+            this.btnSaveMap.Click += new System.EventHandler(this.btnSaveMap_Click);
+            // 
+            // columnHeader8
+            // 
+            this.columnHeader8.Text = "Rest Energy";
+            // 
+            // columnHeader9
+            // 
+            this.columnHeader9.Text = "Life Expectancy";
+            // 
+            // columnHeader10
+            // 
+            this.columnHeader10.Text = "Aggression";
+            // 
             // Analyser
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -421,6 +452,10 @@
         private System.Windows.Forms.CheckBox chkNormalisePopulations;
         private System.Windows.Forms.ListBox lstPopulations;
         private System.Windows.Forms.TrackBar trcTimeline;
+        private System.Windows.Forms.Button btnSaveMap;
+        private System.Windows.Forms.ColumnHeader columnHeader8;
+        private System.Windows.Forms.ColumnHeader columnHeader9;
+        private System.Windows.Forms.ColumnHeader columnHeader10;
     }
 }
 

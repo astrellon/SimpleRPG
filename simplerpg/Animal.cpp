@@ -715,7 +715,8 @@ Animal *Animal::findGreatestThreat()
 	for(EntityList::iterator iter = mSurroundingEntities.begin(); iter != mSurroundingEntities.end(); ++iter)
 	{
 		Animal *animal = dynamic_cast<Animal *>(*iter);
-		if(animal == NULL || iequals(animal->getSpecies(), getSpecies()))
+		//if(animal == NULL || iequals(animal->getSpecies(), getSpecies()))
+		if(animal == NULL || animal->getSpeciesId() == getSpeciesId())
 		{
 			continue;
 		}
@@ -865,7 +866,8 @@ void Animal::receiveDamage(float damage, Animal *from)
 		for(EntityList::iterator iter = mSurroundingEntities.begin(); iter != mSurroundingEntities.end(); ++iter)
 		{
 			Animal *other = dynamic_cast<Animal *>(*iter);
-			if(iequals(other->getSpecies(), getSpecies()))
+			//if(iequals(other->getSpecies(), getSpecies()))
+			if(other->getSpeciesId() == getSpeciesId())
 			{
 				other->dealWithAttackFrom(from);
 			}
@@ -1471,7 +1473,8 @@ void Animal::changeSpeciesAlignment(const string &species, const float &alignmen
 
 float Animal::getEntityThreat(Animal *entity)
 {
-	if (iequals(entity->getSpecies(), getSpecies()))
+	//if (iequals(entity->getSpecies(), getSpecies()))
+	if(entity->getSpeciesId() == getSpeciesId())
 	{
 		return 0.3f;
 	}
@@ -1528,7 +1531,8 @@ void Animal::breed(vector<Animal *> &children, Animal *p1, Animal *p2)
 	}
 
 	string species;
-	if(iequals(p1->getSpecies(), p2->getSpecies()))
+	//if(iequals(p1->getSpecies(), p2->getSpecies()))
+	if(p1->getSpeciesId() == p2->getSpeciesId())
 	{
 		species = p1->getSpecies();
 	}

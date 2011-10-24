@@ -285,6 +285,8 @@ protected:
 
 	vector<string> mListOfNames;
 
+	void removeAllDeadEntities();
+
 	// Used to display the "(Saved)" text in the menu when the game has been saved.
 	// Counts down to zero when the graphic will disappear.
 	int mSaveCounter;

@@ -333,6 +333,11 @@ void Game::keyActions(const int key)
 			setGamePaused(true);
 		}
 
+		else if (key == 'x')
+		{
+			removeAllDeadEntities();
+		}
+
 		break;
 
 	case MENU_LOOK:
@@ -1064,6 +1069,22 @@ void Game::displayUnderCursor()
 	}
 }
 
+void Game::removeAllDeadEntities()
+{
+	for(EntityList::iterator iter = mEntities.begin(); iter != mEntities.end(); ++iter)
+	{
+		Animal *animal = dynamic_cast<Animal *>(*iter);
+		if(animal == NULL)
+		{
+			continue;
+		}
+		if(animal->isDead() && !animal->diedToday(mCurrentDay))
+		{
+			removeEntity(animal);	
+		}
+	}
+}
+
 void Game::render(WINDOW *wnd)
 {
 	mMap->renderMap(mScreenSize, wnd);
@@ -1777,8 +1798,9 @@ FindEntityResult Game::findBreedingPartner(Animal *origin)
 			continue;
 		}
 
-		if (iequals(origin->getSpecies(), ani->getSpecies()) &&
-			ani->wantsToBreed())
+		//if (iequals(origin->getSpecies(), ani->getSpecies()) &&
+		//	ani->wantsToBreed())
+		if(origin->getSpeciesId() == ani->getSpeciesId() && ani->wantsToBreed())
 		{
 			vector<Vector2f> *path = m->search(positionInt, ani->getPosition());
 			if (path != NULL)
@@ -1807,11 +1829,14 @@ FindEntityResult Game::findClosestEntity(Vector2f position, const string &entity
 	float shortest = 1e30f;
 	Map *m = getMap();
 	Vector2i positionInt = (Vector2i)position;
+
+	int speciesId = GameEntity::findSpeciesId(species);
 	for(EntityList::iterator iter = mEntities.begin(); iter != mEntities.end(); ++iter)
 	{
 		GameEntity *entity = *iter;
 		if  (iequals(entity->getEntityType(), entityType) && 
-			(species == NULL || (species != NULL && iequals(*species, entity->getSpecies()))))
+			//(species == NULL || (species != NULL && iequals(*species, entity->getSpecies()))))
+			(species == NULL || (species != NULL && speciesId == entity->getSpeciesId())))
 		{
 			vector<Vector2f> *path = m->search(positionInt, entity->getPosition());
 			if (path != NULL)
@@ -1850,7 +1875,8 @@ Animal *Game::findClosestEdibleAnimal(Animal *eater, bool sameSpecies)
 	{
 		GameEntity *entity = *iter;
 		
-		if(sameSpecies || !iequals(entity->getSpecies(), eater->getSpecies()))
+		//if(sameSpecies || !iequals(entity->getSpecies(), eater->getSpecies()))
+		if(sameSpecies || entity->getSpeciesId() != eater->getSpeciesId())
 		{
 			int entityGroup = m->getGroup(entity->getPosition());
 			if (entityGroup != eaterGroup)
@@ -2073,16 +2099,23 @@ void Game::findNearby(Vector2f origin, const float &radius, vector<GameEntity *>
 
 void Game::findNearby(Vector2f origin, const float &radius, vector<GameEntity *> &results, string *restrictToSpecies)
 {
+	float radiusSquared = radius * radius;
+	int speciesId = GameEntity::findSpeciesId(restrictToSpecies);
 	for(EntityList::iterator iter = mEntities.begin(); iter != mEntities.end(); ++iter)
 	{
 		GameEntity *entity = *iter;
-		if(restrictToSpecies != NULL && !iequals(*restrictToSpecies, entity->getSpecies()))
+		if(restrictToSpecies != NULL && speciesId != entity->getSpeciesId())
 		{
 			continue;
 		}
 
-		Vector2f diff = origin.sub(entity->getPosition());
-		if(diff.length() < radius)
+		float xx = origin.x - entity->getTransform()->zx;
+		xx *= xx;
+
+		float yy = origin.y - entity->getTransform()->zy;
+		yy *= yy;
+
+		if(xx + yy < radiusSquared)
 		{
 			results.push_back(entity);
 		}

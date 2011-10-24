@@ -2,6 +2,8 @@
 #include "Game.h"
 
 unsigned int GameEntity::sId = 0;
+int GameEntity::sSpeciesCount = 0;
+map<string, int> GameEntity::sSpecies;
 
 const float GameEntity::GRAPHIC_FLASH_COOLDOWN = 2.0f;
 
@@ -28,7 +30,7 @@ GameEntity::GameEntity(Game *game)
 	mMass = 1.0f;
 	mSize = 1.0f;
 
-	mSpecies = "Unknown";
+	setSpecies("Unknown");
 
 	mCurrentAction = new Action(IDLE);
 
@@ -47,6 +49,17 @@ GameEntity::GameEntity(Game *game)
 GameEntity::~GameEntity(void)
 {
 	removeEntity(this);
+}
+
+void GameEntity::setSpecies(string species)
+{
+	if(sSpecies.find(species) == sSpecies.end())
+	{
+		sSpecies[species] = sSpeciesCount++;
+		clog << "Species has id " << species << ": " << (sSpeciesCount - 1) << endl;
+	}
+	mSpeciesId = sSpecies[species];
+	mSpecies = species;
 }
 
 void GameEntity::setCurrentAction(Action *action)
@@ -80,7 +93,7 @@ float GameEntity::getY()
 	return mTransform.zy;
 }
 
-Vector2f GameEntity::getPosition()
+inline Vector2f GameEntity::getPosition()
 {
 	return Vector2f(mTransform.zx, mTransform.zy);
 }

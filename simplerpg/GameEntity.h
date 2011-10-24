@@ -123,7 +123,8 @@ public:
 	virtual float beEaten(float amountWanted, GameEntity *eater);
 
 	virtual string getSpecies() { return mSpecies; }
-	virtual void setSpecies(string species) { mSpecies = species; }
+	virtual void setSpecies(string species);// { mSpecies = species; }
+	virtual int getSpeciesId() { return mSpeciesId; }
 
 	virtual string getSpeciesName() { return getSpecies(); }
 
@@ -157,6 +158,27 @@ public:
 	virtual void getNearbyEntities(const float &radius, vector<GameEntity *> &result);
 	virtual void getNearbyEntities(const float &radius, vector<GameEntity *> &result, string &restrictToSpecies);
 
+	static int findSpeciesId(const string *species)
+	{
+		if(species == NULL)
+		{
+			return -1;
+		}
+		if(sSpecies.find(*species) != sSpecies.end())
+		{
+			return sSpecies[*species];
+		}
+		return -1;
+	}
+	static int findSpeciesId(string species)
+	{
+		if(sSpecies.find(species) != sSpecies.end())
+		{
+			return sSpecies[species];
+		}
+		return -1;
+	}
+
 protected:
 	unsigned int mId;
 	Pixel mGraphic;
@@ -179,6 +201,7 @@ protected:
 	UIText *mHudText;
 
 	string mSpecies;
+	int mSpeciesId;
 
 	static EntityMap sEntities;
 
@@ -204,5 +227,7 @@ protected:
 
 private:
 	static unsigned int sId;
+	static map<string, int> sSpecies;
+	static int sSpeciesCount;
 
 };

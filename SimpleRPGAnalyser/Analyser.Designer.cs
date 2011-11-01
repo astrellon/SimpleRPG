@@ -53,8 +53,13 @@
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader10 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.picGraph = new System.Windows.Forms.PictureBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.btnSaveAll = new System.Windows.Forms.Button();
+            this.btnSaveMap = new System.Windows.Forms.Button();
             this.trcDay = new System.Windows.Forms.TrackBar();
             this.picMain = new System.Windows.Forms.PictureBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
@@ -62,10 +67,6 @@
             this.lstPopulations = new System.Windows.Forms.ListBox();
             this.chkNormalisePopulations = new System.Windows.Forms.CheckBox();
             this.chrtPopulation = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.btnSaveMap = new System.Windows.Forms.Button();
-            this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader10 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -216,6 +217,18 @@
             // 
             this.columnHeader7.Text = "Death By";
             // 
+            // columnHeader8
+            // 
+            this.columnHeader8.Text = "Rest Energy";
+            // 
+            // columnHeader9
+            // 
+            this.columnHeader9.Text = "Life Expectancy";
+            // 
+            // columnHeader10
+            // 
+            this.columnHeader10.Text = "Aggression";
+            // 
             // picGraph
             // 
             this.picGraph.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
@@ -231,6 +244,7 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.btnSaveAll);
             this.tabPage2.Controls.Add(this.btnSaveMap);
             this.tabPage2.Controls.Add(this.trcDay);
             this.tabPage2.Controls.Add(this.picMain);
@@ -241,6 +255,28 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Location Heat Map";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // btnSaveAll
+            // 
+            this.btnSaveAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnSaveAll.Location = new System.Drawing.Point(7, 472);
+            this.btnSaveAll.Name = "btnSaveAll";
+            this.btnSaveAll.Size = new System.Drawing.Size(74, 23);
+            this.btnSaveAll.TabIndex = 5;
+            this.btnSaveAll.Text = "Save All";
+            this.btnSaveAll.UseVisualStyleBackColor = true;
+            this.btnSaveAll.Click += new System.EventHandler(this.btnSaveAll_Click);
+            // 
+            // btnSaveMap
+            // 
+            this.btnSaveMap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnSaveMap.Location = new System.Drawing.Point(6, 451);
+            this.btnSaveMap.Name = "btnSaveMap";
+            this.btnSaveMap.Size = new System.Drawing.Size(75, 24);
+            this.btnSaveMap.TabIndex = 4;
+            this.btnSaveMap.Text = "Save";
+            this.btnSaveMap.UseVisualStyleBackColor = true;
+            this.btnSaveMap.Click += new System.EventHandler(this.btnSaveMap_Click);
             // 
             // trcDay
             // 
@@ -370,29 +406,6 @@
             this.chrtPopulation.Titles.Add(title3);
             this.chrtPopulation.Click += new System.EventHandler(this.chart1_Click);
             // 
-            // btnSaveMap
-            // 
-            this.btnSaveMap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnSaveMap.Location = new System.Drawing.Point(6, 451);
-            this.btnSaveMap.Name = "btnSaveMap";
-            this.btnSaveMap.Size = new System.Drawing.Size(75, 45);
-            this.btnSaveMap.TabIndex = 4;
-            this.btnSaveMap.Text = "Save";
-            this.btnSaveMap.UseVisualStyleBackColor = true;
-            this.btnSaveMap.Click += new System.EventHandler(this.btnSaveMap_Click);
-            // 
-            // columnHeader8
-            // 
-            this.columnHeader8.Text = "Rest Energy";
-            // 
-            // columnHeader9
-            // 
-            this.columnHeader9.Text = "Life Expectancy";
-            // 
-            // columnHeader10
-            // 
-            this.columnHeader10.Text = "Aggression";
-            // 
             // Analyser
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -456,6 +469,7 @@
         private System.Windows.Forms.ColumnHeader columnHeader8;
         private System.Windows.Forms.ColumnHeader columnHeader9;
         private System.Windows.Forms.ColumnHeader columnHeader10;
+        private System.Windows.Forms.Button btnSaveAll;
     }
 }
 

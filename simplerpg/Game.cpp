@@ -1310,7 +1310,9 @@ Vector2i Game::findClosestTileWithFood(Animal *entity)
 	int facingX = round(cos(angle));
 	int facingY = round(sin(angle));
 
-	while(!openList.empty())
+	int count = 0;
+
+	while(!openList.empty() && count++ < 100)
 	{
 		Vector2i current = openList.front();
 		openList.pop();
@@ -1745,6 +1747,17 @@ void Game::loadMap(string filename)
 					mTileData[x][y].setFromLoaded(tileData[index]);
 					//clog << "Index: " << index << " (" << x << ',' << y << ") " << mTileData[x][y].getFoodValue() << endl;
 				}
+			}
+		}
+	}
+
+	if(mTileData != NULL && mMap != NULL)
+	{
+		for(int x = 0; x < mMap->getWidth(); x++)
+		{
+			for(int y = 0; y < mMap->getHeight(); y++)
+			{
+				addActiveTile(&mTileData[x][y]);
 			}
 		}
 	}

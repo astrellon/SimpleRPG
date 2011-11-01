@@ -259,6 +259,7 @@ protected:
 	float mHungerBreedLimit;
 	float mHungerDamageCooldown;
 	float mHungerHealCooldown;
+	float mFindFoodCooldown;
 
 	float mStrength;
 	float mDexterity;

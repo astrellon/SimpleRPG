@@ -1,0 +1,303 @@
+// Converted by SimpleRPG Img to Map program at 1/11/2011 14:08:29
+-- Tiles
+. 0
+^ 1
+, 2
+; 3
+# 4
+S 5
+~ 6
+* 7
+R 8
+r 9
+T 10
+d 11
+w 12
+s 13
+c 14
+P 15
+
+-- Map
+RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
+R^^TT^T^^TTT^T^TTTT^TTT^^T^TTTTTTT^^^^^^T,^^^^^^^^^^^^,^,^^^^^^,,d^^^^^^^^,,^,^,^^,,^,,^,,,,,,,,,,dddd^,ddd,,,,,,dd,dd.,,,,,,,^,,d,,,,,,,....,,,,,,..d,.,.,,,,dd,,.,,..d,R
+R^TTT^T^^^^^TTT,^TTTTTTTTTTT^TTTTTT^^^T^T^^^^^,^^^^^^,^^^^^^^^^^^^^,^^^,^,,,,^^,,,,,,,^^,,,,,,,,,,ddddddddd^d,,,dd.,.,d,,,.,,d^.d,,,,,d,,.....,,,d...d,.,,,d,,ddddd.,dd.,R
+RTTT^TTTTTTTTTTTTTTTT,TTTTT,TT^^^T^^^,T^,^^,^^^,^^^,^^^^^^^,^^,^^^^^,,^,^,,,,,,,,,,,,,,^,,,,,,d,,,dddddd.dd^,dddd,,,d,,.,,,,,d..,,,,,.d,,,.....,,,......,,,d.,..,ddd,....R
+R^TT^TTTTT^^T^TTTT^TTTTTT^T,T^TT^^T,^^^^^^^,^^^^^^^^^^,^,^,,^^,^^^,,,^^,,d,,,,,,,,,,,,,,,,,,,,dd,,d,,d,ddd,,,ddd,,,,d,,,,,dd...,,,,,,,,,,,,,..,dd.,d....,....,.,,,,......R
+R^^TTTTT^TT^TTTTT^T^^^TTTTTTTTTT,TT^^^^^,,^,,^^^^^^^^,^^^^^^^,^^^,^^^,,,,^,,^^,,,,,,,,,,,,,,,,,,,,d,,d,,ddd,dddd,,,,d,,d,,d.ddd,,,ddd,dd,,,,dd,dd.,dd....,,d....,d.d..,..R
+R^TTTTTTTT^TTTTT^TTTTT^T,,TTTTT,TTT^^T^,TT^^^^^^^^,^^^^^^^^^^,,^^^^^,,,,,^,,,,,,,,,,,,,,,,,,,,,,,,,ddddd,d,,,dd,d,,,,,,dd,dddd,,dd,,ddddd,,ddd,............ddd...d.,d.,..R
+RTT^^TTTTTTT^^^TTTTTTTTTTTTTT^TTT^^^TT^^,^^^^,^^^^^^^,^,^^^^,,^^^,,,,,,,,,,,,,,,,,,,,,,,,,d,,,,d,d,ddd,d,dd,,,d,d,dddd,dd,,d,ddddd........d,.......,d....dddd............R
+RT^^^^^T^TTTTTTTTTT^TT^TT^TT^^TTT^,^TT,^^^,^^,^^^^^,^,,,^^,,,,,^^^,^,,,,^,,,,,,,,,,,,,,,,,d,,,dd,,,,,,,dd.,,dd,,d,,d,,,d.,,.,d.,,.....d..,,,.,,.........,,,,,...dd..d....R
+R^T^^TTTTTTTTT^T^T^TTT^^T^^,^TT,^^^^^^^^^^,,,,^^^^^^,,,,^^^^,^,^^^^^,,,,^,,,,,,,,,,,,,,,,,,,,ddd,,,,dd,dd.,,d,,,ddddd.,d,,,,dd.d,,....d...,,.....dd......dd.d.d.dd..d....R
+RTTT^TTTTT^TTTTTTT^TT^TTTT,TTT^T^^^^TT^^^^^,^,,^,^^^^,^^^^^^,^ddd,,^dd^,,,,d,,,,,^.,d,,,,,,,,dd,,dddddddd,,dd,.,,d,,,ddd,...,,..............................d.d.....d.,d.R
+RTTT,TT^^TTTTTTTTT^T^^^TTTTT^,TT^^^^^,TT,,^,^^,^^^,^^,^^,,,,^^^^,,^,,^^,,,,d,,,,,^,d,d,,,,,ddddd,,,,.dddd,d,,,dd,,d,,d.,,...d,..d....,........................d.......dd.R
+RT^TTT^^,T^TTTTT,T^TTTTTT^^^T^T^,,^^,^^^,^^,^,,^^,^^,,,^^,^,^d^^,,^,,,^,,,,dd,,d,dd,,,,,,,ddd,,,,,,dd,dd,..,.,,dd,..,dd,d,,,d,,,d....,,...............,,,....,........,d.R
+R^^TTTTTTTT^T^T^^TTT^T^TTT^^T^T^T,^^^^^^,^^^^^,^^,,,,,,,,,^d^ddddd^,,^,dd,,,,,,,,dd,,d,,ddddd,,,,,,,d,,d,ddddd,d,.,..ddd,,d,,...,..d,,...................................R
+RT^^TT^^TTTT^,^T^TTT^^^T^TTTT^,^T,,^^^^,^,^,,,,^,^,^^^,^,,,,^,,ddd,,^^dd,,,,,ddd,,d,,d,d,d,,,..,dddd,dd.ddd,dd,.,,,.......d.,...,.dd.,.......................,..........,R
+RTT,TTT^TTTTTT^TTTT^TTT^^TT^^^^T^^TT,^,^^^,^,,,,^^^^,,^^,,,,,,^^,,,,,^ddddd,ddd,ddd,,d,d,.,,,,,,dd..,,.d,,,,....,,,..,..,...,......d.....................................R
+RTT^^T^TT^^^TTTT,T^^^TTTT^T^,^,T,^,,^^^^^^^^^^,,^,,,^d^dd,,,,,ddd,,,,dd,d,,dd,,,ddd,,ddd,,d,dd....ddd.,.dd,dd...,ddd.,.,,,,....,.,,......................................R
+RTT^^T,TT^^^T^^TT^T^TTTT^,T^^,^^^^^^^^^,,^^^^^,,^^^,^,^,,,,,,,,dd,,d,dd,d,,,dd,.ddd,,,..,,.,,.....dddd,.dd,ddd...,,d....,.....,......................,..........,........R
+R^^^^^TTTTT,T,^T^^T^TT^T^^T^^TT^^^^^^,,^,^^^^,,,,,,^^,,,,,dd,,dd,ddddd,ddd,d.,,,dd,d,,,,,,dd,d..d,,dd,,..........,............,..,,............................,.........R
+R^^^^TTTT^^TT,,TTT^TTT,TT^,^TTT^^^^^^^,^,^^,^^^,,^^,,,,,,,^^,dd,^ddd,d,dd,.d.d,,,d,d,.dd.,..,,d,ddd....ddddddd.......................,...,.......................d.......R
+RTT^,TTTTT^T^TTTT^^^^^,,^^^^^T^^,,,,^^^^,^,^,^^^^^,d,dd,,,,d,d,d^ddd,,ddd,.,d,,.d,,.,,d,,,dd,,.,dd,,dddd,ddddd.,.,,,,.................................,..........d...,...R
+R^T^^TT^^T,T,T,^^,,,TT,^T,^,^^^^^^,^^^^^^^^^^^^,,,,,,,,,,,d,,d,,,,d,d,d..,d,d,,.,,,.d.d..,.,,,,....,,ddd...dddddd........................................................R
+R^^^^TT^TT^^,TT^T,T,TT^^T^^^^^,^^^^^,,,^^,^,,^^^,,,,,,^,,d,,dd,^,,d,,d,,,ddd.,..,.,,d,,,...,...,,....ddd.....dddd............d...........................................R
+RTTT^^TT^^^^^^,TT,T^^^^^T^^T,,,^^^^,,^^^^^^,,^^^^,,,,,^,,d,,d,d^ddd,,,,dddd.dd,,,dd,,.,,..,,....,.............ddd............d...............,....,.........,............R
+R,TTTT^^^,,,,^,,^^T^,,^^,,TT^^^^^^^,,^^^^^^^,^,,,,,,,,,,,,,dd,ddd.,,d,dd,d.,,d,dd...,..,..,.,,,.,,,...........,,,..........,.......................................,.....R
+RTTTT^^,^^^^^^^^^^,^^,^^^^^T^,,,^^^^^^^,,^,,^^^,^,,,,,d,,,d,,,dd...,,ddd,,.,,dd..,.,.,..,..,,.,,...,.....................................................................R
+R^T,T^^,,^^T,^,^^^^^,,,^^^^^^^^,,^,,^^^^^^^^^^^,^^,,d,^,,,,,,..d,,,,,,.d.....d.d,,.,,,d........,...,................;...........................,........................R
+RTT,TT^^^^^T,,,^,,,^^,,T^^,,^^^^^^^^^^^,^^^,^^^,^^,^,,^dd,,.d...,,,,,,,ddd.,,d.dd..,,,d.,..,...,........................,.....................,............,....,........R
+RT^^^^,^^,^^,^^^^^,^^^,T^^,^^^^^^^^^^^^^,^^,,d^,,d^^,,,,d,.,d..ddd,..dd,d,...,,....,....,.,,,,......,,...................................................................R
+RTT^^T^,^,^^,^^,^^^,^^^^,^^^,^^^,,^^,,^,,,,^,^^^,^,^,,,,,,,,,d,d,,,..d.,,,..d,,.d...,,.....,.....,.................;.....................................................R
+RTTT,T,^,^,^,,^^^^^^^^^^^,^^^^,^,^^^,^^^,^^^^^,,^^,,,,,,^^,,,,,d.....dd.d,d.,d..d................,,,,,..ddd........;...............................,.....................R
+RT,TTT,^TT^^^^^^^,,^^^,^,^^^,^,^^^^^^^^^^^^,,,^,^^,,,,,,,,,,,,,,........d.d.....d..d........,,,,,,,,....ddd.............,,,,,.,,....,..;..........,......................R
+R^^,T^^TTT,^^^^^^^,^,T,^^^^^,^^^^,^,^^^^^,^^,,^,^,,,,,,,,,,,,..,....,,..,,d..,....dd,,,,....,,,,,,,^^^^^....RRRRRR~ww...R,,,,,,,.........................................R
+R^,^,,^^T,^^^,^^^^^^^T^^^^,^^^,^,^^^^^^,^,,,,^^,,,,,,,,,dd.d,..,,.,,...............d....d....,,,,,,^^^^^R..TTRR.d~~RR.R.,,,R,,,^^^.......................................R
+RTT^T,,^^^^,^^,^^^,^^^^^,^,^^^^^,^,^^^^^^,,^^,,,,,,,^^,,,d,,,..,,d,..,,.............,...d....,,,,,,^RTT^..RR.T.RRR~RR.RRRR,,,,,;^^.;................,.....,..............R
+R,^TT^^^,^^TT,,^^,^^,^^^^^,^^,^^^^,^^,,^^^^,^^,,,,d,,,.dd...,.,,,,.,..,,................dd;.....TTRR^^TTR.RRRRRRRR~RRTRRTTT,,,^^^........................................R
+RT^T^^,^^^^^^^,,^,,,,,^^^^,^,,^^^^^,,,^^^,dd,^,,,,,,,,,.,,,...,...,,......,......,,,.....d......,R,,RRR.R.RRRRRRRR~RRwTTT,,,RRRR...;.,,....,.............................R
+RT,T^^,,^^^^,^,,,^,^^^^^,^^,,,^^^^,,,,,^,^,,,^,,^,,,,,,,,,,.d,,....,..................,,,.d;ddRR,,,RRRR.dRRRRRRRR~~RR~~~wRRRRRRRRR.d,,,,.............................,...R
+RT^^^^^^^^^^,^^,^^^^,,^^,^,,,,^^^^^^,,,^^^^,d,,.^,,,,,d,d.,dd,.,,,.,,,...............,^,,,d.d.RR..RRRRRRRRRRRRRRR~RRRRR~RRRRRRRRR..,,,,,,.............,..................R
+R^^^^^^TT^^^^^^,^^,^^,^^,^^^,,,^^^^,,,,,^,,,,.,,,,,,,,,.,d.d..,,.,,...,............d.^^,,,wwwRRRRRRRRRRRRRRRRRrr~~RRRRR~RRRRRRRRRTRd,,,,.....;............,..............R
+R^T^^^^,^^^^^^^^^^^,^,^^^^^,,,,^,,,,,,^^,,^,,..,,,,.,d,,,d.d......,...,......d.....,,,~~~~~~RRRRRRRRRRRRRRRRRRrR~RRRRRR~RRRRRRRRR.T.dR,,....^^^.,........................R
+R^T^^^^^^T^^,,^^^^,^^,,^^,,,,,^^^,^,^,^^d,^,,,,,,,....,,,d.,..,...,.,........d.....,,,~RRR~RRRRRRRRRRRRRRRRRRRrR~RRRrR~~RRRRRRRRRR.d.d.ddwww^^^..........................R
+R^^T^TT^^T^^^^^^^^^^^,^^^,^^^,^^,,^,^,,,.,^,,^,d,ddd..,d...,.,,,,,.....,,......^TTT,,w~RRR~~RRRRRRRRRRRRRRRRRrrR~RRrrR~RrRRRRRRRRRRd.d.,.~~ww...............,............R
+R^TT^^^^^^^,^^^^^^,^^,^^,,^,^,,,,,^,^^,,,dd,^^d.,ddddd.,,...,.,.....,.........^^;,,,,w~~~~~~~RRRRRRRRRRRRRRrrRR~~RrrR~~rrRRRRRRRRRRR...RT~~~w....,,,.....................R
+R^T^^^T^,^^,^^^^^,^^^,^^,,,,^,,,,,,,^^,,,dd,,^d..ddd................,..,,........R,,.wRRRRRR~~RRRRrRRRRRRRRrRRR~RRrRR~rRRRRRRRRRRRRRRR..d~~~RR.;.,,,.....................R
+RTT^^^T^,^^^^^,^^^,^^,^^,,,,^,,,,,,,,^,,,,,,,,,.,,d.d......d....................RRRRRRRRRRRRR~~RRRRrRRRRRRRrrRR~RRrR~rrRRRRRRRRrRRRRRRRRR~~RRRR..,,,..........,..........R
+RTTT^T^^^^^,^^,^^^^^^^^^,,,,^,,,,,,,,,,,,,,,,,,.,,,.dd.,,,,d....,...........d..RRRRRRRRRRRRRRR~~RRRRrRRRrrRRrR~~RRrR~rRRRRRRRRRrRRRRRRRR~~RRRRR.....,,.............,.....R
+RT^^^TT^T^,^^^,,^^^^,,^^,,,,,,^^,d,,,,d,d,,,,dd.,,,.........................d.....RRRRRRRRRRRRr~~RRRrrRRrrRRrr~RRrR~rrRRRRRRRRrrRRRRRRR~~RRRRRT.....,,,,,...,..........,.R
+RTTT^TT^TT,^^^T,^^,^^^^^,,^,,,,,,,,,,,,,,,,,dd...dd..d..................;.;.dd..RRRRRRRRRRRRRRRr~~RRRrrRrrRRrR~RRrR~rRRRRRRRRRrRRRRRRRR~~RRRRRTTRR.,^^,,,,,..,...........R
+R^T^TT^^^T^^^^T,^^^^^,^^,,^,,d^^,d,,,,,,,,,d.,,dddd..d.,.....,....,..........d...RRRRRRRRRRRRRRRrr~RRRrRrrrrrR~RRrR~rRRrrRRRRrrRRRRRRR~~RRRRR.RTR..,^^^^^,,..............R
+R^T^,^^^^^^^^^^,^^,^^,^,,,,,d,,,,dd,,,,,,,dd.dd,dd.,,,,,d.................;.d.d.RRRRRrrRRRRRRRRRRrr~RRrrrrrrRR~RRrR~rRRrrRRRrrRRRrrRR~~RRRRRRTTT....,^^^^,...............R
+R^^T^TTT^T^^^^^,^^^^^,^^,,^^,,,,,,,,,,,^,,d.dd.,.d....ddd................wRRRRd.RRRRRRrrRRRRRRRRRRr~~RRrrrrrR~~RrrR~rRrrrRrrrRRrrrRR~~RRRRRRR......d.^^^,,...............R
+R^TTTT^^TT^^,^^^TT^^^,,^,,d,,,,^,,,,,,,^,,,.............,.............,,,w~RRRRRRRRRRRRrrrrrRRRRRRrr~RRRRRrrR~RRrRR~rRrrrrrRRRRrRRR~~RRrrRRRR....RRRRR,,,,...;...........R
+R^T^^^T^T^^^^^^,,^^^^,^,,,^^,,,^,,,,,,,,,,,d.d,d.d........,.........^^,,,,~~~RRRRRRRRRRRRRRRrrRRRRRrR~RRRRrrR~RRrR~~rrrrRRRRRRrRRR~~rrrRRRRRRRRRRRRRRRR,,;...;.....,.....R
+R,TT^^T^T^^,,^^^^^^,,,^^,^dd,,,,,,,,,,,,,,,,dd..d,......dd.........^^^T,RR~~~~RRRRRRRRRRRRRRRrrRRRRrR~RRRRrrR~RrRR~RrrrrRRRRRRrRR~~RRRRRRRRRRRRRRRRRRRR.....;............R
+R,^,^TT^^^^,^^^^^,^^^,^^,^^,,,,^,,,,,,,,,,,,..d,d,.................^^^^,,RRR~dRRRRRRRRRRRRRRRRrRRRRrR~RRRRrrR~RrRR~RrrrRRRRRRrrrr~RRRRRRRRRRRRRRRRRRRRTRd................R
+R,^TT^^^^^^,TT,^,,,^,^^,,,^d.,,^,,,,,,,,,,,d..d,,.....,............^^^R,R~~~~RRRRRRRRrrrrrrrRRrRRRRrR~RRRrrr~~rrRR~RrrrRRRRRrrR~~RRRRRRRRRRRRRRRRRRRRRTRR...;,...........R
+RTT,,^^^^^^,^^^^^,,^,,^,,,,,,,,,,,.,,,,,.,.,,d,.,.....,............^^^w~~~~R~~~~~RRRRrrrrrrrrRrRRRRrr~RRrrrR~RrRRR~RrrrRRRRrR~~rRRRRRRRRRRRRRRRRRRRRR~wTT..;;,^,,........R
+R,^^^^^^^,^^^^,,^,,,^,^^^,^,,,d,,,,,,,,dd,,,d.,,.,,,dd...,...........dwRRRRRRRRR~~~RRRRRRRrrrrrRRRRrr~~rrrR~~RrRR~RRrrrRRrr~~~rRRRRRRRRRRRRRRRRRR~~~~~RRT.RR,^^^,........R
+RTT,^^^,T,^^^^^,^,,^^^^,,^^,,,,,,^^,,,,d,,,,..,..,d..................RRRRRRRRRRRRR~~~~~RRRRrrrrrRRRrrr~rrrR~RRrR~~RrrrrRr~~~RRrRRRRRRRRRRRRRRRR~~~RRR~~wwRRRR^^^,........R
+RTT,^^^,T^^,^^^^^,^^,,,^,^.,,,,,,,.,,,,d,....,,...d....,..............RRRRRRRRRRRRRRRR~~~~RRRrrrrRRrrrr~rrR~RrrR~Rrrrrrr~~RRRrRRRRRRRRR~~~~~~~~RRRRRRR~~w,,,,^^,,.,,,....R
+R^^^^^,,^^^,,^^,^,,^^,,^,^,,,,,,,,,.,,,,,d....,,d......,.............dRRRRRRRRRRRRRRRRRRR~~~RRrrrrrrrrrr~rR~RrR~~Rrrrrr~~RRRrrRRrrrrr~~RRRRRRRRRRRRRRRR~~RRRRRR,,,,,,,...R
+R^T^^^,,^,^,,^^,,,^^,,^^,,,,,,,,,,,,.,,,.dd,,,,,,....,.....,,.....;.dRRRRRRrrrrrRRRRRRRRRRR~~~RRrrrrrrrr~~r~rrR~RdrrrrR~RRRRrRRRrRRRR~RRRRRRRRRRRRRRRRR~RRRRRRR,,,,,,,,..R
+R,T^^^,^^,^,^^^^^^^^^^,,,,,,,^^,,,,,,,..,,,,,,,,,,.................RRRRRRRRRRRRrRRrrrrrRRRRRRR~~~~~~~~~rr~~ddRR~dddddR~~RRRrRRRRrRRR~~RrrrrrrrrrRRRRR~~~RRRRRRR,RRT,,,,..R
+R^T^^T^^^^^^^,,,^^^^,,,,,,,,,,,,,,,,,,,d,,,,.,....,......,........w~RRRRRRRRRRRrrrRRRRrrrrRRRRRRRRRRRR~~dd~..R~~.dd^.~~.drrrRRRrrRR~~rrRRRRRRRRR~~~~~~RRRRRRRRR,,,,d,TT..R
+R,^^TT^^^^^^,,,^^^,,,.,,,,,,,,,,,,,.,,,,,,,,,,....,,....,,......;.~~~~RRRRRRRRRRRRRrrrrRRrrRRRRrrRRRRRR~~~~~^.w..^d.~~.;drRRRRRrRR~~RrRRRRRRRRR~~RRRRRRRRRRRRRRRRRRdR,...R
+R,^^^T^^^^^^,,,^^^^.,,,,,^,,,,,,,,,.d,,,,,d..d....................~RR~~~~~~~~~RRRRRrrrrrrrrrrRrrrrRRRRRRRd~~w~^~.;..~..ddrRRRRrRR~~RrRRRRRRRRRr~RRRRRRRRRRRRRRRRRRRddR...R
+R^^^^^^^^^^^^^^,^,^^,,,,,^,,,,,,,,,,,,,,,,,.dd,...................~~~~RRRRRRRR~~~~RRRrrrrrrrrrrrrrrrrrRRRd.ww~~~~^.w~.dddrRRRrrRR~RRrRRRRRRRrr~RRrrrrrrrRRRRRRRRRRR.d.R,.R
+R^^^,^^^^^^^^^^^^^^^,,,,,,,,,,,,,,,,,,,,,.,..d.,,..,,..........,..wwRRRRRRRRRRRRRR~~~~~RRRRrrrrrrrrrrrrrRd..~~~~~~~w.^dddRRRRrRRR~RrRRRRRRrrr~~RrrRRRRRRRRRRRRrrRRRd.dRRdR
+R^^,,^^^^^^^^^^^^^^^,,,^,,,,,,,,,,,,,,,,,,,,.,,.................;..^RRRRRRRRRRRRRRRRRR~~~~~RRRRrrrrrrrrrrd..^~~~~~~..^ddRRRRRrRR~~rRRRRRRrrRR~RrrRRRRRRRRRRRRrrRRRRRRd,,.R
+R^^^^^^^^^^^^^^^^^^^,,,^,,,,,,,,,,,,,,,,,,,,,,..,,.............,..^^RRRRRRRrrrrrRRRRRRRRRR~~~~~~rrrrrrrrdd.^~~~~*~~~.^dddRrRRrRR~rRRRRRRRrRRR~rrRRRRRRRRrrRRrrRRRRRRRRT.RR
+R^^^^^^^^,^^^^^^^,,^,,^,,,,,,,,,,d,d,,,,d,,,,,..d,,......,....d...^^^RRRRRrrRRRRrrrrrrrrrRRRRRR~~~~~~~~~d..;~~~***~~..dddrrRRrRR~RRRRRRRrRRR~~rRRRRRrrrrrRrrrRRRRRRRRRRRRR
+R,^^,^,,,,,^^^^^^,^,,^^,,,,,,,,,,,,,,,,,,,,d.,,.d.............d....^,^^RRRRRRRRRRRRRRRRRrrrrrRRRRRRRRRdd~~ww~~~***~~~.^ddRRRrrR~~RRRRRRRrRRR~RrRRRRrrRRRRRRRRRRRRRRRRRRRRR
+R^^^^^^,,,^^^^^^,^^,,,^,,^^,,,,,,,,,,,,,,,,,..,...............dd.....R^RRRRRRRRRRRRRRRrrrrrrrrRRRRRRRRrdd..~~~~***~~~~.^ddRRrRR~rRRRRRRrrRR~~rRRRRrrRRRRRRRRRRRRRRRRRRRRRR
+R^^^^^^^^,^^^^,^^^,,,,,,,,,,,,,d,,,,,,,d,,,,,.,,,..............d.....R^RRRRRRRR.......rrrrrrrr.......rrddd.^^~~~***~~~...ddrrR~~rRRRRRrrRRR~RrRRRRrRRRRRRRRRRRRrRRRRRRRRRR
+R^,,^^^,^^^^^^^^,^,,,,,,,,,,,,,,,,,,,,,d,,,,,,...,dd..........d.d.dd.R.R........RRRRR..........rrrrr....dR~~ww~~****~~~;..dddR~RrRRRRrrrRRR~rrRRRRrrRRRRRRRRRrrrRRRRRRRRRR
+R^^,,^^,,,,,^^^^,,,,,,,,,,,,,,,,,,,,,,,,,,,,.,...,...........dd.d.d.,....RRRRRRRRRRRRRRRRRRRrrRRrrrrrrrrR~~..~~~~***~~~~.;.ddd~RrRRRrrrrRR~~rrRRrrrrrrrrrrrrrRRRRRrrRRRRRR
+R^^,^^^^^^^^^^,,,,,,,^^,,,,,,.,,,,,,,,,,,,,,.,......................,,,RRRRRRRRRRRRRRrrrrrrrrRRRRrrrrrr~~~Rd..^~~~~**~~~...ddd~RdRRRrrrRR~RrrrRrrrrrrRRRRRRRRRRRRrrRRR...R
+R^^,^^^^^^^^,,,,,,,,,,,,,,,,,,,,,,,,.,,,,,,,......,,................,,RRR.RRRRRrrrrrrrRRRRRRRRRRRRRRRR~~RRRddd;.~~~~**~~~^....~.dRRrrrRR~RRrrRrrrrrrRRRRRRRRRRRRrrRR...RRR
+R,,^^^,^^^,^^,,,,,,,,,,,,,,,,,,,,,,,,,,,.,,,..d,...................,,^^^,,RRRrrrRRRRRRR~~~~~~~RRRRR~~~~RRRRdddd..^.~~~*~~~^...~.dRRrrrRR~RrrrRrrrrrRRRrrrrrrrrrrRR...RRRRR
+R^^^^,^^^^^,,,,,^^,,,,,,,,,,,d.,,,,,,.,,.,.,...,..,,................,^^RR,,RRRRRRRRRRRRRRRRRR~~~~~~~RRRRRRrrrRdd.^.w~~**~~.^.w^.ddRrrRRR~rrrrRrrrrRrrrrrRRRRRRR....RrrrRRR
+R^^^^,^^^^^^,,,,^^,,,,,,,,,,,,.,,,,,,,....,...........,...........^^^^^RRR..RRRRRRRRRRRRRRRRRRRRRRRRRRRRrrrrrR~~~~~w~~~**~~~~w^.ddrrrRR~~rrrRRdddddddd..........RRrrrRRRRR
+R^^^^^^^^^,d,,,,,,,,,,,,,,,,,,,d,,,,,,,,,,,...,...................^^^d...d..RRrrrrrrrrrrrrrrrrrRRRRRRRrrrrrR~~~Rdd.^.~~~**~~~~~.ddddrrR~RrrRRRdd...;.ddrrRRRRRRrrrRRRRRRRR
+R^^^,^^^^,,^,,,,,,,,,,,,,,,,,,,,,,,,,.,,,,,,......................^^^.d.ddd.dRRRRRRRRRRRRRRRRRrrrrrrrrrrrRR~~RRRd....~~~***~~~~...ddddd~rrrRRRd.^w~w^.ddrrrrrrrRRRRRRRRRRR
+R^,^^^^^^,,^,,,d,,,,,,,,,,,,,,,,,,,,,,,.,,,........................dd.dddRRRdRRRRRRRRRRRRRRRRRRrrrrrrrrRRR~~RRrrddd.^.~~****~~~..^^.dd~drrrRRR..w~*~w.ddrrrrrRRRRRRRRRRRRR
+R,,^^^,,,,,^^,^d,,,,,,,,,,,,,,,,,,,,,,,,.,,,............................RRR...RRRrrrrrrrrrrrrrrrrrrRRrRRRR~RRrrrrddd.;.~~****~~~.....d~ddddRRR.ww*~~w^ddrrRRRRRRRRRRRRRRRR
+R^^^^^^,^^d,^^^d,,,,,,,,,,,,,,,,,,,,,,,.....,,...............................RRRRrrrrrrrrrrrrrrrrRRRRrRR~~~rrrrrrrddd^..~~*****~~~~.^.~.ddddR..w^~ww^.ddRRRRRRRRRRRRRRRRRR
+R,^^,^^,,,,,,,^,,,,,,,,,,,,,,,,,..,,,,.d...,,,...........................RR.RRRRRRRRRRRRRRRRRRRRRRRRrRR~~RrrrrrrrRRRddd..~~******~~~~.w...^;..ww;....dRRRRRRRRrrrrrRRRRRRR
+R,,^,^^,,^,,,,,,d,,,,,,,,,,,,,,,..,,,.dd...d,,.......,.............,......R,RRRRRRRRRRRRRRRRRRRRRRrrR~~~RRrrrrrrRRRRRddd.^.~~******~~www......w..ddddRRRRRrrrrRRRRRRRrrrrR
+R^,^^^,,^^,,,,,,,,d,,,,,,,,,,,,,,d,,,d.dd..d.............................^R^^RRRRRRRRRRRRRRRRRRRRr~~~~RRrrrrrrRRRRRRRRdddd;.~~~****~~~~~~~~~~ww^.dddRRRRRrrRRRRRRRRRRrRRRR
+R,^^^^^,^,,,,d,,,,,,,,,,,,,,,,,,,,,,dd.................................;,,^R^RRRRRRRRRRRRRRRRRRr~~~RRRrrRRRRRRRRRRRRRRRdddd.^^~~~*****~~~~~~~~w^.ddRRRRRrrRRRRRRRRRRrRRRRR
+R^^,^,,,^^,^,dd,,,,,,,,,,,,,.,,d,,,.d...d............................;..,,^R^.RRRRRRRRrrrrrrrr~~~RRRRrrRRRRRRRRRRRRRRrrrrdddd..~~~~*****~~~~~~~^..ddRRRrrRRRRRRRRRRRrRRRRR
+R^^,^^^,^^,^^,,,,^,,,,,,,,,,,dd,,,ddd...d..................,...........,,,,,RR..RRRRrrRRRRRR~~~RRRRRrrRRRRRRRRRRRrrrrrrrrrddd..;.~~~~*****~~~~~...ddRRRrRRRrrrRRRRRRrRRRRR
+R^,,,^,^^,,,^,,,,^,,,,,,,,,,,dd,,,,d,,.d........,.......................^^^,,R;.RRRRRRRRRRR~~RRRrrrrrRRRRRRRRrrrrrrrrrrrrrrdd....^^~~~******~~~~.^dddrrRRrrrRRRRRRRRrRRRRR
+R^^,^^,,^,,,,,d,,,d,,,,,,,,,,,,,,,,d,,,dd.d.............................^T^,,..RRRRRRRRRR~~~rrrrrRRRRRRRRRRrrrrrrrrR~~~~~~~ddd.~~..^^~~******~~~...ddRRRRrRRRRRRRRRRrRRRRR
+R^,,^^^^^^^,^,d,,,,,,,,,,,,,,,,,dd.d,,,dd.dd....d......................;^^^.,;.RRRRRRRRR~~RrrRRRRRRRRRRRRrrrrrrRRR~~RRRRRR~~~~~~~ww~~~~~******~~~.^ddRRRrrRRRRRRRRRRrrRRRR
+R^^,^^^^^,,^^^dd,,,^^,,,,,,,,,,,dd.,,.dd...d,,..d.........,.........;.........dRRRRRRRR~~RRrRRRRRRRRRRRrrrrrrRRRR~~RRRRRRRRRRRRR..^~~~~~******~~~...dRRrrRRRRRRddddRRrRRRR
+R^^^^^,,^^,^,^^,,,,,,,,,,,,,,,,,,d.,,.......,,..........................;...;ddRRRRRR~~RRRrrRRRRRRRRRRrrrrRRR~~~~RRRRRRRRRRRRRRd.^.w~~~~~******~~~..ddRrRRRRRRddddddRrRRrR
+R^^,^^^,^^^^,,^,,,,,,,,,,,,,,,,,...,,d.ddd.d...................,....;......;.dwwRRR~~RRRRrrRRRRRRRRrrrrrrRR~~~RRRRRRRRRRRRRRRRrdd.~ww~~~~~******~~~.ddddRRRRRR...;.ddrRrrR
+R^^,^^^^^^,,,,,,,,,dd,,,d,,,,,,,...,,ddd..dd......dd...................d..;.;dwwRR~~RRRRrrRRRRRRRrrrrrrrRR~~RRRRRRrrrrrrrRRRRRrdd~~...~~~~*******~~...^^ddddd..www..drrRRR
+R^^^^^^^^,d^d,,^^,,,,,,,,,,,,,,,,d..,...d.d..................,.....;;..d.;.;ddww~~~RRRRRrRRRRRRrrrrrrRrRRR~RRRRRRrrrrrrrrrrrrrrr~~~...^~~~~******~~~..;.......~~~~w.dRRRRR
+R^^^^^^^,,,^,,,,,,,,,,,,,,,,,,,,,d,.dd,.d.d..................,.........dd,T,ddww~~~RRRRRRRRRRRRrrrRRRrR~~~~RRRRRrrrrRRRRrrrrrrr~~rRRd.;.~~~~*******~~~.....^..w**~w;dRRRRR
+R^^^,^^^^,^,,,,,,,,,,,,,,,,,,.,,,,,...,dd...........,,...,..............d.,,ddww~~~~RRRRRRRRRRRrrRRRrrR~RRRRRRRrrrrRRRrrRRRRR~~~rrRRR...^~~~~*******~~~~..^^.w~*~~..dRRRRR
+R^^^^^^,,,^^,^d,d,,,d,,,,,,,,,d,,,,,,d,.......dd,..,,,,................d.d,,ddwww~~~~RRRRRRRRRRRRRrrrR~~RRRRRrrrrrRRRrRRRR~~~~~~rrRRRdd..~~~~~~~~~~**~~~~~~^^~*~~w.ddRRRRR
+R^^^^^^^^,^^^^^,d,,^,,,,,,,,,,,,,d,,,.,.,.........,,,,,,..............d;;d^dddwww~~~*~RRRRRRRRRRRrrRRR~RRRRRrrrrrRRRrRRRR~~R~~~rrrRRRRdd^.w~~~~~~~~~~**~~~~~ww~~w..dRRRRRR
+R^,^,,,^,^^,,,^d,,,^,,,,,,,,,,,,,,,,.,,.,,,.......,,,,,,...............;.^^^ddwww~~~*R~~RRRRRRRRRrRRRR~RRRRRrrrRRRRrrRRR~~~~~rrrrrRRRRRd..wwww;^..w^~~**~~~~wwww..dRRRRRRR
+R^^^^^,^,,,,,,,,,d,,,,,,,,,,,.,,,,,,,,,.,,,........,,,,,....,...........^^^^.ddww~~**RR~~~RRRRRRRRrRRR~RRRrrRRRRRRRrRRR~~~~RRrrrrrRRRRRRRd~~~....^ww;.~~***~~.^^.RRRRRRRrR
+R^^,,^,^^,^^^,^,,dd,,,,,,,,,,d,,,,,,,.....d..........,,..................^^;.ddww~~*~*R~~~RRRRRRRRrrRR~RRRrRRRRRRRRrRR~~*~~~RrrrrRRRRRRRRdd~~dddddd~....~~~**~;^.dRRRRrrRR
+R^^,,^,^^^^,,^^,,,d,d^^,,,,d,,,,,,,.,................................,,..;...ddww~~*****~RRRRRRRRRRrRR~RRrRRRRRRRRRrR~~~*~RRRrRRRRRRRRRRRrr~~Rddrdd~..d^.~~~~~...ddrrrrRRR
+R,^^^,,^^,,^,^,,,,,,,.,,.,dd,,,.,,,.,...........................,...........^ddww~~~****RRRRRRRRRRrrR~~RRrRRRRRRRRrrR~~*~~RRRrRRRRRRRRRRRrr~~rrrrrr~~ddd.;~~~~~..ddRRRRRRR
+R^^,^,,^^,,^,^,,,,,,,dd,,,d.,,d.d,,.d.....,,........,....................;^.;.dww~~~****RRRRRRRRRrrRR~RRRRrrRRRRRRrRR~~~~RRRRrRRRRRRRRRRRrr~~rrrrRRR~Rddd.^~~~w..ddRRRRRRR
+R^^,,,,,,,^^,,,,,,,,,,d,,,d,,,,,,,,,,.,,....,...,,..,........,......;........ddww~~~~***RRRRRRRRRRRR~RRRRRRrRRRRRRrR~~~~~RRRrRRRRRRRRRRRRrr~~rrrrRRR~RRddd.~~ww.dddRRRR~~R
+R^,^^^,,^^,,,,,,,^^,,,d,,,,,,,,,,,,.,,,,....,..............,..........;......dwww~~~~********RRRRRR~~RRRRRRrrRRRRRrR~**~RRRrRRRRRRRRRRRRRrr~~rrrrRRR~RRddd..www~~dddRR~~RR
+R,,^^^^^,,,,,,,,,,,,.,dd,,,,....,,,....d..........,.......................;.ddwww~~~~~****RR**RRRRR~RRRRRRRRrRRRRRr~~*~~RRrRRRRRRRRRRRRRRr~~~rrrrRRR~RRdddd...w~~~~~~~dRrR
+R,,^^^,,,,d,,,,,,,,,,,,,,,,,.,,,,,,.,,,.............................,;....^.ddwww~~~~~~***RRR****~~~RRRRRRRRrRRRRR~~**~RRrRRRRRRRRRRRRRRrr~~RrrrrRRR~Rrrrrddd..~~~~~dddrrR
+R,,,^,^,,,,,,^,,,,,..,,,,,.,,,,,,...,,..,.....,..,..............,..,,,,..;..ddwww~~~~~~****R***RR*~RRRRRRRRrrRRRRR~~~~RRrrRRRRRRRRRRRRRrrR~~RrrrrRRR~RrrrrrrrRRR~~d~~~ddrR
+R,,,^,^^,,dd,^,,,,d.,,,,,,,,,.,,,..,,..,,...,.,.,,.,.....,.........,,,,....^ddwww~~~~~*~~*********RRRRRRRrrRRRRRR~~~~~RRrRRRRRRRRRRRRrr~~~~~RrrrrRRR~RrrrrrrrRRRr~~dd~rrrR
+R,^,,,,,,,,,dd,,,,,,,,,,,,,....,....,.,.....,,.....,....,,.........,,,,d...^ddwww~~~~~*******R***RRRRRRRrrRRRRRRr~~~~RRRrRRRRRRRRRRrrR~~**~RRrrrrRRR~RrrrrrrrRRRrR~RRr~~rR
+RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
+
+-- Entities
+
+Animal
+	id 0
+	species "Rabbit"
+	position 124.508 60.9975
+	facing 1.60264
+	name "Jeff"
+	graphic yellow 1 r
+	amount_eaten 0
+	current_action
+	Action
+		action Idle
+		completed 0
+		step 2
+	end
+	action_history
+	end
+	destination -1 -1
+	health 16 16
+	strength 6
+	dexterity 16
+	intelligence 4
+	running_speed 13
+	walking_speed 1.0
+	turning_speed 2.2
+	entity_size 0.5
+	entity_mass 1.0
+	rest_energy_per_day 220
+	hunger_limits 0.5 0.9 1.5
+	life_expectancy 7
+	breeding_age 2
+	age 2
+	breeding_rate 1.8 0
+	fertility 1.6
+	diet 0.1
+	mutation_rate 0.1
+	mutation_amount 0.1
+	damage_base 1
+	attack_rate 1.2
+end
+
+Animal
+	id 1
+	species "Rabbit"
+	position 126.544 60
+	facing 1.60264
+	name "Jill"
+	graphic yellow 1 r
+	amount_eaten 0
+	current_action
+	Action
+		action Idle
+		completed 0
+		step 2
+	end
+	action_history
+	end
+	destination -1 -1
+	health 12 12
+	strength 4
+	dexterity 18
+	intelligence 5
+	running_speed 15
+	walking_speed 1.1
+	turning_speed 2.6
+	entity_size 0.3
+	entity_mass 0.8
+	rest_energy_per_day 200
+	hunger_limits 0.4 0.8 1.2
+	life_expectancy 7
+	breeding_age 2
+	breeding_rate 1.9 0
+	fertility 1.5
+	diet 0.1
+	age 2
+	mutation_rate 0.1
+	mutation_amount 0.1
+	damage_base 1
+	attack_rate 1.2
+end
+
+Animal
+	id 2
+	species "Rabbit"
+	position 150.508 60.9975
+	facing 1.60264
+	name "Reddy"
+	graphic red 1 R
+	amount_eaten 0
+	current_action
+	Action
+		action Idle
+		completed 0
+		step 2
+	end
+	action_history
+	end
+	destination -1 -1
+	health 16 16
+	strength 6
+	dexterity 10
+	intelligence 6
+	running_speed 13
+	walking_speed 1.0
+	turning_speed 2.2
+	entity_size 0.8
+	entity_mass 1.8
+	rest_energy_per_day 100
+	hunger_limits 0.5 0.9 1.5
+	life_expectancy 20
+	breeding_age 4
+	age 2
+	breeding_rate 4 0
+	fertility 1.6
+	diet 0.1
+	mutation_rate 0.1
+	mutation_amount 0.1
+	damage_base 1
+	attack_rate 1.2
+end
+
+Animal
+	id 3
+	species "Rabbit"
+	position 150.508 62.9975
+	facing 1.60264
+	name "Wilma"
+	graphic red 1 R
+	amount_eaten 0
+	current_action
+	Action
+		action Idle
+		completed 0
+		step 2
+	end
+	action_history
+	end
+	destination -1 -1
+	health 16 16
+	strength 5
+	dexterity 10
+	intelligence 6
+	running_speed 13
+	walking_speed 1.0
+	turning_speed 2.2
+	entity_size 0.8
+	entity_mass 1.8
+	rest_energy_per_day 100
+	hunger_limits 0.5 0.9 1.5
+	life_expectancy 20
+	breeding_age 4
+	age 2
+	breeding_rate 4.2 0
+	fertility 1.7
+	diet 0.1
+	mutation_rate 0.1
+	mutation_amount 0.1
+	damage_base 1
+	attack_rate 1.2
+end
+
+-- End

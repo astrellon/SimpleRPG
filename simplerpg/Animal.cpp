@@ -22,6 +22,7 @@ Animal::Animal(Game *game) : GameEntity(game)
 	mHungerHealCooldown = 0.0f;
 	mAggression = 0.0f;
 	mDesiredNumChildren = 2.0f;
+	mFindFoodCooldown = 0.0f;
 
 	mEnergyNeededPerDay = 1.0f;
 	mEnergy = 1.0f;
@@ -587,6 +588,11 @@ void Animal::update(float dt)
 		setHungerDamageCooldown(getHungerDamageCooldown() - dt);
 	}
 
+	if (mFindFoodCooldown > 0.0f)
+	{
+		mFindFoodCooldown -= dt;
+	}
+
 	if (getEnergy() < 0.1f)
 	{
 		if (getHungerDamageCooldown() <= 0.0f)
@@ -638,11 +644,11 @@ void Animal::update(float dt)
 		break;
 	case IDLE:
 		// Checks if the animal is hungry or wants to breed when idle.
-		if (isHungry() || (wantsToBreed() && isHungry(2)))
+		if (mFindFoodCooldown <= 0.0f && (isHungry() || (wantsToBreed() && isHungry(2))))
 		{
 			setCurrentAction(new TargetAction(EAT));
 		}
-		else if(getMateFindCooldown() <= 0.0f && wantsToBreed())
+		else if(getMateFindCooldown() <= 0.0f && wantsToBreed() && !isHungry())
 		{
 			setCurrentAction(new TargetAction(BREED));
 		}
@@ -1085,6 +1091,10 @@ void Animal::doActionEat(float dt)
 				action->setLocation(foodLocation);
 				action->setStep(4);
 			}
+			else
+			{
+				mFindFoodCooldown = 60.0f;
+			}
 		}
 		else
 		{
@@ -1107,6 +1117,10 @@ void Animal::doActionEat(float dt)
 						action->nextStep();
 					}
 				}
+			}
+			else
+			{
+				mFindFoodCooldown = 60.0f;
 			}
 		}
 	}

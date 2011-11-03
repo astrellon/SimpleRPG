@@ -761,6 +761,21 @@ namespace SimpleRPGAnalyser
 
         private Bitmap mPicTemp = new Bitmap(10, 10);
 
+        private void renderTimeStamp(int day, Bitmap orig, ref Bitmap pic)
+        {
+            if (pic != null)
+            {
+                pic.Dispose();
+            }
+            pic = new Bitmap(orig.Width, orig.Height + 32);
+
+            Graphics g = Graphics.FromImage(pic);
+            g.DrawImage(orig, new Point());
+
+            Font font = new Font(FontFamily.GenericSansSerif, 22);
+            g.DrawString(day.ToString(), font, Brushes.Black, 4, orig.Height + 2);
+        }
+
         private void btnSaveAll_Click(object sender, EventArgs e)
         {
             using (FolderBrowserDialog openFolder = new FolderBrowserDialog())
@@ -774,8 +789,9 @@ namespace SimpleRPGAnalyser
                     {
                         renderOverlay(i);
                         renderImage(ref mMapTotal);
+                        renderTimeStamp(i, mMapTotal, ref mPicTemp);
                         string filename = openFolder.SelectedPath + "\\" + mLoadedFileBase + "_" + i + ".png";
-                        mMapTotal.Save(filename, ImageFormat.Png);
+                        mPicTemp.Save(filename, ImageFormat.Png);
                     }
                     MessageBox.Show("Completed saving " + mHistory.Count + " images.");
                     //MessageBox.Show("Selected Folder: " + openFolder.SelectedPath);
